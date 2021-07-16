@@ -8,13 +8,26 @@ import { CustomerDTO } from './customer.dto';
 export class CustomerService {
   constructor(@InjectRepository(Customer) private readonly repo: Repository<Customer>) { }
 
-  public async getAll(): Promise<CustomerDTO[]> {
-    return await this.repo.find()
-      .then(items => items.map(e => CustomerDTO.fromEntity(e)));
-  }
+	public async addCustomer(dto: CustomerDTO): Promise<CustomerDTO> {
+		return this.repo.save(CustomerDTO.toEntity(dto))
+		  .then(e => CustomerDTO.fromEntity(e));
+	}
 
-  public async create(dto: CustomerDTO): Promise<CustomerDTO> {
-    return this.repo.save(CustomerDTO.toEntity(dto))
-      .then(e => CustomerDTO.fromEntity(e));
-  }
+	public async getAllCustomer(): Promise<CustomerDTO[]> {
+		return await this.repo.find()
+		  .then(items => items.map(e => CustomerDTO.fromEntity(e)));
+	}
+
+	public async getCustomer(customerID): Promise<CustomerDTO> {
+		return await this.repo.findOne(customerID);
+	}
+
+	public async updateCustomer(customerID, dto: CustomerDTO): Promise<CustomerDTO> {
+	    await this.repo.update(customerID, dto);
+		return await this.repo.findOne(customerID);
+	}
+
+    public async deleteCustomer(customerID): Promise<any> {
+        return await this.repo.delete(customerID);
+    }
 }
