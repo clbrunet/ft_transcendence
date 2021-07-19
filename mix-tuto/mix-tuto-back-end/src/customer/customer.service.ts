@@ -27,7 +27,7 @@ export class CustomerService {
 		return await this.repo.findOne(customerID);
 	}
 
-    public async deleteCustomer(customerID): Promise<any> {
-        return await this.repo.delete(customerID);
-    }
+  public async deleteCustomer(customerID): Promise<any> {
+      return await this.repo.delete(customerID);
+  }
 }
