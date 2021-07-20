@@ -1,13 +1,12 @@
 import { Controller, Get, Post, Delete, Put, Body, Param } from '@nestjs/common';
-import { UserService } from './user.service';
-import { User } from '../model/user.entity';
+import { ChannelService } from './channel.service';
 import { Channel } from '../model/channel.entity';
 
-@Controller('user')
-export class UserController {
-  constructor(private readonly serv: UserService) {}
+@Controller('channel')
+export class ChannelController {
+  constructor(private readonly serv: ChannelService) {}
 
-  @Get('/users')
+  @Get('/channels')
   async findAll() {
     return await this.serv.findAll();
   }
@@ -18,13 +17,13 @@ export class UserController {
   }
 
   @Post('/create')
-  async create(@Body() user: User) {
-    return await this.serv.create(user);
+  async create(@Body() channel) {
+    return await this.serv.create(channel);
   }
 
   @Put('/update/:id')
-  async update(@Param('id') id, @Body() user: User) {
-    return await this.serv.update(id, user);
+  async update(@Param('id') id, @Body() channel: Channel) {
+    return await this.serv.update(id, channel);
   }
 
   @Delete('/delete/:id')

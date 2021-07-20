@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn, OneToMany } from 'typeorm';
+import { Channel } from './channel.entity';
 
 enum user_status {
   online,
@@ -57,4 +58,7 @@ export class User {
 
     @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     lastChangedDateTime: Date;
+
+    @OneToMany(() => Channel, channel => channel.user)
+    channels: Channel[];
 }
