@@ -28,13 +28,7 @@ export class UserController {
   }
 
   @Delete('/delete/:id')
-  async deleteOne(@Param('id') id) {
-    return await this.serv.deleteOne(id);
+  async delete(@Param('id') id) {
+    return await this.serv.delete(id);
   }
-
-  @Delete('/delete_all')
-  async deleteAll() {
-    return await this.serv.deleteAll();
-  }
-
 }

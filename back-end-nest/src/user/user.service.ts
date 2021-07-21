@@ -5,32 +5,31 @@ import { User } from '../model/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private readonly repo: Repository<User>) { }
+  constructor(@InjectRepository(User) private readonly userRepo: Repository<User>) { }
 
   async findAll() {
-    return await this.repo.find({ relations: ['channels'] });
+    return await this.userRepo.find({ relations: ['channels', 'participants'] });
   }
 
-  async findOne(id: string) {
-    return await this.repo.findOne(id, { relations: ['channels'] });
+  async findOne(userId: string) {
+    const user = await this.userRepo.findOne(userId, { relations: ['channels', 'participants'] });
+    if (user === undefined) { return "[Error]: No user at this id!"; }
+    return user;
   }
 
   async create(user: User) {
-    return await this.repo.save(user);
+    return await this.userRepo.save(user);
   }
 
-  async update(id: string, user: User) {
-    await this.repo.update(id, user);
-    return await this.repo.findOne(id, { relations: ['channels'] });
+  async update(userId: string, user: User) {
+    await this.userRepo.update(userId, user);
+    const res = await this.userRepo.findOne(userId, { relations: ['channels', 'participants'] });
+    if (res === undefined) { return "[Error]: No user at this id!"; }
+    return res;
   }
 
-  async deleteOne(id: string) {
-    await this.repo.delete(id);
-    return await this.repo.find({ relations: ['channels'] });
-  }
-
-  async deleteAll() {
-    await this.repo.clear();
-    return await this.repo.find({ relations: ['channels'] });
+  async delete(id: string) {
+    await this.userRepo.delete(id);
+    return await this.userRepo.find({ relations: ['channels', 'participants'] });
   }
 }

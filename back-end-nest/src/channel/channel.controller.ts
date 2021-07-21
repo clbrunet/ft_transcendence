@@ -11,29 +11,28 @@ export class ChannelController {
     return await this.serv.findAll();
   }
 
-  @Get(':id')
+  @Get('/:id')
   async findOne(@Param('id') id) {
     return await this.serv.findOne(id);
   }
 
-  @Post('/create')
-  async create(@Body() channel) {
-    return await this.serv.create(channel);
+  @Get('/:id/participants/')
+  async getParticipants(@Param('id') id) {
+    return await this.serv.getParticipants(id);
   }
 
-  @Put('/update/:id')
-  async update(@Param('id') id, @Body() channel: Channel) {
-    return await this.serv.update(id, channel);
+  @Post('/create')
+  async create(@Body() input: {
+    ownerId: string, channel_name: string, channel_status: number, channel_password: string
+  })
+  {
+    const { ownerId, channel_name, channel_status, channel_password } = input;
+    return await this.serv.create(ownerId, channel_name, channel_status, channel_password);
   }
 
   @Delete('/delete/:id')
-  async deleteOne(@Param('id') id) {
-    return await this.serv.deleteOne(id);
-  }
-
-  @Delete('/delete_all')
-  async deleteAll() {
-    return await this.serv.deleteAll();
+  async delete(@Param('id') id) {
+    return await this.serv.delete(id);
   }
 
 }
