@@ -8,7 +8,7 @@ import User from '../user/user.entity';
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authenticationService: AuthenticationService) {
     super({
-      usernameField: 'email'
+      usernameField: 'email' // change the name of one of the two expected fields
     });
   }
   async validate(email: string, password: string): Promise<User> {

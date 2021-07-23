@@ -21,20 +21,11 @@ export class AuthenticationController {
     return this.authenticationService.register(registrationData);
   }
 
-  /*@HttpCode(200)
+  @HttpCode(200)
   @UseGuards(LocalAuthenticationGuard)
   @Post('log-in')
   async logIn(@Req() request: RequestWithUser, @Res() response: Response) {
     const {user} = request;
-    const cookie = this.authenticationService.getCookieWithJwtToken(user.id);
-    response.setHeader('Set-Cookie', cookie);
-    user.password = undefined;
-    return response.send(user);
-  }*/
-
-  @Post('log-in')
-  async logIn(@Body() registrationData: RegisterDto, @Res() response: Response) {
-    const user = await this.authenticationService.getByEmail(registrationData.email);
     const cookie = this.authenticationService.getCookieWithJwtToken(user.id);
     response.setHeader('Set-Cookie', cookie);
     user.password = undefined;
