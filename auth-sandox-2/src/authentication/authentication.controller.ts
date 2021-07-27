@@ -5,15 +5,15 @@ import RegisterDto from './register.dto';
 import RequestWithUser from './requestWithUser.interface';
 import { LocalAuthenticationGuard } from './localAuthentication.guard';
 import { JwtAuthenticationGuard } from './jwtAuthentication.guard';
+import JwtTwoFactorGuard from './jwt-two-factor.guard';
 import { AuthGuard } from '@nestjs/passport';
-
-//@Injectable()
-//export default class JwtAuthenticationGuard extends AuthGuard('jwt') {}
+import { UserService } from '../user/user.service';
 
 @Controller('authentication')
 export class AuthenticationController {
   constructor(
-    private readonly authenticationService: AuthenticationService
+    private readonly authenticationService: AuthenticationService,
+    private readonly userService: UserService
   ) {}
 
   @Post('register')
@@ -29,17 +29,20 @@ export class AuthenticationController {
     const cookie = this.authenticationService.getCookieWithJwtToken(user.id);
     response.setHeader('Set-Cookie', cookie);
     user.password = undefined;
+    if (user.isTwoFactorAuthenticationEnabled) {
+      return;
+    }
     return response.send(user);
   }
 
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   @Post('log-out')
   async logOut(@Req() request: RequestWithUser, @Res() response: Response) {
     response.setHeader('Set-Cookie', this.authenticationService.getCookieForLogOut());
     return response.sendStatus(200);
   }
 
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   @Get()
   authenticate(@Req() request: RequestWithUser) {
     const user = request.user;

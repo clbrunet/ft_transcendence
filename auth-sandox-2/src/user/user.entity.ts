@@ -5,6 +5,12 @@ class User {
   @PrimaryGeneratedColumn()
   public id?: number;
 
+  @Column({ nullable: true })
+  public twoFactorAuthenticationSecret?: string;
+
+  @Column({ default: false })
+  public isTwoFactorAuthenticationEnabled: boolean;
+
   @Column({ unique: true })
   public email: string;
 
