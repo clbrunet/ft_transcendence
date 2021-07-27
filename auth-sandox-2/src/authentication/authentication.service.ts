@@ -35,7 +35,7 @@ export class AuthenticationService {
     try {
       const user = await this.userService.getByEmail(email);
       await this.verifyPassword(plainTextPassword, user.password);
-      user.password = undefined;
+      user.password = undefined; //not the cleanest way to not send the password in a response
       return user;
     } catch (error) {
       throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
@@ -60,10 +60,6 @@ export class AuthenticationService {
 
   public getCookieForLogOut() {
     return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
-  }
-  //**********************//
-  public async getByEmail(email: string) {
-    return await this.userService.getByEmail(email);
   }
 
 }
