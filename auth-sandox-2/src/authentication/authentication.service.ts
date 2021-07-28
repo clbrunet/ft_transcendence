@@ -25,7 +25,7 @@ export class AuthenticationService {
       return createdUser;
     } catch (error) {
       if (error?.code === '23505') {
-        throw new HttpException('User with that email already exists', HttpStatus.BAD_REQUEST);
+        throw new HttpException('User with that email or that name already exists', HttpStatus.BAD_REQUEST);
       }
       throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -52,7 +52,7 @@ export class AuthenticationService {
     }
   }
 
-  public getCookieWithJwtToken(userId: number) {
+  public getCookieWithJwtToken(userId: string) {
     const payload: TokenPayload = { userId };
     const token = this.jwtService.sign(payload);
     return `Authentication=${token}; HttpOnly; Path=/; Max-Age='1d'}`;
@@ -62,7 +62,7 @@ export class AuthenticationService {
     return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
   }
 
-  public getCookieWithJwtAccessToken(userId: number, isSecondFactorAuthenticated = false) {
+  public getCookieWithJwtAccessToken(userId: string, isSecondFactorAuthenticated = false) {
     const payload: TokenPayload = { userId, isSecondFactorAuthenticated };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),

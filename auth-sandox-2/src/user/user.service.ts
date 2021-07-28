@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import User from './user.entity';
-import CreateUserDto from './createUser.dto';
+import RegisterDto from '../authentication/register.dto';
 
 @Injectable()
 export class UserService {
@@ -11,13 +11,13 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
-  async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
+  async setTwoFactorAuthenticationSecret(secret: string, userId: string) {
     return this.userRepository.update(userId, {
       twoFactorAuthenticationSecret: secret
     });
   }
 
-  async turnOnTwoFactorAuthentication(userId: number) {
+  async turnOnTwoFactorAuthentication(userId: string) {
     return this.userRepository.update(userId, {
       isTwoFactorAuthenticationEnabled: true
     });
@@ -35,16 +35,16 @@ export class UserService {
     throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
   }
 
-  async getById(id: number) {
-    const user = await this.userRepository.findOne({ id });
+  async getById(id: string) {
+    const user = await this.userRepository.findOne( id );
     if (user) {
       return user;
     }
     throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  async create(userData: CreateUserDto) {
-    const newUser = await this.userRepository.create(userData);
+  async create(registerData: RegisterDto) {
+    const newUser = await this.userRepository.create(registerData);
     await this.userRepository.save(newUser);
     return newUser;
   }

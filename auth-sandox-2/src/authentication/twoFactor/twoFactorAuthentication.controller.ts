@@ -43,8 +43,7 @@ export class TwoFactorAuthenticationController {
   @UseGuards(JwtAuthenticationGuard)
   async authenticate(
     @Req() request: RequestWithUser,
-    @Body() { twoFactorAuthenticationCode } : TwoFactorAuthenticationCodeDto
-  ) {
+    @Body() { twoFactorAuthenticationCode } : TwoFactorAuthenticationCodeDto) {
     const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
       twoFactorAuthenticationCode, request.user
     );
