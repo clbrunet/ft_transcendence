@@ -1,35 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../model/user.entity';
+import User from './user.entity';
+import RegisterDto from '../authentication/register.dto';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private readonly userRepo: Repository<User>) { }
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>
+  ) {}
 
-  async findAll() {
-    return await this.userRepo.find({ relations: ['channels', 'participants'] });
+  async setTwoFactorAuthenticationSecret(secret: string, userId: string) {
+    return this.userRepository.update(userId, {
+      twoFactorAuthenticationSecret: secret
+    });
   }
 
-  async findOne(userId: string) {
-    const user = await this.userRepo.findOne(userId, { relations: ['channels', 'participants'] });
-    if (user === undefined) { return "[Error]: No user at this id!"; }
-    return user;
+  async turnOnTwoFactorAuthentication(userId: string) {
+    return this.userRepository.update(userId, {
+      isTwoFactorAuthenticationEnabled: true
+    });
   }
 
-  async create(user: User) {
-    return await this.userRepo.save(user);
+  async getAll() {
+    return await this.userRepository.find();
   }
 
-  async update(userId: string, user: User) {
-    await this.userRepo.update(userId, user);
-    const res = await this.userRepo.findOne(userId, { relations: ['channels', 'participants'] });
-    if (res === undefined) { return "[Error]: No user at this id!"; }
-    return res;
+  async getByEmail(email: string) {
+    const user = await this.userRepository.findOne({ email });
+    if (user) {
+      return user;
+    }
+    throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
   }
 
-  async delete(id: string) {
-    await this.userRepo.delete(id);
-    return await this.userRepo.find({ relations: ['channels', 'participants'] });
+  async getById(id: string) {
+    const user = await this.userRepository.findOne( id );
+    if (user) {
+      return user;
+    }
+    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
   }
+
+  async create(registerData: RegisterDto) {
+    const newUser = await this.userRepository.create(registerData);
+    await this.userRepository.save(newUser);
+    return newUser;
+  }
+
+  async delete(id: number) {
+    await this.userRepository.delete(id);
+    return await this.userRepository.find();
+  }
+
 }

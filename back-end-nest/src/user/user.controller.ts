@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Delete, Put, Body, Param } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from '../model/user.entity';
-import { Channel } from '../model/channel.entity';
+import User from './user.entity';
+import RegisterDto from '../authentication/register.dto';
 
 @Controller('user')
 export class UserController {
@@ -9,26 +9,22 @@ export class UserController {
 
   @Get('/users')
   async findAll() {
-    return await this.serv.findAll();
+    return await this.serv.getAll();
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id) {
-    return await this.serv.findOne(id);
+  @Get('/id/:id')
+  async getById(@Param('id') id) {
+    return await this.serv.getById(id);
   }
 
-  @Post('/create')
-  async create(@Body() user: User) {
-    return await this.serv.create(user);
+  @Get('/email/:email')
+  async getByEmail(@Param('email') email) {
+    return await this.serv.getByEmail(email);
   }
 
-  @Put('/update/:id')
-  async update(@Param('id') id, @Body() user: User) {
-    return await this.serv.update(id, user);
-  }
-
-  @Delete('/delete/:id')
+  @Delete('/:id')
   async delete(@Param('id') id) {
     return await this.serv.delete(id);
   }
 }
+
