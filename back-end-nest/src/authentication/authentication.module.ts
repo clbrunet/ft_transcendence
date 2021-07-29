@@ -12,7 +12,7 @@ import { TwoFactorAuthenticationService } from './twoFactor/twoFactorAuthenticat
 
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
-import { JwtTwoFactorStrategy } from './jwt-two-factor.strategy';
+import { JwtTwoFactorStrategy } from './twoFactor/jwtTwoFactor.strategy';
 
 import { AuthenticationController } from './authentication.controller';
 import { TwoFactorAuthenticationController } from './twoFactor/twoFactorAuthentication.controller';

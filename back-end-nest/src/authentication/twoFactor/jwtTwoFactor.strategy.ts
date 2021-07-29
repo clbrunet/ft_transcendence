@@ -4,13 +4,13 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 
-import TokenPayload from './tokenPayload.interface';
+import TokenPayload from '../tokenPayload.interface';
 
-import { UserService } from '../user/user.service';
+import { UserService } from '../../user/user.service';
 
 
 @Injectable()
-export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-two-factor') {
+export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwtTwoFactor') {
   constructor(
     private readonly configService: ConfigService,
     private readonly userService: UserService ) {

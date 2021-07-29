@@ -7,7 +7,7 @@ import Channel from './channel.entity';
 
 import { ChannelService } from './channel.service';
 
-import JwtTwoFactorGuard from '../authentication/jwt-two-factor.guard';
+import JwtTwoFactorGuard from '../authentication/twoFactor/jwtTwoFactor.guard';
 
 import ChannelCreationDto from './channelCreation.dto';
 

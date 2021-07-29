@@ -33,31 +33,6 @@ export class UserService {
     return this.userRepository.update(userId, { isTwoFactorAuthenticationEnabled: true });
   }
 
-  public userToDto(user: User) {
-    let dto = new UserDto();
-    dto.userId = user.id;
-    dto.name = user.name;
-    dto.email = user.email;
-    dto.twoFactorAuthenticationSecret = user.twoFactorAuthenticationSecret;
-    dto.isTwoFactorAuthenticationEnabled = user.isTwoFactorAuthenticationEnabled;
-    dto.avatar = user.avatar;
-    dto.status = Status[user.status];
-    dto.level = Level[user.level];
-    dto.nGames = user.nGames;
-    dto.nWins = user.nWins;
-    dto.nLosses = user.nLosses;
-    dto.xp = user.xp;
-    dto.channels = [];
-    user.channels.forEach( channel => {
-      let channelDto = new ChannelDto();
-      channelDto.channelId = channel.id;
-      channelDto.channelName = channel.channelName;
-      channelDto.channelStatus = ChannelStatus[channel.channelStatus];
-      dto.channels.push(channelDto);
-    })
-    return dto;
-  }
-
   public async getAll() {
     return await this.userRepository.find( { relations: ['channels'] } );
   }
@@ -81,6 +56,31 @@ export class UserService {
   public async delete(id: number) {
     await this.userRepository.delete(id);
     return await this.userRepository.find();
+  }
+
+  public userToDto(user: User) {
+    let dto = new UserDto();
+    dto.userId = user.id;
+    dto.name = user.name;
+    dto.email = user.email;
+    dto.twoFactorAuthenticationSecret = user.twoFactorAuthenticationSecret;
+    dto.isTwoFactorAuthenticationEnabled = user.isTwoFactorAuthenticationEnabled;
+    dto.avatar = user.avatar;
+    dto.status = Status[user.status];
+    dto.level = Level[user.level];
+    dto.nGames = user.nGames;
+    dto.nWins = user.nWins;
+    dto.nLosses = user.nLosses;
+    dto.xp = user.xp;
+    dto.channels = [];
+    user.channels.forEach( channel => {
+      let channelDto = new ChannelDto();
+      channelDto.channelId = channel.id;
+      channelDto.channelName = channel.channelName;
+      channelDto.channelStatus = ChannelStatus[channel.channelStatus];
+      dto.channels.push(channelDto);
+    })
+    return dto;
   }
 
 }

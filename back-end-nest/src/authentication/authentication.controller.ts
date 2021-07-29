@@ -13,7 +13,7 @@ import { UserService } from '../user/user.service';
 
 import { LocalAuthenticationGuard } from './localAuthentication.guard';
 import { JwtAuthenticationGuard } from './jwtAuthentication.guard';
-import JwtTwoFactorGuard from './jwt-two-factor.guard';
+import JwtTwoFactorGuard from './twoFactor/jwtTwoFactor.guard';
 
 import RegisterDto from './register.dto';
 

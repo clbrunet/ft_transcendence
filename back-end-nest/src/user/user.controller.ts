@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Delete, Param } from '@nestjs/common';
 
 import User from './user.entity';
 
@@ -25,5 +25,17 @@ export class UserController {
     return dto;
   }
 
-}
+  @Delete('/:id')
+  async delete(@Param('id') id) {
+    await this.userService.delete(id);
+    let res: User[] = [];
+    res = await this.userService.getAll();
+    let dto: UserDto[] = [];
+    res.forEach( user => {
+      let userDto: UserDto = this.userService.userToDto(user);
+      dto.push(userDto);
+    })
+    return dto;
+  }
 
+}
