@@ -11,6 +11,12 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
+  async create(registerData: RegisterDto) {
+    const newUser = await this.userRepository.create(registerData);
+    await this.userRepository.save(newUser);
+    return newUser;
+  }
+
   async setTwoFactorAuthenticationSecret(secret: string, userId: string) {
     return this.userRepository.update(userId, {
       twoFactorAuthenticationSecret: secret
@@ -24,11 +30,11 @@ export class UserService {
   }
 
   async getAll() {
-    return await this.userRepository.find();
+    return await this.userRepository.find({ relations: ['channels'] });
   }
 
   async getByEmail(email: string) {
-    const user = await this.userRepository.findOne({ email });
+    const user = await this.userRepository.findOne({ email }, { relations: ['channels'] });
     if (user) {
       return user;
     }
@@ -36,17 +42,11 @@ export class UserService {
   }
 
   async getById(id: string) {
-    const user = await this.userRepository.findOne( id );
+    const user = await this.userRepository.findOne( id, { relations: ['channels'] } );
     if (user) {
       return user;
     }
     throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
-  }
-
-  async create(registerData: RegisterDto) {
-    const newUser = await this.userRepository.create(registerData);
-    await this.userRepository.save(newUser);
-    return newUser;
   }
 
   async delete(id: number) {

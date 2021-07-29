@@ -11,7 +11,6 @@ import { ParticipantModule } from './participant/participant.module';
   imports: [
     TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
     UserModule,
-    ChannelModule,
     ParticipantModule
   ],
   controllers: [AppController],

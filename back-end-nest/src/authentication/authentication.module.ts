@@ -3,6 +3,7 @@ import { UserModule } from '../user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthenticationService } from './authentication.service';
 import { AuthenticationController } from './authentication.controller';
 import { LocalStrategy } from './local.strategy';
@@ -10,9 +11,11 @@ import { JwtStrategy } from './jwt.strategy';
 import { TwoFactorAuthenticationController } from './twoFactor/twoFactorAuthentication.controller';
 import { TwoFactorAuthenticationService } from './twoFactor/twoFactorAuthentication.service';
 import { JwtTwoFactorStrategy } from './jwt-two-factor.strategy';
+import User from '../user/user.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([User]),
     UserModule,
     PassportModule,
     ConfigModule,

@@ -1,6 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Level } from './enum.level';
 import { Status } from './enum.status';
+import  Channel  from '../channel/channel.entity';
+//import { Participant } from '../participant/participant.entity';
 
 @Entity()
 class User {
@@ -23,25 +25,31 @@ class User {
   public password: string;
 
   @Column({ default: '../assets/default_avatar.png' })
-  avatar: string;
+  public avatar: string;
 
   @Column({ default: 0 })
-  status: Status;
+  public status: Status;
 
   @Column({ default: 0 })
-  level: Level;
+  public level: Level;
 
   @Column({ default: 0 })
-  n_games: number;
+  public nGames: number;
 
   @Column({ default: 0 })
-  n_wins: number;
+  public nWins: number;
 
   @Column({ default: 0 })
-  n_losses: number;
+  public nLosses: number;
 
   @Column({ default: 0 })
-  xp: number;
+  public xp: number;
+
+  @OneToMany(() => Channel, channel => channel.owner)
+  channels: Channel[];
+
+  //@OneToMany(() => Participant, participant => participant.user)
+  //participants: Participant[];
 }
 
 export default User;

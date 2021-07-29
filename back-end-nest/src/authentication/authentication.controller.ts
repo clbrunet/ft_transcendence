@@ -1,4 +1,6 @@
 import { Body, Req, Res, Controller, HttpCode, Get, Post, UseGuards, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Response } from 'express';
 import { AuthenticationService } from './authentication.service';
 import RegisterDto from './register.dto';
@@ -8,10 +10,13 @@ import { JwtAuthenticationGuard } from './jwtAuthentication.guard';
 import JwtTwoFactorGuard from './jwt-two-factor.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from '../user/user.service';
+import User from '../user/user.entity';
 
 @Controller('authentication')
 export class AuthenticationController {
   constructor(
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
     private readonly authenticationService: AuthenticationService,
     private readonly userService: UserService
   ) {}
@@ -44,10 +49,10 @@ export class AuthenticationController {
 
   @UseGuards(JwtTwoFactorGuard)
   @Get()
-  authenticate(@Req() request: RequestWithUser) {
-    const user = request.user;
-    user.password = undefined;
-    return user;
+  async authenticate(@Req() request: RequestWithUser) {
+    const {user} = request;
+    const res = await this.userRepo.findOne(user.id, { relations: ['channels'] });
+    return res;
   }
 
 }

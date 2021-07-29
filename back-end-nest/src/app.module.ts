@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { configService } from './config/config.service';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { ChannelModule } from './channel/channel.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -16,6 +17,7 @@ import * as Joi from 'joi';
       })
     }),
     AuthenticationModule,
+    ChannelModule,
   ],
   controllers: [AppController],
   providers: [AppService],
