@@ -1,10 +1,16 @@
-import { Controller, Get, Post, Delete, Put, Body, Param, Req, UseGuards } from '@nestjs/common';
-import { ChannelService } from './channel.service';
-import Channel from './channel.entity';
-import RequestWithUser from '../authentication/requestWithUser.interface';
-import ChannelCreationDto from './channelCreation.dto';
-import JwtTwoFactorGuard from '../authentication/jwt-two-factor.guard';
+import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+
+import RequestWithUser from '../authentication/requestWithUser.interface';
+
+import Channel from './channel.entity';
+
+import { ChannelService } from './channel.service';
+
+import JwtTwoFactorGuard from '../authentication/jwt-two-factor.guard';
+
+import ChannelCreationDto from './channelCreation.dto';
+
 
 @Controller('channel')
 export class ChannelController {
@@ -17,25 +23,5 @@ export class ChannelController {
     data.ownerId = user.id;
     await this.channelService.create(data);
   }
-/*
-  @Get('/channels')
-  async findAll() {
-    return await this.serv.findAll();
-  }
 
-  @Get('/:id')
-  async findOne(@Param('id') id) {
-    return await this.serv.findOne(id);
-  }
-
-  @Get('/:id/participants/')
-  async getParticipants(@Param('id') id) {
-    return await this.serv.getParticipants(id);
-  }
-
-  @Delete('/delete/:id')
-  async delete(@Param('id') id) {
-    return await this.serv.delete(id);
-  }
-*/
 }

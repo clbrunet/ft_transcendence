@@ -1,5 +1,7 @@
 import { IsString, IsNotEmpty, MinLength, IsOptional, IsEnum } from 'class-validator';
+
 import { ChannelStatus } from './enum.channelStatus';
+
 
 export class ChannelCreationDto {
   @IsString()

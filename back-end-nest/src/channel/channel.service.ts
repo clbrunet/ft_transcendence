@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import Channel from '../channel/channel.entity';
+
 import User from '../user/user.entity';
+import Channel from '../channel/channel.entity';
 //import { Participant } from '../model/participant.entity';
-import ChannelCreationDto from './channelCreation.dto';
+
 import { UserService } from '../user/user.service';
+
+import ChannelCreationDto from './channelCreation.dto';
+
 
 @Injectable()
 export class ChannelService {

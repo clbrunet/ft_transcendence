@@ -4,14 +4,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import User from '../user/user.entity';
+
 import { AuthenticationService } from './authentication.service';
-import { AuthenticationController } from './authentication.controller';
+import { TwoFactorAuthenticationService } from './twoFactor/twoFactorAuthentication.service';
+
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
-import { TwoFactorAuthenticationController } from './twoFactor/twoFactorAuthentication.controller';
-import { TwoFactorAuthenticationService } from './twoFactor/twoFactorAuthentication.service';
 import { JwtTwoFactorStrategy } from './jwt-two-factor.strategy';
-import User from '../user/user.entity';
+
+import { AuthenticationController } from './authentication.controller';
+import { TwoFactorAuthenticationController } from './twoFactor/twoFactorAuthentication.controller';
+
 
 @Module({
   imports: [

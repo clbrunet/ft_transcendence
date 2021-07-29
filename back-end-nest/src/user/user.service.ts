@@ -2,11 +2,11 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import User from './user.entity';
-
 import { Level } from './enum.level';
 import { Status } from './enum.status';
 import { ChannelStatus } from '../channel/enum.channelStatus';
+
+import User from './user.entity';
 
 import RegisterDto from '../authentication/register.dto';
 import UserDto from './user.dto';

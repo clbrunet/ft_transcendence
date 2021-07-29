@@ -1,10 +1,11 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
+import { Level } from './enum.level';
+import { Status } from './enum.status';
+
 import  Channel  from '../channel/channel.entity';
 //import { Participant } from '../participant/participant.entity';
 
-import { Level } from './enum.level';
-import { Status } from './enum.status';
 
 @Entity()
 class User {

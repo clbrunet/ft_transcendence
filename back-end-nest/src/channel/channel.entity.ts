@@ -1,5 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+
 import { ChannelStatus } from './enum.channelStatus';
+
 import  User  from '../user/user.entity';
 //import { Participant } from './participant/participant.entity';
 

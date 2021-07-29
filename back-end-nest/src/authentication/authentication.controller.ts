@@ -2,15 +2,21 @@ import { Body, Req, Res, Controller, HttpCode, Get, Post, UseGuards, Injectable 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Response } from 'express';
-import { AuthenticationService } from './authentication.service';
-import RegisterDto from './register.dto';
+import { AuthGuard } from '@nestjs/passport';
+
+import User from '../user/user.entity';
+
 import RequestWithUser from './requestWithUser.interface';
+
+import { AuthenticationService } from './authentication.service';
+import { UserService } from '../user/user.service';
+
 import { LocalAuthenticationGuard } from './localAuthentication.guard';
 import { JwtAuthenticationGuard } from './jwtAuthentication.guard';
 import JwtTwoFactorGuard from './jwt-two-factor.guard';
-import { AuthGuard } from '@nestjs/passport';
-import { UserService } from '../user/user.service';
-import User from '../user/user.entity';
+
+import RegisterDto from './register.dto';
+
 
 @Controller('authentication')
 export class AuthenticationController {
