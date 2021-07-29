@@ -52,7 +52,7 @@ export class AuthenticationController {
   async authenticate(@Req() request: RequestWithUser) {
     const {user} = request;
     const res = await this.userRepo.findOne(user.id, { relations: ['channels'] });
-    return res;
+    return this.userService.userToDto(res);
   }
 
 }

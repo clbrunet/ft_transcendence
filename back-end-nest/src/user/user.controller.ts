@@ -1,30 +1,29 @@
-import { Controller, Get, Post, Delete, Put, Body, Param } from '@nestjs/common';
-import { UserService } from './user.service';
+import { Controller, Get } from '@nestjs/common';
+
 import User from './user.entity';
+
+import { UserService } from './user.service';
+
 import RegisterDto from '../authentication/register.dto';
+import UserDto from './user.dto';
+import ChannelDto from '../channel/channel.dto';
+
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly serv: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get('/users')
   async findAll() {
-    return await this.serv.getAll();
+    let res: User[] = [];
+    res = await this.userService.getAll();
+    let dto: UserDto[] = [];
+    res.forEach( user => {
+      let userDto: UserDto = this.userService.userToDto(user);
+      dto.push(userDto);
+    })
+    return dto;
   }
 
-  @Get('/id/:id')
-  async getById(@Param('id') id) {
-    return await this.serv.getById(id);
-  }
-
-  @Get('/email/:email')
-  async getByEmail(@Param('email') email) {
-    return await this.serv.getByEmail(email);
-  }
-
-  @Delete('/:id')
-  async delete(@Param('id') id) {
-    return await this.serv.delete(id);
-  }
 }
 
