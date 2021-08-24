@@ -1,4 +1,5 @@
 import ChannelDto from '../channel/channel.dto';
+import ParticipantForUserDto from '../participant/participantForUser.dto';
 
 export class UserDto {
   userId: string;
@@ -14,6 +15,7 @@ export class UserDto {
   nLosses: number;
   xp: number;
   channels: ChannelDto[];
+  participants: ParticipantForUserDto[];
 }
 
 export default UserDto;

@@ -2,8 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'ty
 
 import { ChannelStatus } from './enum.channelStatus';
 
-import  User  from '../user/user.entity';
-//import { Participant } from './participant/participant.entity';
+import User  from '../user/user.entity';
+import Participant from '../participant/participant.entity';
 
 @Entity()
 class Channel {
@@ -22,8 +22,8 @@ class Channel {
     @ManyToOne(() => User, user => user.channels, { eager: true, onDelete: "CASCADE" })
     owner: User;
 
-    //@OneToMany(() => Participant, participant => participant.channel)
-    //participants: Participant[];
+    @OneToMany(() => Participant, participant => participant.channel)
+    participants: Participant[];
 }
 
 export default Channel;

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { ChannelModule } from './channel/channel.module';
+import { ParticipantModule } from './participant/participant.module';
 import * as Joi from 'joi';
 
 import { AppService } from './app.service';
@@ -21,6 +22,7 @@ import { AppController } from './app.controller';
     }),
     AuthenticationModule,
     ChannelModule,
+    ParticipantModule,
   ],
   controllers: [AppController],
   providers: [AppService],

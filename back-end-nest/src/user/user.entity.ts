@@ -3,8 +3,8 @@ import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Level } from './enum.level';
 import { Status } from './enum.status';
 
-import  Channel  from '../channel/channel.entity';
-//import { Participant } from '../participant/participant.entity';
+import Channel from '../channel/channel.entity';
+import Participant from '../participant/participant.entity';
 
 
 @Entity()
@@ -51,8 +51,8 @@ class User {
   @OneToMany(() => Channel, channel => channel.owner)
   channels: Channel[];
 
-  //@OneToMany(() => Participant, participant => participant.user)
-  //participants: Participant[];
+  @OneToMany(() => Participant, participant => participant.user)
+  participants: Participant[];
 }
 
 export default User;

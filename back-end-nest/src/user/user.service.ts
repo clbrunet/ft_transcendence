@@ -11,6 +11,7 @@ import User from './user.entity';
 import RegisterDto from '../authentication/register.dto';
 import UserDto from './user.dto';
 import ChannelDto from '../channel/channel.dto';
+import ParticipantForUserDto from '../participant/participantForUser.dto';
 
 
 @Injectable()
@@ -34,11 +35,11 @@ export class UserService {
   }
 
   public async getAll() {
-    return await this.userRepository.find( { relations: ['channels'] } );
+    return await this.userRepository.find( { relations: ['channels', 'participants'] } );
   }
 
   public async getByEmail(email: string) {
-    const user = await this.userRepository.findOne( { email }, { relations: ['channels'] } );
+    const user = await this.userRepository.findOne( { email }, { relations: ['channels', 'participants'] } );
     if (user) {
       return user;
     }
@@ -46,7 +47,7 @@ export class UserService {
   }
 
   public async getById(id: string) {
-    const user = await this.userRepository.findOne( id, { relations: ['channels'] } );
+    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants'] } );
     if (user) {
       return user;
     }
@@ -79,6 +80,16 @@ export class UserService {
       channelDto.channelName = channel.channelName;
       channelDto.channelStatus = ChannelStatus[channel.channelStatus];
       dto.channels.push(channelDto);
+    })
+    dto.participants = [];
+    user.participants.forEach( participant => {
+      let participantForUserDto = new ParticipantForUserDto();
+      participantForUserDto.channelId = participant.channel.id;
+      participantForUserDto.channelName = participant.channel.channelName;
+      participantForUserDto.admin = participant.admin;
+      participantForUserDto.mute = participant.mute;
+      participantForUserDto.ban = participant.ban;
+      dto.participants.push(participantForUserDto);
     })
     return dto;
   }

@@ -1,18 +1,19 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import User from '../user/user.entity';
 import Channel from '../channel/channel.entity';
-import Participant from '../participant/participant.entity';
+import Participant from './participant.entity';
 
 import { UserService } from '../user/user.service';
+import { ChannelService } from '../channel/channel.service';
 
-import ChannelCreationDto from './channelCreation.dto';
+import ParticipantCreationDto from './participantCreation.dto';
 
 
 @Injectable()
-export class ChannelService {
+export class ParticipantService {
   constructor(
     @InjectRepository(Channel)
     private readonly channelRepo: Repository<Channel>,
@@ -21,24 +22,17 @@ export class ChannelService {
     @InjectRepository(Participant)
     private readonly participantRepo: Repository<Participant>,
     private readonly userService: UserService,
+    private readonly channelService: ChannelService,
   ) {}
 
-  async create(data: ChannelCreationDto) {
-    let channel = new Channel();
-    channel.channelName = data.channelName;
-    channel.channelStatus = data.channelStatus;
-    channel.password = data.password;
-    const owner = await this.userService.getById(data.ownerId);
-    channel.owner = owner;
-    await this.channelRepo.save(channel);
-  }
-
-  public async getById(id: string) {
-    const channel = await this.channelRepo.findOne( id, { relations: ['participants'] } );
-    if (channel) {
-      return channel;
-    }
-    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+  async create(data: ParticipantCreationDto) {
+    let participant = new Participant();
+    const user = await this.userService.getById(data.userId);
+    participant.user = user;
+    const channel = await this.channelService.getById(data.channelId);
+    participant.channel = channel;
+    participant.admin = data.admin;    
+    await this.participantRepo.save(participant);
   }
 
 /*
