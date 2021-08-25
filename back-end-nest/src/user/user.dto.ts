@@ -1,8 +1,8 @@
-import ChannelDto from '../channel/channel.dto';
-import ParticipantForUserDto from '../participant/participantForUser.dto';
+import { ChannelForUserDto } from '../channel/channel.dto';
+import { ParticipantForUserDto } from '../participant/participant.dto';
 
 export class UserDto {
-  userId: string;
+  id: string;
   name: string;
   email: string;
   twoFactorAuthenticationSecret: string;
@@ -14,8 +14,13 @@ export class UserDto {
   nWins: number;
   nLosses: number;
   xp: number;
-  channels: ChannelDto[];
+  channels: ChannelForUserDto[];
   participants: ParticipantForUserDto[];
 }
 
-export default UserDto;
+export class UserForChannelDto {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+}

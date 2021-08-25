@@ -57,8 +57,7 @@ export class AuthenticationController {
   @Get()
   async authenticate(@Req() request: RequestWithUser) {
     const {user} = request;
-    const res = await this.userRepo.findOne(user.id, { relations: ['channels', 'participants'] });
-    return this.userService.userToDto(res);
+    return await this.userService.getById(user.id);
   }
 
 }

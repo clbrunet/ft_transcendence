@@ -11,10 +11,10 @@ class Channel {
     public id?: string;
 
     @Column({ unique: true })
-    public channelName: string;
+    public name: string;
 
     @Column()
-    public channelStatus: ChannelStatus;
+    public status: ChannelStatus;
 
     @Column({ nullable: true })
     public password: string;

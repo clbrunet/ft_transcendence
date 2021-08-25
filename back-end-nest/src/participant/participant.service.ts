@@ -9,7 +9,7 @@ import Participant from './participant.entity';
 import { UserService } from '../user/user.service';
 import { ChannelService } from '../channel/channel.service';
 
-import ParticipantCreationDto from './participantCreation.dto';
+import { ParticipantCreationDto } from './participant.dto';
 
 
 @Injectable()
@@ -27,9 +27,9 @@ export class ParticipantService {
 
   async create(data: ParticipantCreationDto) {
     let participant = new Participant();
-    const user = await this.userService.getById(data.userId);
+    const user = await this.userService.findById(data.userId);
     participant.user = user;
-    const channel = await this.channelService.getById(data.channelId);
+    const channel = await this.channelService.findById(data.channelId);
     participant.channel = channel;
     participant.admin = data.admin;    
     await this.participantRepo.save(participant);

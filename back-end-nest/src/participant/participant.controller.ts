@@ -9,7 +9,7 @@ import { ParticipantService } from './participant.service';
 
 import JwtTwoFactorGuard from '../authentication/twoFactor/jwtTwoFactor.guard';
 
-import ParticipantCreationDto from './participantCreation.dto';
+import { ParticipantCreationDto } from './participant.dto';
 
 
 @Controller('participant')
