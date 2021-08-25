@@ -37,7 +37,7 @@ export class AuthenticationService {
 
   public async getAuthenticatedUser(email: string, plainTextPassword: string) {
     try {
-      const user = await this.userService.getByEmail(email);
+      const user = await this.userService.findByEmail(email);
       await this.verifyPassword(plainTextPassword, user.password);
       user.password = undefined; //not the cleanest way to not send the password in a response
       return user;

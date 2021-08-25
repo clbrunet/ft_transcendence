@@ -9,8 +9,9 @@ import { ChannelStatus } from '../channel/enum.channelStatus';
 import User from './user.entity';
 
 import RegisterDto from '../authentication/register.dto';
-import UserDto from './user.dto';
-import ChannelDto from '../channel/channel.dto';
+import { UserDto } from './user.dto';
+import { ParticipantForUserDto } from '../participant/participant.dto';
+import { ChannelForUserDto } from '../channel/channel.dto';
 
 
 @Injectable()
@@ -34,33 +35,57 @@ export class UserService {
   }
 
   public async getAll() {
-    return await this.userRepository.find( { relations: ['channels'] } );
+    let res: User[] = [];
+    res = await this.userRepository.find( { relations: ['channels', 'participants'] } );
+    let dto: UserDto[] = [];
+    res.forEach( user => {
+      let userDto: UserDto = this.userToDto(user);
+      dto.push(userDto);
+    })
+    return dto;    
   }
 
-  public async getByEmail(email: string) {
-    const user = await this.userRepository.findOne( { email }, { relations: ['channels'] } );
-    if (user) {
-      return user;
-    }
-    throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
-  }
-
+  // Return User Dto
   public async getById(id: string) {
-    const user = await this.userRepository.findOne( id, { relations: ['channels'] } );
+    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants'] } );
+    if (user) {  
+      return this.userToDto(user);
+    }
+    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return User Object 
+  public async findById(id: string) {
+    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants'] } );
     if (user) {
       return user;
     }
     throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  public async delete(id: number) {
+  // Return User Object
+  public async findByEmail(email: string) {
+    const user = await this.userRepository.findOne( { email }, { relations: ['channels', 'participants'] } );
+    if (user) {
+      return user;
+    }
+    throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  public async delete(id: string) {
+    try {
+      await this.findById(id);
+    }
+    catch(error) {
+      throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND); 
+    }
     await this.userRepository.delete(id);
-    return await this.userRepository.find();
+    return await this.getAll();
   }
 
   public userToDto(user: User) {
     let dto = new UserDto();
-    dto.userId = user.id;
+    dto.id = user.id;
     dto.name = user.name;
     dto.email = user.email;
     dto.twoFactorAuthenticationSecret = user.twoFactorAuthenticationSecret;
@@ -74,11 +99,21 @@ export class UserService {
     dto.xp = user.xp;
     dto.channels = [];
     user.channels.forEach( channel => {
-      let channelDto = new ChannelDto();
-      channelDto.channelId = channel.id;
-      channelDto.channelName = channel.channelName;
-      channelDto.channelStatus = ChannelStatus[channel.channelStatus];
-      dto.channels.push(channelDto);
+      let channelForUserDto = new ChannelForUserDto();
+      channelForUserDto.id = channel.id;
+      channelForUserDto.name = channel.name;
+      channelForUserDto.status = ChannelStatus[channel.status];
+      dto.channels.push(channelForUserDto);
+    })
+    dto.participants = [];
+    user.participants.forEach( participant => {
+      let participantForUserDto = new ParticipantForUserDto();
+      participantForUserDto.channelId = participant.channel.id;
+      participantForUserDto.channelName = participant.channel.name;
+      participantForUserDto.admin = participant.admin;
+      participantForUserDto.mute = participant.mute;
+      participantForUserDto.ban = participant.ban;
+      dto.participants.push(participantForUserDto);
     })
     return dto;
   }
