@@ -24,3 +24,10 @@ export class UserForChannelDto {
   email: string;
   avatar: string;
 }
+
+export class UserForParticipantDto {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+}

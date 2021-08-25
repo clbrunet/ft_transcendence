@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Req, Param, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import RequestWithUser from '../authentication/requestWithUser.interface';
@@ -18,8 +18,26 @@ export class ParticipantController {
 
   @UseGuards(JwtTwoFactorGuard)
   @Post('/create')
-  async create(@Req() request: RequestWithUser, @Body() data: ParticipantCreationDto) {
-    await this.participantService.create(data);
+  async create(@Body() data: ParticipantCreationDto) {
+    return await this.participantService.create(data);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/all')
+  async getAll() {
+    return await this.participantService.getAll();
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get(':id')
+  async getById(@Param('id') id) {
+    return await this.participantService.getById(id);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Delete('/:id')
+  async delete(@Param('id') id) {
+    return await this.participantService.delete(id);
   }
 
 }

@@ -37,3 +37,8 @@ export class ChannelForUserDto {
   name: string;
   status: string;
 }
+
+export class ChannelForParticipantDto {
+  id: string;
+  name: string;
+}

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../user/user.module';
 import { ChannelModule } from '../channel/channel.module';
@@ -16,9 +16,10 @@ import { ParticipantService } from './participant.service';
   imports: [
     TypeOrmModule.forFeature([Channel, User, Participant]),
     UserModule,
-    ChannelModule,
+    forwardRef(() => ChannelModule)
   ],
   controllers: [ParticipantController],
-  providers: [ParticipantService]
+  providers: [ParticipantService],
+  exports: [ParticipantService]
 })
 export class ParticipantModule {}

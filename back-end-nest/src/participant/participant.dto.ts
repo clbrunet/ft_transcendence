@@ -12,6 +12,17 @@ export class ParticipantCreationDto {
   admin: boolean;
 }
 
+export class ParticipantDto {
+  id: string;
+  userId: string;
+  userName: string;
+  channelId: string;
+  channelName: string;
+  admin: boolean;
+  mute: boolean;
+  ban: boolean;
+}
+
 export class ParticipantForChannelDto {
   id: string;
   name: string;

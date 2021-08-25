@@ -73,6 +73,12 @@ export class UserService {
   }
 
   public async delete(id: string) {
+    try {
+      await this.findById(id);
+    }
+    catch(error) {
+      throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND); 
+    }
     await this.userRepository.delete(id);
     return await this.getAll();
   }

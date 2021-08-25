@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Unique, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 
 import  User  from '../user/user.entity';
 import  Channel  from '../channel/channel.entity';
 
 @Entity()
+@Unique(["user", "channel"])
 class Participant {
     @PrimaryGeneratedColumn('uuid')
     public id?: string;
