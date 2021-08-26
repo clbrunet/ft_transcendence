@@ -4,13 +4,13 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { ChannelModule } from './channel/channel.module';
 import { ParticipantModule } from './participant/participant.module';
+import { MessageModule } from './message/message.module';
 import * as Joi from 'joi';
 
 import { AppService } from './app.service';
 import { configService } from './config/config.service';
 
 import { AppController } from './app.controller';
-
 
 @Module({
   imports: [
@@ -23,6 +23,7 @@ import { AppController } from './app.controller';
     AuthenticationModule,
     ChannelModule,
     ParticipantModule,
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
