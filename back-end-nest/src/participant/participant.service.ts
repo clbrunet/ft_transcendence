@@ -11,6 +11,7 @@ import { ChannelService } from '../channel/channel.service';
 
 import { ParticipantCreationDto } from './participant.dto';
 import { ParticipantDto } from './participant.dto';
+import { MessageForParticipantDto } from '../message/message.dto';
 
 @Injectable()
 export class ParticipantService {
@@ -57,7 +58,7 @@ export class ParticipantService {
 
   public async getAll() {
     let res: Participant[] = [];
-    res = await this.participantRepo.find();
+    res = await this.participantRepo.find( { relations: ['messages'] } );
     let dto: ParticipantDto[] = [];
     res.forEach( participant => {
       let participantDto: ParticipantDto = this.participantToDto(participant);
@@ -68,7 +69,7 @@ export class ParticipantService {
 
   // Return Participant Dto 
   public async getById(id: string) {
-    const participant = await this.participantRepo.findOne(id);
+    const participant = await this.participantRepo.findOne(id, { relations: ['messages'] });
     if (participant) {
       return this.participantToDto(participant);
     }
@@ -77,11 +78,22 @@ export class ParticipantService {
 
   // Return Channel Object
   public async findById(id: string) {
-    const participant = await this.participantRepo.findOne(id);
+    const participant = await this.participantRepo.findOne(id, { relations: ['messages'] });
     if (participant) {
       return participant;
     }
     throw new HttpException('Participant with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return Channel Object
+  public async findByUserAndChannel(userId: string, channelId: string) {
+    const user = await this.userService.findById(userId);
+    const channel = await this.channelService.findById(channelId);
+    const participant = await this.participantRepo.findOne( { user, channel }, { relations: ['messages'] });
+    if (participant) {
+      return participant;
+    }
+    throw new HttpException('Participant with this (userId, channelId) does not exist', HttpStatus.NOT_FOUND);
   }
 
   public async delete(id: string) {
@@ -104,7 +116,19 @@ export class ParticipantService {
     dto.channelName = participant.channel.name;
     dto.admin = participant.admin;
     dto.mute = participant.mute;
+    dto.muteDateTime = participant.muteDateTime;
     dto.ban = participant.ban;
+    dto.banDateTime = participant.banDateTime;
+    dto.messages = [];
+    if (participant.messages) {
+        participant.messages.forEach( message => {
+        let messageForParticipantDto = new MessageForParticipantDto();
+        messageForParticipantDto.id = message.id;
+        messageForParticipantDto.createDateTime = message.createDateTime;
+        messageForParticipantDto.content = message.content;
+        dto.messages.push(messageForParticipantDto);
+        })
+    }
     return dto;
   }
 }

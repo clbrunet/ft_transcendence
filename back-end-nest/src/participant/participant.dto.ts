@@ -1,4 +1,6 @@
-import { IsString, IsNotEmpty, IsBoolean, IsOptional } from 'class-validator';
+import { IsString, IsBoolean, IsOptional } from 'class-validator';
+
+import { MessageForParticipantDto } from '../message/message.dto';
 
 export class ParticipantCreationDto {
   @IsString()
@@ -20,7 +22,10 @@ export class ParticipantDto {
   channelName: string;
   admin: boolean;
   mute: boolean;
+  muteDateTime: Date; 
   ban: boolean;
+  banDateTime: Date;
+  messages: MessageForParticipantDto[];
 }
 
 export class ParticipantForChannelDto {
@@ -28,7 +33,9 @@ export class ParticipantForChannelDto {
   name: string;
   admin: boolean;
   mute: boolean;
+  muteDateTime: Date; 
   ban: boolean;
+  banDateTime: Date;
 }
 
 export class ParticipantForUserDto {
@@ -36,5 +43,7 @@ export class ParticipantForUserDto {
   channelName: string;
   admin: boolean;
   mute: boolean;
+  muteDateTime: Date; 
   ban: boolean;
+  banDateTime: Date;
 }

@@ -2,6 +2,7 @@ import { Entity, Unique, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } 
 
 import  User  from '../user/user.entity';
 import  Channel  from '../channel/channel.entity';
+import  Message  from '../message/message.entity';
 
 @Entity()
 @Unique(["user", "channel"])
@@ -21,14 +22,17 @@ class Participant {
     @Column({ type: 'boolean', default: false })
     mute: boolean;
 
-    //@CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-    //muteDateTime: Date;
+    @Column({ type: 'timestamptz', nullable: true })
+    muteDateTime: Date;
 
     @Column({ type: 'boolean', default: false })
     ban: boolean;
 
-    //@CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+    @Column({ type: 'timestamptz', nullable: true })
     banDateTime: Date;
+
+    @OneToMany(() => Message, message => message.author)
+    messages: Message[];
 }
 
 export default Participant;
