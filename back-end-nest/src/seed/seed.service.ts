@@ -16,9 +16,11 @@ import { MessageService } from '../message/message.service';
 import { registers } from './data';
 import { channels } from './data';
 import { participants } from './data';
+import { messages } from './data';
 
 import { ChannelCreationDto } from '../channel/channel.dto';
 import { ParticipantCreationDto } from '../participant/participant.dto';
+import { MessageCreationDto } from '../message/message.dto';
 
 
 @Injectable()
@@ -84,6 +86,21 @@ export class SeedService {
       await this.participantService.create(participantCreationDto);
     }
     console.log('Participant seeding complete!');
+    return true;
+  }
+
+  async seedMessage() {
+    console.log('Seeding messages...');
+    for await (const message of messages) {
+      let user = await this.userService.findByEmail(message.userEmail);
+      let channel = await this.channelService.findByName(message.channelName);
+      let author = await this.participantService.findByUserAndChannel(user.id, channel.id);
+      let messageCreationDto = new MessageCreationDto();
+      messageCreationDto.authorId = author.id;
+      messageCreationDto.content = message.content;
+      await this.messageService.create(messageCreationDto);
+    }
+    console.log('Message seeding complete!');
     return true;
   }
 

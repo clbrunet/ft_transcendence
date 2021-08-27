@@ -2,10 +2,16 @@ import { IsString, IsNotEmpty } from 'class-validator';
 
 export class MessageCreationDto {
   @IsString()
-  authorId: string;
+  authorId: string; // Participant
 
   @IsNotEmpty()
   @IsString()
+  content: string;
+}
+
+export class MessageSeedDto {
+  userEmail: string; // User
+  channelName: string;
   content: string;
 }
 

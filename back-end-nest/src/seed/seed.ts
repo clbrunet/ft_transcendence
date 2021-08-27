@@ -18,12 +18,16 @@ async function bootstrap() {
           let resParticipant = seedService.seedParticipant();
           return resParticipant;
         })
+        .then((resParticipant) => {
+          let resMessage = seedService.seedMessage();
+          return resMessage;
+        })
         .catch(error => {
           console.log('Seeding failed!');
           throw error;
         })
         .finally(() => {
-          console.log('Successfull seeding!');
+          //console.log('Successfull seeding!');
           appContext.close();
         });
     })
