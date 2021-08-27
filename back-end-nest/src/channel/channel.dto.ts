@@ -24,6 +24,13 @@ export class ChannelCreationDto {
   ownerId: string;
 }
 
+export class ChannelSeedDto {
+  name: string;
+  status: ChannelStatus;
+  password: string;
+  ownerEmail: string;
+}
+
 export class ChannelDto {
   id: string;
   name: string;

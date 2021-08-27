@@ -1,0 +1,35 @@
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from '../app.module';
+//import * as cookieParser from 'cookie-parser';
+//import { ValidationPipe } from '@nestjs/common';
+
+import { SeedService } from '../seed/seed.service';
+
+async function bootstrap() {
+  NestFactory.createApplicationContext(AppModule)
+    .then(appContext => {
+      const seedService = appContext.get(SeedService);
+      let resRegister = seedService.seedRegister()
+        .then((resRegister) => {
+          let resChannel = seedService.seedChannel();
+          return resChannel;
+        })
+        .then((resChannel) => {
+          let resParticipant = seedService.seedParticipant();
+          return resParticipant;
+        })
+        .catch(error => {
+          console.log('Seeding failed!');
+          throw error;
+        })
+        .finally(() => {
+          console.log('Successfull seeding!');
+          appContext.close();
+        });
+    })
+    .catch(error => {
+      console.log('Something wrong happened...')
+      throw error;
+    });
+}
+bootstrap();

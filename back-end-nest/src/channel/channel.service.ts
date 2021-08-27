@@ -77,6 +77,15 @@ export class ChannelService {
     throw new HttpException('Channel with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
+  // Return Channel Object
+  public async findByName(name: string) {
+    const channel = await this.channelRepo.findOne( { name }, { relations: ['participants'] } );
+    if (channel) {
+      return channel;
+    }
+    throw new HttpException('Channel with this name does not exist', HttpStatus.NOT_FOUND);
+  }
+
   public async delete(id: string) {
     try {
       await this.findById(id);

@@ -5,12 +5,14 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { ChannelModule } from './channel/channel.module';
 import { ParticipantModule } from './participant/participant.module';
 import { MessageModule } from './message/message.module';
+import { SeedModule } from './seed/seed.module';
 import * as Joi from 'joi';
 
 import { AppService } from './app.service';
 import { configService } from './config/config.service';
 
 import { AppController } from './app.controller';
+
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { AppController } from './app.controller';
     ChannelModule,
     ParticipantModule,
     MessageModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
