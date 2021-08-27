@@ -1,10 +1,6 @@
 import { Controller, Get, Post, Delete, Body, Req, Param, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import RequestWithUser from '../authentication/requestWithUser.interface';
-
-import Participant from './participant.entity';
-
 import { ParticipantService } from './participant.service';
 
 import JwtTwoFactorGuard from '../authentication/twoFactor/jwtTwoFactor.guard';

@@ -76,7 +76,7 @@ export class ParticipantService {
     throw new HttpException('Participant with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Channel Object
+  // Return Participant Object
   public async findById(id: string) {
     const participant = await this.participantRepo.findOne(id, { relations: ['messages'] });
     if (participant) {
@@ -85,7 +85,7 @@ export class ParticipantService {
     throw new HttpException('Participant with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Channel Object
+  // Return Participant Object
   public async findByUserAndChannel(userId: string, channelId: string) {
     const user = await this.userService.findById(userId);
     const channel = await this.channelService.findById(channelId);

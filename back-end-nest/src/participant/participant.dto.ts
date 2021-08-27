@@ -14,6 +14,12 @@ export class ParticipantCreationDto {
   admin: boolean;
 }
 
+export class ParticipantSeedDto {
+  userEmail: string;
+  channelName: string;
+  admin: boolean;
+}
+
 export class ParticipantDto {
   id: string;
   userId: string;

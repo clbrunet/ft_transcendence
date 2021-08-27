@@ -16,6 +16,7 @@ import { MessageController } from './message.controller';
   	ParticipantModule,
   ],
   controllers: [MessageController],
-  providers: [MessageService]
+  providers: [MessageService],
+  exports: [MessageService]
 })
 export class MessageModule {}
