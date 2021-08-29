@@ -13,10 +13,12 @@ import { configService } from './config/config.service';
 
 import { AppController } from './app.controller';
 
+let modified = configService.getTypeOrmConfig();
+modified['port'] = 5436;
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
+    TypeOrmModule.forRoot(modified),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         JWT_SECRET: Joi.string().required(),
