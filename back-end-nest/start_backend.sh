@@ -1,5 +1,5 @@
-npm install
+sudo npm install
 sudo npm run start:dev:db
-npm run typeorm:migration:run
-npm run seed:db
-npm run start:dev
+sudo npm run typeorm:migration:run
+sudo npm run seed:db
+sudo npm run start:dev
