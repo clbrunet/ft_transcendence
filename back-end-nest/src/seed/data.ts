@@ -16,12 +16,12 @@ export const registers: RegisterDto[] = [
 ];
 
 export const users: UserSeedDto[] = [
-  { email: 'erwan@yopmail.com', avatar: '../Erwan.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'clement@yopmail.com', avatar: '../Clement.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'nicolas@yopmail.com', avatar: '../Nicolas.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'lucille@yopmail.com', avatar: '../Lucille.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'come@yopmail.com', avatar: '../Come.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'alban@yopmail.com', avatar: '../Alban.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'erwan@yopmail.com', avatar: '../assets/erwan.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'clement@yopmail.com', avatar: '../assets/clement.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'nicolas@yopmail.com', avatar: '../assets/nicolas.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'lucille@yopmail.com', avatar: '../assets/lucille.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'come@yopmail.com', avatar: '../assets/come.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'alban@yopmail.com', avatar: '../assets/alban.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
 ];
 
 // friend.status can't equal to 1, you invert connectorEmail and friendEmail if needed
