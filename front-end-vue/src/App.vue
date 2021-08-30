@@ -39,7 +39,7 @@ export default Vue.extend({
         },
         withCredentials: true
       })
-      .then(res => {
+      .then(() => {
         this.$store.dispatch("unauthenticate");
         console.log(router);
         router.push({ name: "App" });
