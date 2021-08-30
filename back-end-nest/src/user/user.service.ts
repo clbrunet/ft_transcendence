@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Level } from './enum.level';
 import { Status } from './enum.status';
 import { ChannelStatus } from '../channel/enum.channelStatus';
+import { RequestStatus } from '../friend/enum.requestStatus';
 
 import User from './user.entity';
 
@@ -13,6 +14,7 @@ import { UserDto } from './user.dto';
 import { UserUpdateDto } from './user.dto';
 import { ParticipantForUserDto } from '../participant/participant.dto';
 import { ChannelForUserDto } from '../channel/channel.dto';
+import { FriendForUserDto } from '../friend/friend.dto';
 
 
 @Injectable()
@@ -37,7 +39,7 @@ export class UserService {
 
   public async getAll() {
     let res: User[] = [];
-    res = await this.userRepository.find( { relations: ['channels', 'participants'] } );
+    res = await this.userRepository.find( { relations: ['channels', 'participants', 'friends', 'connectors'] } );
     let dto: UserDto[] = [];
     res.forEach( user => {
       let userDto: UserDto = this.userToDto(user);
@@ -48,8 +50,8 @@ export class UserService {
 
   // Return User Dto
   public async getById(id: string) {
-    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants'] } );
-    if (user) {  
+    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors'] } );
+    if (user) { 
       return this.userToDto(user);
     }
     throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
@@ -57,7 +59,7 @@ export class UserService {
 
   // Return User Object 
   public async findById(id: string) {
-    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants'] } );
+    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors'] } );
     if (user) {
       return user;
     }
@@ -66,7 +68,7 @@ export class UserService {
 
   // Return User Object
   public async findByEmail(email: string) {
-    const user = await this.userRepository.findOne( { email }, { relations: ['channels', 'participants'] } );
+    const user = await this.userRepository.findOne( { email }, { relations: ['channels', 'participants', 'friends', 'connectors'] } );
     if (user) {
       return user;
     }
@@ -74,10 +76,10 @@ export class UserService {
   }
 
   public async update(id: string, userUpdateDto: UserUpdateDto) {
-    let user = await this.userRepository.findOne( id, { relations: ['channels', 'participants'] } );
+    let user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors'] } );
     if (user) {
       await this.userRepository.update(id, userUpdateDto);
-      user = await this.userRepository.findOne( id, { relations: ['channels', 'participants'] } );
+      user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors'] } );
       return this.userToDto(user);
     }
     throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
@@ -126,7 +128,20 @@ export class UserService {
       participantForUserDto.ban = participant.ban;
       dto.participants.push(participantForUserDto);
     })
+    dto.friends = [];
+    user.connectors.forEach( connector => {
+      let friendForUserDto = new FriendForUserDto();
+      friendForUserDto.friendId = connector.friend.id;
+      friendForUserDto.friendName = connector.friend.name;
+      friendForUserDto.requestStatus = RequestStatus[connector.status];
+      if (connector.status === 2) {
+        friendForUserDto.userStatus = Status[connector.friend.status];
+      }
+      else {
+        friendForUserDto.userStatus = null;
+      }
+      dto.friends.push(friendForUserDto);
+    })
     return dto;
   }
-
 }

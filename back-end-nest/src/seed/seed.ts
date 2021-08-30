@@ -11,14 +11,18 @@ async function bootstrap() {
       const seedService = appContext.get(SeedService);
       let resRegister = seedService.seedRegister()
         .then((resRegister) => {
-          let resChannel = seedService.seedChannel();
-          return resChannel;
-        })
-        .then((resChannel) => {
           let resUser = seedService.seedUser();
           return resUser;
         })
         .then((resUser) => {
+          let resFriend = seedService.seedFriend();
+          return resFriend;
+        })
+        .then((resFriend) => {
+          let resChannel = seedService.seedChannel();
+          return resChannel;
+        })
+        .then((resChannel) => {
           let resParticipant = seedService.seedParticipant();
           return resParticipant;
         })

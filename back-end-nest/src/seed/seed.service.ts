@@ -3,18 +3,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import User from '../user/user.entity';
+import Friend from '../friend/friend.entity';
 import Channel from '../channel/channel.entity';
 import Participant from '../participant/participant.entity';
 import Message from '../message/message.entity';
 
 import { AuthenticationService } from '../authentication/authentication.service';
 import { UserService } from '../user/user.service';
+import { FriendService } from '../friend/friend.service';
 import { ChannelService } from '../channel/channel.service';
 import { ParticipantService } from '../participant/participant.service';
 import { MessageService } from '../message/message.service';
 
 import { registers } from './data';
 import { users } from './data';
+import { friends } from './data';
 import { channels } from './data';
 import { participants } from './data';
 import { messages } from './data';
@@ -30,6 +33,8 @@ export class SeedService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+    @InjectRepository(Friend)
+    private readonly friendRepo: Repository<Friend>,
     @InjectRepository(Channel)
     private readonly channelRepo: Repository<Channel>,
     @InjectRepository(Participant)
@@ -39,6 +44,7 @@ export class SeedService {
 
     private readonly authenticationService: AuthenticationService,
     private readonly userService: UserService,
+    private readonly friendService: FriendService,
     private readonly channelService: ChannelService,
     private readonly participantService: ParticipantService,
     private readonly messageService: MessageService,
@@ -75,6 +81,23 @@ export class SeedService {
       await this.userService.update(user2.id, userUpdateDto);
     }
     console.log('User seeding complete!');
+    return true;
+  }
+
+  async seedFriend() {
+    console.log('Seeding friend...');
+    for await (const friend of friends) {
+      let connector = await this.userService.findByEmail(friend.connectorEmail);
+      let friend2 = await this.userService.findByEmail(friend.friendEmail);
+      const friendObjects = await this.friendService.create(connector.id, friend2.id);
+      if (friendObjects[0] === 1) {
+        await this.friendService.updateStatus(friendObjects[0].connectorId, friendObjects[0].friendId, friend.status);
+      }
+      else {
+        await this.friendService.updateStatus(friendObjects[1].connectorId, friendObjects[1].friendId, friend.status);      
+      }
+    }
+    console.log('Friend seeding complete!');
     return true;
   }
 
