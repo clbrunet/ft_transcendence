@@ -41,7 +41,6 @@ export default Vue.extend({
       .then(res => {
           console.log(res);
           this.$store.dispatch("unauthenticate");
-          router.push({ name: "Home" });
       })
       .catch(err => {
           console.log(err);
@@ -64,10 +63,10 @@ export default Vue.extend({
     })
       .then(() => {
         this.$store.dispatch("authenticate");
-        router.push({ name: "Home" });
       })
       .catch(() => {
         this.$store.dispatch("unauthenticate");
+        router.push({ name: "Home" });
       });
   }
 });
