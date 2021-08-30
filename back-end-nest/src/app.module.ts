@@ -6,6 +6,7 @@ import { ChannelModule } from './channel/channel.module';
 import { ParticipantModule } from './participant/participant.module';
 import { MessageModule } from './message/message.module';
 import { SeedModule } from './seed/seed.module';
+import { FriendModule } from './friend/friend.module';
 import * as Joi from 'joi';
 
 import { AppService } from './app.service';
@@ -29,6 +30,7 @@ modified['port'] = 5436;
     ParticipantModule,
     MessageModule,
     SeedModule,
+    FriendModule,
   ],
   controllers: [AppController],
   providers: [AppService],

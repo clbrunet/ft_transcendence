@@ -5,7 +5,7 @@ import { Level } from './enum.level';
 
 import { ChannelForUserDto } from '../channel/channel.dto';
 import { ParticipantForUserDto } from '../participant/participant.dto';
-
+import { FriendForUserDto } from '../friend/friend.dto';
 
 export class UserUpdateDto {
   @IsOptional()
@@ -58,6 +58,7 @@ export class UserDto {
   xp: number;
   channels: ChannelForUserDto[];
   participants: ParticipantForUserDto[];
+  friends: FriendForUserDto[];
 }
 
 export class UserForChannelDto {

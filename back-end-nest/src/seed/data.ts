@@ -1,5 +1,6 @@
 import { RegisterDto } from '../authentication/register.dto';
 import { UserSeedDto } from '../user/user.dto';
+import { FriendSeedDto } from '../friend/friend.dto';
 import { ChannelSeedDto } from '../channel/channel.dto';
 import { ParticipantSeedDto } from '../participant/participant.dto';
 import { MessageSeedDto } from '../message/message.dto';
@@ -21,6 +22,21 @@ export const users: UserSeedDto[] = [
   { email: 'lucille@yopmail.com', avatar: '../Lucille.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
   { email: 'come@yopmail.com', avatar: '../Come.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
   { email: 'alban@yopmail.com', avatar: '../Alban.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+];
+
+export const friends: FriendSeedDto[] = [
+  { connectorEmail: 'erwan@yopmail.com', friendEmail: 'nicolas@yopmail.com', status: 0},
+  { connectorEmail: 'erwan@yopmail.com', friendEmail: 'clement@yopmail.com', status: 2},
+  { connectorEmail: 'erwan@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 3},
+  { connectorEmail: 'erwan@yopmail.com', friendEmail: 'alban@yopmail.com', status: 0},
+
+  { connectorEmail: 'clement@yopmail.com', friendEmail: 'nicolas@yopmail.com', status: 2},
+  { connectorEmail: 'clement@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 3},
+  { connectorEmail: 'clement@yopmail.com', friendEmail: 'alban@yopmail.com', status: 0},
+
+  { connectorEmail: 'nicolas@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 2},
+  { connectorEmail: 'nicolas@yopmail.com', friendEmail: 'come@yopmail.com', status: 2},
+  { connectorEmail: 'nicolas@yopmail.com', friendEmail: 'alban@yopmail.com', status: 2},
 ];
 
 export const channels: ChannelSeedDto[] = [
