@@ -54,7 +54,7 @@ export default Vue.extend({
         }
       ).then(res => {
           console.log(res);
-          router.push({ name: "Home" });
+          router.push({ name: "App" });
         })
         .catch(err => {
           this.messages = Array.isArray(err.response.data.message) ? err.response.data.message : [err.response.data.message];

@@ -7,12 +7,6 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'App',
-    component: () => import('../views/Home.vue')
-  },
-  {
-    path: '/home',
-    name: 'Home',
-    component: () => import('../views/Home.vue')
   },
   {
     path: '/profile',

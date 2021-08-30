@@ -5,7 +5,7 @@
       <input type="email" placeholder="entrez votre email" v-model="email">
       <input type="password" placeholder="entrez votre mot de passe" v-model="password">
       <input type="submit" value="Valider">
-      <p> {{ messages }} </p>
+      <p class="error"> {{ messages }} </p>
     </form>
   </div>
 </template>
@@ -49,7 +49,8 @@ export default Vue.extend({
           'Access-Control-Allow-Origin': 'http://localhost:3000'
         },
         withCredentials: true
-      }).then(() => {
+      }).then(res => {
+        this.$store.state.user = res.data;
         this.$store.dispatch('authenticate');
         router.push({ name: "Profile" });
       }).catch(() => {
