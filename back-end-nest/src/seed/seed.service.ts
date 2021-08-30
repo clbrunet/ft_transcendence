@@ -89,12 +89,10 @@ export class SeedService {
     for await (const friend of friends) {
       let connector = await this.userService.findByEmail(friend.connectorEmail);
       let friend2 = await this.userService.findByEmail(friend.friendEmail);
-      const friendObjects = await this.friendService.create(connector.id, friend2.id);
-      if (friendObjects[0] === 1) {
-        await this.friendService.updateStatus(friendObjects[0].connectorId, friendObjects[0].friendId, friend.status);
-      }
-      else {
-        await this.friendService.updateStatus(friendObjects[1].connectorId, friendObjects[1].friendId, friend.status);      
+      await this.friendService.create(connector.id, friend2.id);
+      const friendObject = await this.friendService.findByConnectorAndFriend(connector.id, friend2.id);
+      if (friend.status === 2 || friend.status === 3) {
+        await this.friendService.updateStatus(friendObject.friend.id, friendObject.connector.id, friend.status);
       }
     }
     console.log('Friend seeding complete!');

@@ -24,8 +24,9 @@ export const users: UserSeedDto[] = [
   { email: 'alban@yopmail.com', avatar: '../Alban.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
 ];
 
+// friend.status can't equal to 1, you invert connectorEmail and friendEmail if needed
 export const friends: FriendSeedDto[] = [
-  { connectorEmail: 'erwan@yopmail.com', friendEmail: 'nicolas@yopmail.com', status: 0},
+  { connectorEmail: 'erwan@yopmail.com', friendEmail: 'nicolas@yopmail.com', status: 2},
   { connectorEmail: 'erwan@yopmail.com', friendEmail: 'clement@yopmail.com', status: 2},
   { connectorEmail: 'erwan@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 3},
   { connectorEmail: 'erwan@yopmail.com', friendEmail: 'alban@yopmail.com', status: 0},
@@ -37,6 +38,10 @@ export const friends: FriendSeedDto[] = [
   { connectorEmail: 'nicolas@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 2},
   { connectorEmail: 'nicolas@yopmail.com', friendEmail: 'come@yopmail.com', status: 2},
   { connectorEmail: 'nicolas@yopmail.com', friendEmail: 'alban@yopmail.com', status: 2},
+
+  { connectorEmail: 'come@yopmail.com', friendEmail: 'alban@yopmail.com', status: 3},
+  { connectorEmail: 'come@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 3},
+  { connectorEmail: 'come@yopmail.com', friendEmail: 'erwan@yopmail.com', status: 0},
 ];
 
 export const channels: ChannelSeedDto[] = [
