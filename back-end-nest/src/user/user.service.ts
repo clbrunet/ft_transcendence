@@ -10,6 +10,7 @@ import User from './user.entity';
 
 import RegisterDto from '../authentication/register.dto';
 import { UserDto } from './user.dto';
+import { UserUpdateDto } from './user.dto';
 import { ParticipantForUserDto } from '../participant/participant.dto';
 import { ChannelForUserDto } from '../channel/channel.dto';
 
@@ -70,6 +71,16 @@ export class UserService {
       return user;
     }
     throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  public async update(id: string, userUpdateDto: UserUpdateDto) {
+    let user = await this.userRepository.findOne( id, { relations: ['channels', 'participants'] } );
+    if (user) {
+      await this.userRepository.update(id, userUpdateDto);
+      user = await this.userRepository.findOne( id, { relations: ['channels', 'participants'] } );
+      return this.userToDto(user);
+    }
+    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
   public async delete(id: string) {

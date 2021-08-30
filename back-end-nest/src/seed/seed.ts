@@ -15,6 +15,10 @@ async function bootstrap() {
           return resChannel;
         })
         .then((resChannel) => {
+          let resUser = seedService.seedUser();
+          return resUser;
+        })
+        .then((resUser) => {
           let resParticipant = seedService.seedParticipant();
           return resParticipant;
         })

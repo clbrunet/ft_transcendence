@@ -14,10 +14,12 @@ import { ParticipantService } from '../participant/participant.service';
 import { MessageService } from '../message/message.service';
 
 import { registers } from './data';
+import { users } from './data';
 import { channels } from './data';
 import { participants } from './data';
 import { messages } from './data';
 
+import { UserUpdateDto } from '../user/user.dto';
 import { ChannelCreationDto } from '../channel/channel.dto';
 import { ParticipantCreationDto } from '../participant/participant.dto';
 import { MessageCreationDto } from '../message/message.dto';
@@ -56,6 +58,23 @@ export class SeedService {
 	  	await this.authenticationService.register(register);
     }
     console.log('Register seeding complete!');
+    return true;
+  }
+
+  async seedUser() {
+    console.log('Seeding users...');
+    for await (const user of users) {
+      let user2 = await this.userService.findByEmail(user.email);
+      let userUpdateDto = new UserUpdateDto();
+      userUpdateDto.avatar = user.avatar;
+      userUpdateDto.level = user.level;
+      userUpdateDto.nGames = user.nGames;
+      userUpdateDto.nWins = user.nWins;
+      userUpdateDto.nLosses = user.nLosses;
+      userUpdateDto.xp = user.xp;      
+      await this.userService.update(user2.id, userUpdateDto);
+    }
+    console.log('User seeding complete!');
     return true;
   }
 
