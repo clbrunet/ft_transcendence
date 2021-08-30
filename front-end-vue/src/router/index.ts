@@ -27,7 +27,12 @@ const routes: Array<RouteConfig> = [
     path: '/chats',
     name: 'Chats',
     component: () => import('../views/Chats.vue')
-  }
+  },
+  {
+    path: '/authTest',
+    name: 'AuthTest',
+    component: () => import('../views/AuthTest.vue')
+  },
 ]
 
 const router = new VueRouter({
