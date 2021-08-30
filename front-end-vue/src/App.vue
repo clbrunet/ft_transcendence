@@ -1,39 +1,81 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link>
-      <router-link v-if="is_auth" to="/profile">Profile</router-link>
-      <router-link v-else to="/login">Login</router-link>
+      <router-link to="/home">Home</router-link>
+      <template v-if="is_auth">
+        <router-link to="/profile">Profile</router-link>
+        <router-link to="/chats">Chats</router-link>
+        <button id="btn-disconnect" @click="logout">Disconnect</button>
+      </template>
+      <template v-else>
+        <router-link to="/login">Login</router-link>
+        <router-link to="/register">Register</router-link>
+      </template>
     </div>
-    <router-view/>
-    <p>is_auth : {{ is_auth }} </p>
+    <router-view />
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Store from './store/index';
+import Vue from "vue";
+import Store from "./store/index";
+import axios from "axios";
+import router from "./router";
 
 export default Vue.extend({
-  name: 'App',
+  name: "App",
   store: Store,
   data() {
-    return {
-    };
+    return {};
+  },
+  methods: {
+    logout() {
+      axios({
+        method: "post",
+        url: "http://localhost:3000/authentication/log-out",
+        headers: {
+          "Access-Control-Allow-Origin": "http://localhost:3000"
+        },
+        withCredentials: true
+      })
+      .then(res => {
+          console.log(res);
+          this.$store.dispatch("unauthenticate");
+          router.push({ name: "Home" });
+      })
+      .catch(err => {
+          console.log(err);
+      });
+    }
   },
   computed: {
     is_auth() {
-      return this.$store.state.is_auth
+      return this.$store.state.is_auth;
     }
+  },
+  mounted() {
+    axios({
+      method: "get",
+      url: "http://localhost:3000/authentication",
+      headers: {
+        "Access-Control-Allow-Origin": "http://localhost:3000"
+      },
+      withCredentials: true
+    })
+      .then(() => {
+        this.$store.dispatch("authenticate");
+        router.push({ name: "Home" });
+      })
+      .catch(() => {
+        this.$store.dispatch("unauthenticate");
+      });
   }
 });
 </script>
 
-<style>
+<style scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
 }
@@ -53,5 +95,11 @@ export default Vue.extend({
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+#btn-disconnect {
+  width: 90px;
+  height: 40px;
+  cursor: pointer;
 }
 </style>
