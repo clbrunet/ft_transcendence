@@ -9,6 +9,7 @@
 <script lang="ts">
 import Vue from "vue";
 import axios from "axios";
+import router from "../router";
 import Chat from "../components/Chat.vue"
 export default Vue.extend({
   name: "Chats",
@@ -35,6 +36,7 @@ export default Vue.extend({
       })
       .catch(err => {
         console.log(err);
+        router.push({name: 'App'});
       });
   }
 });

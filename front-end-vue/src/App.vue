@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/home">Home</router-link>
       <template v-if="is_auth">
         <router-link to="/profile">Profile</router-link>
         <router-link to="/chats">Chats</router-link>
@@ -26,7 +25,9 @@ export default Vue.extend({
   name: "App",
   store: Store,
   data() {
-    return {};
+    return {
+      mounted: false
+    };
   },
   methods: {
     logout() {
@@ -39,8 +40,9 @@ export default Vue.extend({
         withCredentials: true
       })
       .then(res => {
-          console.log(res);
-          this.$store.dispatch("unauthenticate");
+        this.$store.dispatch("unauthenticate");
+        console.log(router);
+        router.push({ name: "App" });
       })
       .catch(err => {
           console.log(err);
@@ -61,12 +63,12 @@ export default Vue.extend({
       },
       withCredentials: true
     })
-      .then(() => {
+      .then(res => {
+        this.$store.state.user = res.data;
         this.$store.dispatch("authenticate");
       })
       .catch(() => {
         this.$store.dispatch("unauthenticate");
-        router.push({ name: "Home" });
       });
   }
 });
