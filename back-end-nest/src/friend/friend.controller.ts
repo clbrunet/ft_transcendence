@@ -20,10 +20,10 @@ export class FriendController {
   ) {}
 
   @UseGuards(JwtTwoFactorGuard)
-  @Post('/create')
-  async create(@Req() request: RequestWithUser, @Body() data: FriendCreationActiveUserDto) {
+  @Post('/:friendId')
+  async create(@Req() request: RequestWithUser, @Param('friendId') friendId) {
     const {user} = request;
-    return await this.friendService.create(user.id, data.friendId);
+    return await this.friendService.create(user.id, friendId);
   }
 
   @UseGuards(JwtTwoFactorGuard)

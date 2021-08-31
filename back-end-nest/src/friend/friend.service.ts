@@ -79,6 +79,17 @@ export class FriendService {
     return dto;    
   }
 
+  public async getAllActiveUser(userId: string) {
+    const res = await this.userService.findById(userId);
+    let dto: FriendDto[] = [];
+    for (const connector of res.connectors) {
+      const friend = await this.findById(connector.id);
+      let friendDto: FriendDto = this.friendToDto(friend);
+      dto.push(friendDto);
+    }
+    return dto;  
+  }
+
   // Return Friend Object
   public async findById(id: string) {
     const friend = await this.friendRepo.findOne(id);
@@ -144,7 +155,7 @@ export class FriendService {
       throw new HttpException('Friend with this id does not exist', HttpStatus.NOT_FOUND);
     }
     await this.friendRepo.delete(id);
-    return await this.getAll();
+    return;
   }
 
   public async unfriend(userId: string, friendId: string) {
@@ -152,7 +163,7 @@ export class FriendService {
     const friend2 = await this.findByConnectorAndFriend(friendId, userId);
     await this.delete(friend.id);
     await this.delete(friend2.id);
-    return await this.getAll();
+    return await this.getAllActiveUser(userId);
   }
 
   public friendToDto(friend: Friend) {
