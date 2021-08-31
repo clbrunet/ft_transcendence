@@ -8,6 +8,7 @@ import { MessageModule } from './message/message.module';
 import { SeedModule } from './seed/seed.module';
 import { FriendModule } from './friend/friend.module';
 import { BlockModule } from './block/block.module';
+import { QueueModule } from './queue/queue.module';
 import * as Joi from 'joi';
 
 import { AppService } from './app.service';
@@ -34,6 +35,7 @@ modified['port'] = 5436;
     SeedModule,
     FriendModule,
     BlockModule,
+    QueueModule,
   ],
   controllers: [AppController],
   providers: [AppService],

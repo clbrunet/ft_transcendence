@@ -66,6 +66,7 @@ export class UserDto {
   participants: ParticipantForUserDto[];
   friends: FriendForUserDto[];
   blocks: BlockForUserDto[];
+  inQueue: boolean;
 }
 
 export class UserForChannelDto {
