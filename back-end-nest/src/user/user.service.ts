@@ -40,7 +40,7 @@ export class UserService {
 
   public async getAll() {
     let res: User[] = [];
-    res = await this.userRepository.find( { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors'] } );
+    res = await this.userRepository.find( { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors', 'queuers'] } );
     let dto: UserDto[] = [];
     res.forEach( user => {
       let userDto: UserDto = this.userToDto(user);
@@ -51,7 +51,7 @@ export class UserService {
 
   // Return User Dto
   public async getById(id: string) {
-    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors'] } );
+    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors', 'queuers'] } );
     if (user) { 
       return this.userToDto(user);
     }
@@ -60,7 +60,7 @@ export class UserService {
 
   // Return User Object 
   public async findById(id: string) {
-    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors'] } );
+    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors', 'queuers'] } );
     if (user) {
       return user;
     }
@@ -69,7 +69,7 @@ export class UserService {
 
   // Return User Object
   public async findByEmail(email: string) {
-    const user = await this.userRepository.findOne( { email }, { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors'] } );
+    const user = await this.userRepository.findOne( { email }, { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors', 'queuers'] } );
     if (user) {
       return user;
     }
@@ -149,6 +149,12 @@ export class UserService {
       blockForUserDto.blockName = blockConnector.block.name;
       dto.blocks.push(blockForUserDto);
     })  
+    if (user.queuers.length === 0) {
+      dto.inQueue = false;
+    }
+    else {
+      dto.inQueue = true;      
+    }
     return dto;
   }
 }

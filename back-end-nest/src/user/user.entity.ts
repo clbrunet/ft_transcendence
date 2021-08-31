@@ -7,6 +7,7 @@ import Channel from '../channel/channel.entity';
 import Participant from '../participant/participant.entity';
 import Friend from '../friend/friend.entity';
 import Block from '../block/block.entity';
+import Queue from '../queue/queue.entity';
 
 
 @Entity()
@@ -67,6 +68,9 @@ class User {
 
   @OneToMany(() => Block, block => block.blockConnector)
   blockConnectors: Block[];
+
+  @OneToMany(() => Queue, queue => queue.queuer)
+  queuers: Queue[];
 }
 
 export default User;
