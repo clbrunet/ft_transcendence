@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import User from '../user/user.entity';
 import Friend from '../friend/friend.entity';
+import Block from '../block/block.entity';
 import Channel from '../channel/channel.entity';
 import Participant from '../participant/participant.entity';
 import Message from '../message/message.entity';
@@ -11,6 +12,7 @@ import Message from '../message/message.entity';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { UserService } from '../user/user.service';
 import { FriendService } from '../friend/friend.service';
+import { BlockService } from '../block/block.service';
 import { ChannelService } from '../channel/channel.service';
 import { ParticipantService } from '../participant/participant.service';
 import { MessageService } from '../message/message.service';
@@ -18,6 +20,7 @@ import { MessageService } from '../message/message.service';
 import { registers } from './data';
 import { users } from './data';
 import { friends } from './data';
+import { blocks } from './data';
 import { channels } from './data';
 import { participants } from './data';
 import { messages } from './data';
@@ -35,6 +38,8 @@ export class SeedService {
     private readonly userRepo: Repository<User>,
     @InjectRepository(Friend)
     private readonly friendRepo: Repository<Friend>,
+    @InjectRepository(Block)
+    private readonly blockRepo: Repository<Block>,
     @InjectRepository(Channel)
     private readonly channelRepo: Repository<Channel>,
     @InjectRepository(Participant)
@@ -45,6 +50,7 @@ export class SeedService {
     private readonly authenticationService: AuthenticationService,
     private readonly userService: UserService,
     private readonly friendService: FriendService,
+    private readonly blockService: BlockService,
     private readonly channelService: ChannelService,
     private readonly participantService: ParticipantService,
     private readonly messageService: MessageService,
@@ -96,6 +102,18 @@ export class SeedService {
       }
     }
     console.log('Friend seeding complete!');
+    return true;
+  }
+
+  async seedBlock() {
+    console.log('Seeding block...');
+    for await (const block of blocks) {
+      let connector = await this.userService.findByEmail(block.blockConnectorEmail);
+      let block2 = await this.userService.findByEmail(block.blockEmail);
+      await this.blockService.create(connector.id, block2.id);
+      const blockObject = await this.blockService.findByConnectorAndBlock(connector.id, block2.id);
+    }
+    console.log('Block seeding complete!');
     return true;
   }
 

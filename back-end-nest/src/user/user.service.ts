@@ -15,6 +15,7 @@ import { UserUpdateDto } from './user.dto';
 import { ParticipantForUserDto } from '../participant/participant.dto';
 import { ChannelForUserDto } from '../channel/channel.dto';
 import { FriendForUserDto } from '../friend/friend.dto';
+import { BlockForUserDto } from '../block/block.dto';
 
 
 @Injectable()
@@ -39,7 +40,7 @@ export class UserService {
 
   public async getAll() {
     let res: User[] = [];
-    res = await this.userRepository.find( { relations: ['channels', 'participants', 'friends', 'connectors'] } );
+    res = await this.userRepository.find( { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors'] } );
     let dto: UserDto[] = [];
     res.forEach( user => {
       let userDto: UserDto = this.userToDto(user);
@@ -50,7 +51,7 @@ export class UserService {
 
   // Return User Dto
   public async getById(id: string) {
-    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors'] } );
+    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors'] } );
     if (user) { 
       return this.userToDto(user);
     }
@@ -59,7 +60,7 @@ export class UserService {
 
   // Return User Object 
   public async findById(id: string) {
-    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors'] } );
+    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors'] } );
     if (user) {
       return user;
     }
@@ -68,7 +69,7 @@ export class UserService {
 
   // Return User Object
   public async findByEmail(email: string) {
-    const user = await this.userRepository.findOne( { email }, { relations: ['channels', 'participants', 'friends', 'connectors'] } );
+    const user = await this.userRepository.findOne( { email }, { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors'] } );
     if (user) {
       return user;
     }
@@ -76,13 +77,12 @@ export class UserService {
   }
 
   public async update(id: string, userUpdateDto: UserUpdateDto) {
-    let user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors'] } );
-    if (user) {
-      await this.userRepository.update(id, userUpdateDto);
-      user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors'] } );
+    const res = await this.userRepository.update(id, userUpdateDto);
+    if (res) {
+      const user = await this.findById(id);
       return this.userToDto(user);
     }
-    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+    throw new HttpException('User update failed', HttpStatus.NOT_FOUND);
   }
 
   public async delete(id: string) {
@@ -142,6 +142,13 @@ export class UserService {
       }
       dto.friends.push(friendForUserDto);
     })
+    dto.blocks = [];
+    user.blockConnectors.forEach( blockConnector => {
+      let blockForUserDto = new BlockForUserDto();
+      blockForUserDto.blockId = blockConnector.block.id;
+      blockForUserDto.blockName = blockConnector.block.name;
+      dto.blocks.push(blockForUserDto);
+    })  
     return dto;
   }
 }

@@ -16,6 +16,7 @@ import { JwtAuthenticationGuard } from './jwtAuthentication.guard';
 import JwtTwoFactorGuard from './twoFactor/jwtTwoFactor.guard';
 
 import RegisterDto from './register.dto';
+import { UserUpdateDto } from '../user/user.dto';
 
 
 @Controller('authentication')
@@ -29,7 +30,8 @@ export class AuthenticationController {
 
   @Post('register')
   async register(@Body() registrationData: RegisterDto) {
-    return this.authenticationService.register(registrationData);
+    const res = await this.authenticationService.register(registrationData);
+    return await this.userService.getById(res.id);
   }
 
   @HttpCode(200)
@@ -43,13 +45,20 @@ export class AuthenticationController {
     if (user.isTwoFactorAuthenticationEnabled) {
       return;
     }
-    return user;
+    let userUpdateDto = new UserUpdateDto();
+    userUpdateDto.status = 1;
+    this.userService.update(user.id, userUpdateDto);
+    return this.userService.userToDto(await this.userService.findById(user.id));
   }
 
   @UseGuards(JwtTwoFactorGuard)
   @Post('log-out')
   async logOut(@Req() request: RequestWithUser, @Res() response: Response) {
+    const {user} = request;
     response.setHeader('Set-Cookie', this.authenticationService.getCookieForLogOut());
+    let userUpdateDto = new UserUpdateDto();
+    userUpdateDto.status = 0;
+    this.userService.update(user.id, userUpdateDto);
     return response.sendStatus(200);
   }
 

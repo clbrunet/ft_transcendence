@@ -7,12 +7,14 @@ import { ParticipantModule } from './participant/participant.module';
 import { MessageModule } from './message/message.module';
 import { SeedModule } from './seed/seed.module';
 import { FriendModule } from './friend/friend.module';
+import { BlockModule } from './block/block.module';
 import * as Joi from 'joi';
 
 import { AppService } from './app.service';
 import { configService } from './config/config.service';
 
 import { AppController } from './app.controller';
+
 
 let modified = configService.getTypeOrmConfig();
 modified['port'] = 5436;
@@ -31,6 +33,7 @@ modified['port'] = 5436;
     MessageModule,
     SeedModule,
     FriendModule,
+    BlockModule,
   ],
   controllers: [AppController],
   providers: [AppService],

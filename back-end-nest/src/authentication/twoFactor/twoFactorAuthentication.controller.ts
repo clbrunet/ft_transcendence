@@ -10,6 +10,7 @@ import { UserService } from '../../user/user.service';
 import { JwtAuthenticationGuard } from '../jwtAuthentication.guard';
 
 import { TwoFactorAuthenticationCodeDto } from './twoFactorAuthenticationCode.dto';
+import { UserUpdateDto } from '../../user/user.dto';
 
 
 @Controller('2fa')
@@ -57,6 +58,9 @@ export class TwoFactorAuthenticationController {
     }
     const accessTokenCookie = this.authenticationService.getCookieWithJwtAccessToken(request.user.id, true);
     request.res.setHeader('Set-Cookie', [accessTokenCookie]);
-    return request.user;
+    let userUpdateDto = new UserUpdateDto();
+    userUpdateDto.status = 1;
+    this.userService.update(request.user.id, userUpdateDto);
+    return this.userService.userToDto(await this.userService.findById(request.user.id));
   }
 }
