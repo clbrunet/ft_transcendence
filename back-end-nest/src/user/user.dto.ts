@@ -6,11 +6,17 @@ import { Level } from './enum.level';
 import { ChannelForUserDto } from '../channel/channel.dto';
 import { ParticipantForUserDto } from '../participant/participant.dto';
 import { FriendForUserDto } from '../friend/friend.dto';
+import { BlockForUserDto } from '../block/block.dto';
+
 
 export class UserUpdateDto {
   @IsOptional()
   @IsString()
   avatar: string;
+
+  @IsOptional()
+  @IsEnum(Status)
+  status: Status;
 
   @IsOptional()
   @IsEnum(Level)
@@ -59,6 +65,7 @@ export class UserDto {
   channels: ChannelForUserDto[];
   participants: ParticipantForUserDto[];
   friends: FriendForUserDto[];
+  blocks: BlockForUserDto[];
 }
 
 export class UserForChannelDto {

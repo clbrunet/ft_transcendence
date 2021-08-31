@@ -6,6 +6,7 @@ import { Status } from './enum.status';
 import Channel from '../channel/channel.entity';
 import Participant from '../participant/participant.entity';
 import Friend from '../friend/friend.entity';
+import Block from '../block/block.entity';
 
 
 @Entity()
@@ -60,6 +61,12 @@ class User {
 
   @OneToMany(() => Friend, friend => friend.connector)
   connectors: Friend[];
+
+  @OneToMany(() => Block, block => block.block)
+  blocks: Block[];
+
+  @OneToMany(() => Block, block => block.blockConnector)
+  blockConnectors: Block[];
 }
 
 export default User;

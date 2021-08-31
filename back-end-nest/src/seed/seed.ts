@@ -19,6 +19,10 @@ async function bootstrap() {
           return resFriend;
         })
         .then((resFriend) => {
+          let resBlock = seedService.seedBlock();
+          return resBlock;
+        })
+        .then((resBlock) => {
           let resChannel = seedService.seedChannel();
           return resChannel;
         })

@@ -1,6 +1,7 @@
 import { RegisterDto } from '../authentication/register.dto';
 import { UserSeedDto } from '../user/user.dto';
 import { FriendSeedDto } from '../friend/friend.dto';
+import { BlockSeedDto } from '../block/block.dto';
 import { ChannelSeedDto } from '../channel/channel.dto';
 import { ParticipantSeedDto } from '../participant/participant.dto';
 import { MessageSeedDto } from '../message/message.dto';
@@ -42,6 +43,15 @@ export const friends: FriendSeedDto[] = [
   { connectorEmail: 'come@yopmail.com', friendEmail: 'alban@yopmail.com', status: 3},
   { connectorEmail: 'come@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 3},
   { connectorEmail: 'come@yopmail.com', friendEmail: 'erwan@yopmail.com', status: 0},
+];
+
+export const blocks: BlockSeedDto[] = [
+  { blockConnectorEmail: 'erwan@yopmail.com', blockEmail: 'come@yopmail.com'},
+  { blockConnectorEmail: 'clement@yopmail.com', blockEmail: 'come@yopmail.com'},
+  { blockConnectorEmail: 'nicolas@yopmail.com', blockEmail: 'alban@yopmail.com'},
+  { blockConnectorEmail: 'come@yopmail.com', blockEmail: 'erwan@yopmail.com'},
+  { blockConnectorEmail: 'lucille@yopmail.com', blockEmail: 'erwan@yopmail.com'},
+  { blockConnectorEmail: 'alban@yopmail.com', blockEmail: 'erwan@yopmail.com'},
 ];
 
 export const channels: ChannelSeedDto[] = [
