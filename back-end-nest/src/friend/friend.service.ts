@@ -24,7 +24,7 @@ export class FriendService {
     private readonly userService: UserService,
   ) {}
 
-  async create(friendOwnerId: string, friendId: string) {
+  public async create(friendOwnerId: string, friendId: string) {
     if (friendOwnerId === friendId) {
       throw new HttpException('User can not friend himself', HttpStatus.BAD_REQUEST);
     }

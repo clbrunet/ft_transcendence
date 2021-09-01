@@ -24,7 +24,7 @@ export class BlockService {
     private readonly userService: UserService,
   ) {}
 
-  async create(blockOwnerId: string, blockId: string) {
+  public async create(blockOwnerId: string, blockId: string) {
     if (blockOwnerId === blockId) {
       throw new HttpException('User can not block himself', HttpStatus.BAD_REQUEST);
     }

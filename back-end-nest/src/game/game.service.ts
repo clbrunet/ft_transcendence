@@ -2,15 +2,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { gameStatus } from './enum.gameStatus';
+import { GameStatus } from './enum.gameStatus';
 
 import Game from './game.entity';
 import Player from '../player/player.entity';
-import User from '../user/user.entity';
 
-import { UserService } from '../user/user.service';
+import { PlayerService } from '../player/player.service';
 
-//import { BlockForUserDto } from '../block/block.dto';
+import { GameDto } from '../game/game.dto';
 
 
 @Injectable()
@@ -20,9 +19,21 @@ export class GameService {
     private readonly gameRepo: Repository<Game>,
     @InjectRepository(Player)
     private readonly playerRepo: Repository<Player>,
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
 
-    private readonly userService: UserService,
+    private readonly playerService: GameService,
   ) {}
+
+  public async create() {
+    const game = new Game();
+    const res = await this.gameRepo.save(game);
+    return this.gameToDto(res);
+  }
+
+  public gameToDto(game: Game) {
+    let dto = new GameDto();
+    dto.id = game.id;
+    dto.status = GameStatus[game.status];
+    dto.startTime = game.startTime;
+    return dto;
+  }
 }
