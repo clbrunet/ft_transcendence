@@ -7,6 +7,7 @@ import { ChannelForUserDto } from '../channel/channel.dto';
 import { ParticipantForUserDto } from '../participant/participant.dto';
 import { FriendForUserDto } from '../friend/friend.dto';
 import { BlockForUserDto } from '../block/block.dto';
+import { DuelForUserDto } from '../duel/duel.dto';
 
 
 export class UserUpdateDto {
@@ -66,6 +67,7 @@ export class UserDto {
   participants: ParticipantForUserDto[];
   friends: FriendForUserDto[];
   blocks: BlockForUserDto[];
+  duels: DuelForUserDto[];
   inQueue: boolean;
 }
 

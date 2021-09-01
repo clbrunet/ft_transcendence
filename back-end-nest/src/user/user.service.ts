@@ -5,7 +5,9 @@ import { Repository } from 'typeorm';
 import { Level } from './enum.level';
 import { Status } from './enum.status';
 import { ChannelStatus } from '../channel/enum.channelStatus';
-import { RequestStatus } from '../friend/enum.requestStatus';
+import { FriendStatus } from '../friend/enum.friendStatus';
+import { BlockStatus } from '../block/enum.blockStatus';
+import { DuelStatus } from '../duel/enum.duelStatus';
 
 import User from './user.entity';
 
@@ -16,6 +18,7 @@ import { ParticipantForUserDto } from '../participant/participant.dto';
 import { ChannelForUserDto } from '../channel/channel.dto';
 import { FriendForUserDto } from '../friend/friend.dto';
 import { BlockForUserDto } from '../block/block.dto';
+import { DuelForUserDto } from '../duel/duel.dto';
 
 
 @Injectable()
@@ -40,7 +43,7 @@ export class UserService {
 
   public async getAll() {
     let res: User[] = [];
-    res = await this.userRepository.find( { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors', 'queuers'] } );
+    res = await this.userRepository.find( { relations: ['channels', 'participants', 'friends', 'friendOwners', 'blocks', 'blockOwners', 'duels', 'duelOwners', 'queuers', 'players'] } );
     let dto: UserDto[] = [];
     res.forEach( user => {
       let userDto: UserDto = this.userToDto(user);
@@ -51,7 +54,7 @@ export class UserService {
 
   // Return User Dto
   public async getById(id: string) {
-    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors', 'queuers'] } );
+    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'friendOwners', 'blocks', 'blockOwners', 'duels', 'duelOwners', 'queuers', 'players'] } );
     if (user) { 
       return this.userToDto(user);
     }
@@ -60,7 +63,7 @@ export class UserService {
 
   // Return User Object 
   public async findById(id: string) {
-    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors', 'queuers'] } );
+    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'friendOwners', 'blocks', 'blockOwners', 'duels', 'duelOwners', 'queuers', 'players'] } );
     if (user) {
       return user;
     }
@@ -69,7 +72,7 @@ export class UserService {
 
   // Return User Object
   public async findByEmail(email: string) {
-    const user = await this.userRepository.findOne( { email }, { relations: ['channels', 'participants', 'friends', 'connectors', 'blocks', 'blockConnectors', 'queuers'] } );
+    const user = await this.userRepository.findOne( { email }, { relations: ['channels', 'participants', 'friends', 'friendOwners', 'blocks', 'blockOwners', 'duels', 'duelOwners', 'queuers', 'players'] } );
     if (user) {
       return user;
     }
@@ -129,13 +132,13 @@ export class UserService {
       dto.participants.push(participantForUserDto);
     })
     dto.friends = [];
-    user.connectors.forEach( connector => {
+    user.friendOwners.forEach( friendOwner => {
       let friendForUserDto = new FriendForUserDto();
-      friendForUserDto.friendId = connector.friend.id;
-      friendForUserDto.friendName = connector.friend.name;
-      friendForUserDto.requestStatus = RequestStatus[connector.status];
-      if (connector.status === 2) {
-        friendForUserDto.userStatus = Status[connector.friend.status];
+      friendForUserDto.friendId = friendOwner.friend.id;
+      friendForUserDto.friendName = friendOwner.friend.name;
+      friendForUserDto.requestStatus = FriendStatus[friendOwner.status];
+      if (friendOwner.status === 2) {
+        friendForUserDto.userStatus = Status[friendOwner.friend.status];
       }
       else {
         friendForUserDto.userStatus = null;
@@ -143,12 +146,21 @@ export class UserService {
       dto.friends.push(friendForUserDto);
     })
     dto.blocks = [];
-    user.blockConnectors.forEach( blockConnector => {
+    user.blockOwners.forEach( blockOwner => {
       let blockForUserDto = new BlockForUserDto();
-      blockForUserDto.blockId = blockConnector.block.id;
-      blockForUserDto.blockName = blockConnector.block.name;
+      blockForUserDto.blockId = blockOwner.block.id;
+      blockForUserDto.blockName = blockOwner.block.name;
+      blockForUserDto.requestStatus = BlockStatus[blockOwner.status];
       dto.blocks.push(blockForUserDto);
-    })  
+    })
+    dto.duels = [];
+    user.duelOwners.forEach( duelOwner => {
+      let duelForUserDto = new DuelForUserDto();
+      duelForUserDto.duelId = duelOwner.duel.id;
+      duelForUserDto.duelName = duelOwner.duel.name;
+      duelForUserDto.requestStatus = DuelStatus[duelOwner.status];
+      dto.duels.push(duelForUserDto);
+    })
     if (user.queuers.length === 0) {
       dto.inQueue = false;
     }

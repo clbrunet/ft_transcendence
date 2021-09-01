@@ -43,7 +43,7 @@ export class FriendController {
   @Patch('/reject/:friendId')
   async reject(@Req() request: RequestWithUser, @Param('friendId') friendId) {
     const {user} = request;
-    return await this.friendService.updateStatus(user.id, friendId, 3);
+    return await this.friendService.unfriend(user.id, friendId);;
   }
 
   @UseGuards(JwtTwoFactorGuard)

@@ -7,7 +7,9 @@ import Channel from '../channel/channel.entity';
 import Participant from '../participant/participant.entity';
 import Friend from '../friend/friend.entity';
 import Block from '../block/block.entity';
+import Duel from '../duel/duel.entity';
 import Queue from '../queue/queue.entity';
+import Player from '../player/player.entity';
 
 
 @Entity()
@@ -60,17 +62,26 @@ class User {
   @OneToMany(() => Friend, friend => friend.friend)
   friends: Friend[];
 
-  @OneToMany(() => Friend, friend => friend.connector)
-  connectors: Friend[];
+  @OneToMany(() => Friend, friend => friend.friendOwner)
+  friendOwners: Friend[];
 
   @OneToMany(() => Block, block => block.block)
   blocks: Block[];
 
-  @OneToMany(() => Block, block => block.blockConnector)
-  blockConnectors: Block[];
+  @OneToMany(() => Block, block => block.blockOwner)
+  blockOwners: Block[];
+
+  @OneToMany(() => Duel, duel => duel.duel)
+  duels: Duel[];
+
+  @OneToMany(() => Duel, duel => duel.duelOwner)
+  duelOwners: Duel[];
 
   @OneToMany(() => Queue, queue => queue.queuer)
   queuers: Queue[];
+
+  @OneToMany(() => Player, player => player.player)
+  players: Player[];
 }
 
 export default User;

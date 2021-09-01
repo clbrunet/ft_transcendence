@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import Friend from './friend.entity';
 import User from '../user/user.entity';
 
-import { RequestStatus } from './enum.requestStatus';
+import { FriendStatus } from './enum.friendStatus';
 
 import { UserService } from '../user/user.service';
 
@@ -24,10 +24,10 @@ export class FriendService {
     private readonly userService: UserService,
   ) {}
 
-  async create(connectorId: string, friendId: string) {
-    const connector = await this.userService.findById(connectorId);
-    if (!connector) {
-      throw new HttpException('Connector with this id does not exist', HttpStatus.BAD_REQUEST);
+  async create(friendOwnerId: string, friendId: string) {
+    const friendOwner = await this.userService.findById(friendOwnerId);
+    if (!friendOwner) {
+      throw new HttpException('FriendOwner with this id does not exist', HttpStatus.BAD_REQUEST);
     }
     const friend = await this.userService.findById(friendId);
     if (!friend) {
@@ -35,7 +35,7 @@ export class FriendService {
     }
 
     let friendObject = new Friend();
-    friendObject.connector = connector;
+    friendObject.friendOwner = friendOwner;
     friendObject.friend = friend;
     friendObject.status = 0;
     let res;
@@ -44,7 +44,7 @@ export class FriendService {
     }
     catch(error) {
       if (error?.code === '23505') {
-        throw new HttpException('Friend relationship between those two users already exists', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Friend between those two users already exists', HttpStatus.BAD_REQUEST);
       }
       throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -52,8 +52,8 @@ export class FriendService {
     ret.push(this.friendToDto(res));
 
     let friendObject2 = new Friend();
-    friendObject2.connector = friend;
-    friendObject2.friend = connector;
+    friendObject2.friendOwner = friend;
+    friendObject2.friend = friendOwner;
     friendObject2.status = 1;
     try {
       res = await this.friendRepo.save(friendObject2);
@@ -82,8 +82,8 @@ export class FriendService {
   public async getAllActiveUser(userId: string) {
     const res = await this.userService.findById(userId);
     let dto: FriendDto[] = [];
-    for (const connector of res.connectors) {
-      const friend = await this.findById(connector.id);
+    for (const friendOwner of res.friendOwners) {
+      const friend = await this.findById(friendOwner.id);
       let friendDto: FriendDto = this.friendToDto(friend);
       dto.push(friendDto);
     }
@@ -100,14 +100,14 @@ export class FriendService {
   }
 
   // Return Friend Object
-  public async findByConnectorAndFriend(connectorId: string, friendId: string) {
-    const connector = await this.userService.findById(connectorId);
+  public async findByOwnerAndFriend(friendOwnerId: string, friendId: string) {
+    const friendOwner = await this.userService.findById(friendOwnerId);
     const friend = await this.userService.findById(friendId);
-    const friendObject = await this.friendRepo.findOne( { connector, friend } );
+    const friendObject = await this.friendRepo.findOne( { friendOwner, friend } );
     if (friendObject) {
       return friendObject;
     }
-    throw new HttpException('Friend with this (connectorId, friendId) does not exist', HttpStatus.NOT_FOUND);
+    throw new HttpException('Friend with this (friendOwnerId, friendId) does not exist', HttpStatus.NOT_FOUND);
   }
 
   public async update(id: string, friendUpdateDto: FriendUpdateDto) {
@@ -120,15 +120,12 @@ export class FriendService {
   }
 
   public async updateStatus(userId: string, friendId: string, status: number) {
-    let friend = await this.findByConnectorAndFriend(userId, friendId);
+    let friend = await this.findByOwnerAndFriend(userId, friendId);
     if (friend.status === 0) {
-      throw new HttpException('You have to wait for the invited Friend to accept or reject', HttpStatus.NOT_FOUND);
+      throw new HttpException('You have to wait for Friend to accept', HttpStatus.NOT_FOUND);
     }
     if (friend.status === 2) {
       throw new HttpException('The request has already been accepted', HttpStatus.NOT_FOUND);
-    }
-    if (friend.status === 3) {
-      throw new HttpException('The request has already been rejected', HttpStatus.NOT_FOUND);
     }
     let friendUpdateDto = new FriendUpdateDto();
     friendUpdateDto.status = status;
@@ -137,7 +134,7 @@ export class FriendService {
     let ret = [];
     ret.push(this.friendToDto(res));
 
-    let friend2 = await this.findByConnectorAndFriend(friendId, userId);
+    let friend2 = await this.findByOwnerAndFriend(friendId, userId);
     let friendUpdateDto2 = new FriendUpdateDto();
     friendUpdateDto2.status = status;
     await this.update(friend2.id, friendUpdateDto2);
@@ -159,8 +156,8 @@ export class FriendService {
   }
 
   public async unfriend(userId: string, friendId: string) {
-    const friend = await this.findByConnectorAndFriend(userId, friendId);
-    const friend2 = await this.findByConnectorAndFriend(friendId, userId);
+    const friend = await this.findByOwnerAndFriend(userId, friendId);
+    const friend2 = await this.findByOwnerAndFriend(friendId, userId);
     await this.delete(friend.id);
     await this.delete(friend2.id);
     return await this.getAllActiveUser(userId);
@@ -169,11 +166,11 @@ export class FriendService {
   public friendToDto(friend: Friend) {
     let dto = new FriendDto();
     dto.id = friend.id;
-    dto.connectorId = friend.connector.id;
-    dto.connectorName = friend.connector.name;
+    dto.friendOwnerId = friend.friendOwner.id;
+    dto.friendOwnerName = friend.friendOwner.name;
     dto.friendId = friend.friend.id;
     dto.friendName = friend.friend.name;
-    dto.status = RequestStatus[friend.status];
+    dto.status = FriendStatus[friend.status];
     return dto;
   }
 }

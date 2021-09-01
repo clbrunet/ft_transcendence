@@ -1,32 +1,32 @@
 import { IsOptional } from 'class-validator';
 
-import { RequestStatus } from './enum.requestStatus';
+import { FriendStatus } from './enum.friendStatus';
 
 export class FriendCreationActiveUserDto {
   friendId: string;
 }
 
 export class FriendSeedDto {
-  connectorEmail: string;
+  friendOwnerEmail: string;
   friendEmail: string;
-  status: RequestStatus;
+  status: FriendStatus;
 }
 
 export class FriendUpdateActiveUserDto {
   friendId: string;
 
   @IsOptional()
-  status: RequestStatus;
+  status: FriendStatus;
 }
 
 export class FriendUpdateDto {
-  status: RequestStatus;
+  status: FriendStatus;
 }
 
 export class FriendDto {
   id: string;
-  connectorId: string;
-  connectorName: string;
+  friendOwnerId: string;
+  friendOwnerName: string;
   friendId: string;
   friendName: string;
   status: string;

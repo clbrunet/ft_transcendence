@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import User from '../user/user.entity';
 import Friend from '../friend/friend.entity';
 import Block from '../block/block.entity';
+import Duel from '../duel/duel.entity';
 import Channel from '../channel/channel.entity';
 import Participant from '../participant/participant.entity';
 import Message from '../message/message.entity';
@@ -13,6 +14,7 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { UserService } from '../user/user.service';
 import { FriendService } from '../friend/friend.service';
 import { BlockService } from '../block/block.service';
+import { DuelService } from '../duel/duel.service';
 import { ChannelService } from '../channel/channel.service';
 import { ParticipantService } from '../participant/participant.service';
 import { MessageService } from '../message/message.service';
@@ -21,6 +23,7 @@ import { registers } from './data';
 import { users } from './data';
 import { friends } from './data';
 import { blocks } from './data';
+import { duels } from './data';
 import { channels } from './data';
 import { participants } from './data';
 import { messages } from './data';
@@ -41,6 +44,8 @@ export class SeedService {
     @InjectRepository(Block)
     private readonly blockRepo: Repository<Block>,
     @InjectRepository(Channel)
+    private readonly duelRepo: Repository<Duel>,
+    @InjectRepository(Duel)
     private readonly channelRepo: Repository<Channel>,
     @InjectRepository(Participant)
     private readonly participantRepo: Repository<Participant>,
@@ -51,6 +56,7 @@ export class SeedService {
     private readonly userService: UserService,
     private readonly friendService: FriendService,
     private readonly blockService: BlockService,
+    private readonly duelService: DuelService,
     private readonly channelService: ChannelService,
     private readonly participantService: ParticipantService,
     private readonly messageService: MessageService,
@@ -91,14 +97,14 @@ export class SeedService {
   }
 
   async seedFriend() {
-    console.log('Seeding friend...');
+    console.log('Seeding friends...');
     for await (const friend of friends) {
-      let connector = await this.userService.findByEmail(friend.connectorEmail);
-      let friend2 = await this.userService.findByEmail(friend.friendEmail);
-      await this.friendService.create(connector.id, friend2.id);
-      const friendObject = await this.friendService.findByConnectorAndFriend(connector.id, friend2.id);
-      if (friend.status === 2 || friend.status === 3) {
-        await this.friendService.updateStatus(friendObject.friend.id, friendObject.connector.id, friend.status);
+      let friendOwner = await this.userService.findByEmail(friend.friendOwnerEmail);
+      let friendAttribute = await this.userService.findByEmail(friend.friendEmail);
+      await this.friendService.create(friendOwner.id, friendAttribute.id);
+      const friendObject = await this.friendService.findByOwnerAndFriend(friendOwner.id, friendAttribute.id);
+      if (friend.status === 2) {
+        await this.friendService.updateStatus(friendObject.friend.id, friendObject.friendOwner.id, friend.status);
       }
     }
     console.log('Friend seeding complete!');
@@ -106,14 +112,32 @@ export class SeedService {
   }
 
   async seedBlock() {
-    console.log('Seeding block...');
+    console.log('Seeding blocks...');
     for await (const block of blocks) {
-      let connector = await this.userService.findByEmail(block.blockConnectorEmail);
-      let block2 = await this.userService.findByEmail(block.blockEmail);
-      await this.blockService.create(connector.id, block2.id);
-      const blockObject = await this.blockService.findByConnectorAndBlock(connector.id, block2.id);
+      let blockOwner = await this.userService.findByEmail(block.blockOwnerEmail);
+      let blockAttribute = await this.userService.findByEmail(block.blockEmail);
+      await this.blockService.create(blockOwner.id, blockAttribute.id);
+      const blockObject = await this.blockService.findByOwnerAndBlock(blockOwner.id, blockAttribute.id);
+      if (block.status === 2) {
+        await this.blockService.updateStatus(blockObject.block.id, blockObject.blockOwner.id, block.status);
+      }
     }
     console.log('Block seeding complete!');
+    return true;
+  }
+
+  async seedDuel() {
+    console.log('Seeding duels...');
+    for await (const duel of duels) {
+      let duelOwner = await this.userService.findByEmail(duel.duelOwnerEmail);
+      let duelAttribute = await this.userService.findByEmail(duel.duelEmail);
+      await this.duelService.create(duelOwner.id, duelAttribute.id);
+      const duelObject = await this.duelService.findByOwnerAndDuel(duelOwner.id, duelAttribute.id);
+      if (duel.status === 2) {
+        await this.duelService.updateStatus(duelObject.duel.id, duelObject.duelOwner.id, duel.status);
+      }
+    }
+    console.log('Duel seeding complete!');
     return true;
   }
 

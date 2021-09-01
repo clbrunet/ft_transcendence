@@ -1,16 +1,21 @@
-import { Entity, Unique, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Unique, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+
+import { BlockStatus } from './enum.blockStatus';
 
 import User  from '../user/user.entity';
 
 
 @Entity()
-@Unique(["blockConnector", "block"])
+@Unique(["blockOwner", "block"])
 class Block {
     @PrimaryGeneratedColumn('uuid')
     public id?: string;
 
-    @ManyToOne(() => User, user => user.blockConnectors, { eager: true, onDelete: "CASCADE" })
-    blockConnector: User;
+    @Column()
+    public status: BlockStatus;
+
+    @ManyToOne(() => User, user => user.blockOwners, { eager: true, onDelete: "CASCADE" })
+    blockOwner: User;
 
     @ManyToOne(() => User, user => user.blocks, { eager: true, onDelete: "CASCADE" })
     block: User;
