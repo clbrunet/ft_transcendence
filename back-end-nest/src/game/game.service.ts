@@ -20,7 +20,7 @@ export class GameService {
     @InjectRepository(Player)
     private readonly playerRepo: Repository<Player>,
 
-    private readonly playerService: GameService,
+    private readonly playerService: PlayerService,
   ) {}
 
   public async create() {
