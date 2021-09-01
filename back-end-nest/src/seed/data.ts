@@ -47,13 +47,14 @@ export const friends: FriendSeedDto[] = [
 ];
 
 export const blocks: BlockSeedDto[] = [
-  { blockOwnerEmail: 'erwan@yopmail.com', blockEmail: 'come@yopmail.com', status: 2},
-  { blockOwnerEmail: 'clement@yopmail.com', blockEmail: 'come@yopmail.com', status: 2},
-  { blockOwnerEmail: 'nicolas@yopmail.com', blockEmail: 'come@yopmail.com', status: 2},
-  { blockOwnerEmail: 'alban@yopmail.com', blockEmail: 'come@yopmail.com', status: 2},
-  { blockOwnerEmail: 'lucille@yopmail.com', blockEmail: 'come@yopmail.com', status: 2},
+  { blockOwnerEmail: 'erwan@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
+  { blockOwnerEmail: 'clement@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
+  { blockOwnerEmail: 'nicolas@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
+  { blockOwnerEmail: 'alban@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
+  { blockOwnerEmail: 'lucille@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
 ];
 
+// duel.status can't equal to 1, you invert connectorEmail and friendEmail if needed
 export const duels: DuelSeedDto[] = [
   { duelOwnerEmail: 'erwan@yopmail.com', duelEmail: 'nicolas@yopmail.com', status: 2},
   { duelOwnerEmail: 'erwan@yopmail.com', duelEmail: 'clement@yopmail.com', status: 2},

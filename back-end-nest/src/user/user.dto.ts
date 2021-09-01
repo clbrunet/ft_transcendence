@@ -71,6 +71,18 @@ export class UserDto {
   inQueue: boolean;
 }
 
+export class UserDtoLazy {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  level: string;
+  nGames: number;
+  nWins: number;
+  nLosses: number;
+  xp: number;
+}
+
 export class UserForChannelDto {
   id: string;
   name: string;

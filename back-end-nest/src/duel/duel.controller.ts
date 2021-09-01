@@ -20,16 +20,17 @@ export class DuelController {
   ) {}
 
   @UseGuards(JwtTwoFactorGuard)
+  @Get('/index')
+  async getAllActiveUser(@Req() request: RequestWithUser) {
+    const {user} = request;
+    return await this.duelService.getAllActiveUser(user.id);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
   @Post('/:duelId')
   async create(@Req() request: RequestWithUser, @Param('duelId') duelId) {
     const {user} = request;
     return await this.duelService.create(user.id, duelId);
-  }
-
-  @UseGuards(JwtTwoFactorGuard)
-  @Get('/all')
-  async getAll() {
-    return await this.duelService.getAll();
   }
 
   @UseGuards(JwtTwoFactorGuard)
@@ -43,7 +44,7 @@ export class DuelController {
   @Patch('/reject/:duelId')
   async reject(@Req() request: RequestWithUser, @Param('duelId') duelId) {
     const {user} = request;
-    return await this.duelService.unduel(user.id, duelId);;
+    return await this.duelService.reject(user.id, duelId);;
   }
 
   @UseGuards(JwtTwoFactorGuard)
@@ -52,4 +53,13 @@ export class DuelController {
     const {user} = request;
     return await this.duelService.unduel(user.id, duelId);
   }
+
+  // ROUTES FOR DEV ONLY TO BE COMMENTED
+/*
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/all')
+  async getAll() {
+    return await this.duelService.getAll();
+  }
+*/
 }

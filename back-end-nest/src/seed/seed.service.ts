@@ -117,10 +117,6 @@ export class SeedService {
       let blockOwner = await this.userService.findByEmail(block.blockOwnerEmail);
       let blockAttribute = await this.userService.findByEmail(block.blockEmail);
       await this.blockService.create(blockOwner.id, blockAttribute.id);
-      const blockObject = await this.blockService.findByOwnerAndBlock(blockOwner.id, blockAttribute.id);
-      if (block.status === 2) {
-        await this.blockService.updateStatus(blockObject.block.id, blockObject.blockOwner.id, block.status);
-      }
     }
     console.log('Block seeding complete!');
     return true;

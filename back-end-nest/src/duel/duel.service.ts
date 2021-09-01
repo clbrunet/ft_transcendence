@@ -25,11 +25,14 @@ export class DuelService {
   ) {}
 
   async create(duelOwnerId: string, duelId: string) {
-    const duelOwner = await this.userService.findById(duelOwnerId);
+    if (duelOwnerId === duelId) {
+      throw new HttpException('User can not duel himself', HttpStatus.BAD_REQUEST);
+    }
+    const duelOwner = await this.userService.findByIdLazy(duelOwnerId);
     if (!duelOwner) {
       throw new HttpException('DuelOwner with this id does not exist', HttpStatus.BAD_REQUEST);
     }
-    const duel = await this.userService.findById(duelId);
+    const duel = await this.userService.findByIdLazy(duelId);
     if (!duel) {
       throw new HttpException('Duel with this id does not exist', HttpStatus.BAD_REQUEST);
     }
@@ -80,7 +83,7 @@ export class DuelService {
   }
 
   public async getAllActiveUser(userId: string) {
-    const res = await this.userService.findById(userId);
+    const res = await this.userService.findByIdDuelOwner(userId);
     let dto: DuelDto[] = [];
     for (const duelOwner of res.duelOwners) {
       const duel = await this.findById(duelOwner.id);
@@ -101,8 +104,8 @@ export class DuelService {
 
   // Return Duel Object
   public async findByOwnerAndDuel(duelOwnerId: string, duelId: string) {
-    const duelOwner = await this.userService.findById(duelOwnerId);
-    const duel = await this.userService.findById(duelId);
+    const duelOwner = await this.userService.findByIdLazy(duelOwnerId);
+    const duel = await this.userService.findByIdLazy(duelId);
     const duelObject = await this.duelRepo.findOne( { duelOwner, duel } );
     if (duelObject) {
       return duelObject;
@@ -155,8 +158,22 @@ export class DuelService {
     return;
   }
 
+  public async reject(userId: string, duelId: string) {
+    const duel = await this.findByOwnerAndDuel(userId, duelId);
+    if (duel.status == 0) {
+      throw new HttpException('User can not reject a Duel he has sent', HttpStatus.NOT_FOUND);      
+    }
+    const duel2 = await this.findByOwnerAndDuel(duelId, userId);
+    await this.delete(duel.id);
+    await this.delete(duel2.id);
+    return await this.getAllActiveUser(userId);
+  }
+
   public async unduel(userId: string, duelId: string) {
     const duel = await this.findByOwnerAndDuel(userId, duelId);
+    if (duel.status == 1) {
+      throw new HttpException('User can not unduel before accepting', HttpStatus.NOT_FOUND);      
+    }
     const duel2 = await this.findByOwnerAndDuel(duelId, userId);
     await this.delete(duel.id);
     await this.delete(duel2.id);

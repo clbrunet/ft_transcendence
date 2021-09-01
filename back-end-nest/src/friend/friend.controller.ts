@@ -20,16 +20,17 @@ export class FriendController {
   ) {}
 
   @UseGuards(JwtTwoFactorGuard)
+  @Get('/index')
+  async getAllActiveUser(@Req() request: RequestWithUser) {
+    const {user} = request;
+    return await this.friendService.getAllActiveUser(user.id);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
   @Post('/:friendId')
   async create(@Req() request: RequestWithUser, @Param('friendId') friendId) {
     const {user} = request;
     return await this.friendService.create(user.id, friendId);
-  }
-
-  @UseGuards(JwtTwoFactorGuard)
-  @Get('/all')
-  async getAll() {
-    return await this.friendService.getAll();
   }
 
   @UseGuards(JwtTwoFactorGuard)
@@ -43,13 +44,22 @@ export class FriendController {
   @Patch('/reject/:friendId')
   async reject(@Req() request: RequestWithUser, @Param('friendId') friendId) {
     const {user} = request;
-    return await this.friendService.unfriend(user.id, friendId);;
+    return await this.friendService.reject(user.id, friendId);;
   }
-
+ 
   @UseGuards(JwtTwoFactorGuard)
   @Delete('/unfriend/:friendId')
   async unfriend(@Req() request: RequestWithUser, @Param('friendId') friendId) {
     const {user} = request;
     return await this.friendService.unfriend(user.id, friendId);
   }
+
+  // ROUTES FOR DEV ONLY TO BE COMMENTED
+/*
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/all')
+  async getAll() {
+    return await this.friendService.getAll();
+  }
+*/
 }

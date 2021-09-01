@@ -13,6 +13,7 @@ import User from './user.entity';
 
 import RegisterDto from '../authentication/register.dto';
 import { UserDto } from './user.dto';
+import { UserDtoLazy } from './user.dto';
 import { UserUpdateDto } from './user.dto';
 import { ParticipantForUserDto } from '../participant/participant.dto';
 import { ChannelForUserDto } from '../channel/channel.dto';
@@ -52,6 +53,17 @@ export class UserService {
     return dto;    
   }
 
+  public async getAllLazy() {
+    let res: User[] = [];
+    res = await this.userRepository.find();
+    let dto: UserDtoLazy[] = [];
+    res.forEach( user => {
+      let userDtoLazy: UserDtoLazy = this.userToDtoLazy(user);
+      dto.push(userDtoLazy);
+    })
+    return dto;    
+  }
+
   // Return User Dto
   public async getById(id: string) {
     const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'friendOwners', 'blocks', 'blockOwners', 'duels', 'duelOwners', 'queuers', 'players'] } );
@@ -61,7 +73,7 @@ export class UserService {
     throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return User Object 
+  // Return User Object with all relation
   public async findById(id: string) {
     const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'friendOwners', 'blocks', 'blockOwners', 'duels', 'duelOwners', 'queuers', 'players'] } );
     if (user) {
@@ -70,6 +82,78 @@ export class UserService {
     throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
+  // Return User Object without any relation
+  public async findByIdLazy(id: string) {
+    const user = await this.userRepository.findOne(id);
+    if (user) {
+      return user;
+    }
+    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return User Object with channels relation only
+  public async findByIdChannel(id: string) {
+    const user = await this.userRepository.findOne( id, { relations: ['channels'] } );
+    if (user) {
+      return user;
+    }
+    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return User Object with participants relation only
+  public async findByIdParticipant(id: string) {
+    const user = await this.userRepository.findOne( id, { relations: ['participants'] } );
+    if (user) {
+      return user;
+    }
+    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return User Object with friendOwners relation only
+  public async findByIdFriendOwner(id: string) {
+    const user = await this.userRepository.findOne( id, { relations: ['friendOwners'] } );
+    if (user) {
+      return user;
+    }
+    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return User Object with blockOwners relation only
+  public async findByIdBlockOwner(id: string) {
+    const user = await this.userRepository.findOne( id, { relations: ['blockOwners'] } );
+    if (user) {
+      return user;
+    }
+    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return User Object with duelOwners relation only
+  public async findByIdDuelOwner(id: string) {
+    const user = await this.userRepository.findOne( id, { relations: ['duelOwners'] } );
+    if (user) {
+      return user;
+    }
+    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return User Object with queuers relation only
+  public async findByIdQueuer(id: string) {
+    const user = await this.userRepository.findOne( id, { relations: ['queuers'] } );
+    if (user) {
+      return user;
+    }
+    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return User Object with players relation only
+  public async findByIdPlayer(id: string) {
+    const user = await this.userRepository.findOne( id, { relations: ['players'] } );
+    if (user) {
+      return user;
+    }
+    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+ 
   // Return User Object
   public async findByEmail(email: string) {
     const user = await this.userRepository.findOne( { email }, { relations: ['channels', 'participants', 'friends', 'friendOwners', 'blocks', 'blockOwners', 'duels', 'duelOwners', 'queuers', 'players'] } );
@@ -167,6 +251,20 @@ export class UserService {
     else {
       dto.inQueue = true;      
     }
+    return dto;
+  }
+
+  public userToDtoLazy(user: User) {
+    let dto = new UserDtoLazy();
+    dto.id = user.id;
+    dto.name = user.name;
+    dto.email = user.email;
+    dto.avatar = user.avatar;
+    dto.level = Level[user.level];
+    dto.nGames = user.nGames;
+    dto.nWins = user.nWins;
+    dto.nLosses = user.nLosses;
+    dto.xp = user.xp;
     return dto;
   }
 }

@@ -18,16 +18,17 @@ export class BlockController {
   ) {}
 
   @UseGuards(JwtTwoFactorGuard)
+  @Get('/index')
+  async getAllActiveUser(@Req() request: RequestWithUser) {
+    const {user} = request;
+    return await this.blockService.getAllActiveUser(user.id);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
   @Post('/:blockId')
   async block(@Req() request: RequestWithUser, @Param('blockId') blockId) {
     const {user} = request;
     return await this.blockService.create(user.id, blockId);
-  }
-
-  @UseGuards(JwtTwoFactorGuard)
-  @Get('/all')
-  async getAll() {
-    return await this.blockService.getAll();
   }
 
   @UseGuards(JwtTwoFactorGuard)
@@ -36,4 +37,13 @@ export class BlockController {
     const {user} = request;
     return await this.blockService.unblock(user.id, blockId);
   }
+
+  // ROUTES FOR DEV ONLY TO BE COMMENTED
+/*
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/all')
+  async getAll() {
+    return await this.blockService.getAll();
+  }
+*/
 }

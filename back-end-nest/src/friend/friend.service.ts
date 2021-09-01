@@ -25,11 +25,14 @@ export class FriendService {
   ) {}
 
   async create(friendOwnerId: string, friendId: string) {
-    const friendOwner = await this.userService.findById(friendOwnerId);
+    if (friendOwnerId === friendId) {
+      throw new HttpException('User can not friend himself', HttpStatus.BAD_REQUEST);
+    }
+    const friendOwner = await this.userService.findByIdLazy(friendOwnerId);
     if (!friendOwner) {
       throw new HttpException('FriendOwner with this id does not exist', HttpStatus.BAD_REQUEST);
     }
-    const friend = await this.userService.findById(friendId);
+    const friend = await this.userService.findByIdLazy(friendId);
     if (!friend) {
       throw new HttpException('Friend with this id does not exist', HttpStatus.BAD_REQUEST);
     }
@@ -80,7 +83,7 @@ export class FriendService {
   }
 
   public async getAllActiveUser(userId: string) {
-    const res = await this.userService.findById(userId);
+    const res = await this.userService.findByIdFriendOwner(userId);
     let dto: FriendDto[] = [];
     for (const friendOwner of res.friendOwners) {
       const friend = await this.findById(friendOwner.id);
@@ -101,8 +104,8 @@ export class FriendService {
 
   // Return Friend Object
   public async findByOwnerAndFriend(friendOwnerId: string, friendId: string) {
-    const friendOwner = await this.userService.findById(friendOwnerId);
-    const friend = await this.userService.findById(friendId);
+    const friendOwner = await this.userService.findByIdLazy(friendOwnerId);
+    const friend = await this.userService.findByIdLazy(friendId);
     const friendObject = await this.friendRepo.findOne( { friendOwner, friend } );
     if (friendObject) {
       return friendObject;
@@ -155,8 +158,22 @@ export class FriendService {
     return;
   }
 
+  public async reject(userId: string, friendId: string) {
+    const friend = await this.findByOwnerAndFriend(userId, friendId);
+    if (friend.status == 0) {
+      throw new HttpException('User can not reject a Friend he has sent', HttpStatus.NOT_FOUND);      
+    }
+    const friend2 = await this.findByOwnerAndFriend(friendId, userId);
+    await this.delete(friend.id);
+    await this.delete(friend2.id);
+    return await this.getAllActiveUser(userId);
+  }
+
   public async unfriend(userId: string, friendId: string) {
     const friend = await this.findByOwnerAndFriend(userId, friendId);
+    if (friend.status == 1) {
+      throw new HttpException('User can not unfriend before accepting', HttpStatus.NOT_FOUND);      
+    }
     const friend2 = await this.findByOwnerAndFriend(friendId, userId);
     await this.delete(friend.id);
     await this.delete(friend2.id);

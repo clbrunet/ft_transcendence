@@ -25,11 +25,14 @@ export class BlockService {
   ) {}
 
   async create(blockOwnerId: string, blockId: string) {
-    const blockOwner = await this.userService.findById(blockOwnerId);
+    if (blockOwnerId === blockId) {
+      throw new HttpException('User can not block himself', HttpStatus.BAD_REQUEST);
+    }
+    const blockOwner = await this.userService.findByIdLazy(blockOwnerId);
     if (!blockOwner) {
       throw new HttpException('BlockOwner with this id does not exist', HttpStatus.BAD_REQUEST);
     }
-    const block = await this.userService.findById(blockId);
+    const block = await this.userService.findByIdLazy(blockId);
     if (!block) {
       throw new HttpException('Block with this id does not exist', HttpStatus.BAD_REQUEST);
     }
@@ -60,7 +63,7 @@ export class BlockService {
     }
     catch(error) {
       if (error?.code === '23505') {
-        throw new HttpException('Block relationship between those two users already exists', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Block between those two users already exists', HttpStatus.BAD_REQUEST);
       }
       throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -80,7 +83,7 @@ export class BlockService {
   }
 
   public async getAllActiveUser(userId: string) {
-    const res = await this.userService.findById(userId);
+    const res = await this.userService.findByIdBlockOwner(userId);
     let dto: BlockDto[] = [];
     for (const blockOwner of res.blockOwners) {
       const block = await this.findById(blockOwner.id);
@@ -101,47 +104,13 @@ export class BlockService {
 
   // Return Block Object
   public async findByOwnerAndBlock(blockOwnerId: string, blockId: string) {
-    const blockOwner = await this.userService.findById(blockOwnerId);
-    const block = await this.userService.findById(blockId);
+    const blockOwner = await this.userService.findByIdLazy(blockOwnerId);
+    const block = await this.userService.findByIdLazy(blockId);
     const blockObject = await this.blockRepo.findOne( { blockOwner, block } );
     if (blockObject) {
       return blockObject;
     }
     throw new HttpException('Block with this (blockOwnerId, blockId) does not exist', HttpStatus.NOT_FOUND);
-  }
-
-  public async update(id: string, blockUpdateDto: BlockUpdateDto) {
-    const res = await this.blockRepo.update(id, blockUpdateDto);
-    if (res) {
-      const block = await this.findById(id);
-      return this.blockToDto(block);
-    }
-    throw new HttpException('Block update failed', HttpStatus.NOT_FOUND);
-  }
-
-  public async updateStatus(userId: string, blockId: string, status: number) {
-    let block = await this.findByOwnerAndBlock(userId, blockId);
-    if (block.status === 0) {
-      throw new HttpException('You have to wait for Block to accept', HttpStatus.NOT_FOUND);
-    }
-    if (block.status === 2) {
-      throw new HttpException('The request has already been accepted', HttpStatus.NOT_FOUND);
-    }
-    let blockUpdateDto = new BlockUpdateDto();
-    blockUpdateDto.status = status;
-    await this.update(block.id, blockUpdateDto);
-    let res = await this.findById(block.id);
-    let ret = [];
-    ret.push(this.blockToDto(res));
-
-    let block2 = await this.findByOwnerAndBlock(blockId, userId);
-    let blockUpdateDto2 = new BlockUpdateDto();
-    blockUpdateDto2.status = status;
-    await this.update(block2.id, blockUpdateDto2);
-    let res2 = await this.findById(block2.id);
-    ret.push(this.blockToDto(res2));
-
-    return ret;
   }
 
   public async delete(id: string) {
@@ -157,6 +126,9 @@ export class BlockService {
 
   public async unblock(userId: string, blockId: string) {
     const block = await this.findByOwnerAndBlock(userId, blockId);
+    if (block.status == 1) {
+      throw new HttpException('Only the blocker can unblock a Block', HttpStatus.NOT_FOUND);      
+    }
     const block2 = await this.findByOwnerAndBlock(blockId, userId);
     await this.delete(block.id);
     await this.delete(block2.id);
