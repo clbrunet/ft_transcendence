@@ -21,6 +21,12 @@ export class UserController {
   }
 
   @UseGuards(JwtTwoFactorGuard)
+  @Get('/index')
+  async getAllLazy() {
+    return await this.userService.getAllLazy();
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
   @Get('/:id')
   async getbyId(@Param('id') id) {
     return await this.userService.getById(id);

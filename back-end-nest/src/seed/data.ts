@@ -2,6 +2,7 @@ import { RegisterDto } from '../authentication/register.dto';
 import { UserSeedDto } from '../user/user.dto';
 import { FriendSeedDto } from '../friend/friend.dto';
 import { BlockSeedDto } from '../block/block.dto';
+import { DuelSeedDto } from '../duel/duel.dto';
 import { ChannelSeedDto } from '../channel/channel.dto';
 import { ParticipantSeedDto } from '../participant/participant.dto';
 import { MessageSeedDto } from '../message/message.dto';
@@ -27,31 +28,50 @@ export const users: UserSeedDto[] = [
 
 // friend.status can't equal to 1, you invert connectorEmail and friendEmail if needed
 export const friends: FriendSeedDto[] = [
-  { connectorEmail: 'erwan@yopmail.com', friendEmail: 'nicolas@yopmail.com', status: 2},
-  { connectorEmail: 'erwan@yopmail.com', friendEmail: 'clement@yopmail.com', status: 2},
-  { connectorEmail: 'erwan@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 3},
-  { connectorEmail: 'erwan@yopmail.com', friendEmail: 'alban@yopmail.com', status: 0},
+  { friendOwnerEmail: 'erwan@yopmail.com', friendEmail: 'nicolas@yopmail.com', status: 2},
+  { friendOwnerEmail: 'erwan@yopmail.com', friendEmail: 'clement@yopmail.com', status: 2},
+  { friendOwnerEmail: 'erwan@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 0},
+  { friendOwnerEmail: 'erwan@yopmail.com', friendEmail: 'alban@yopmail.com', status: 0},
 
-  { connectorEmail: 'clement@yopmail.com', friendEmail: 'nicolas@yopmail.com', status: 2},
-  { connectorEmail: 'clement@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 3},
-  { connectorEmail: 'clement@yopmail.com', friendEmail: 'alban@yopmail.com', status: 0},
+  { friendOwnerEmail: 'clement@yopmail.com', friendEmail: 'nicolas@yopmail.com', status: 2},
+  { friendOwnerEmail: 'clement@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 0},
+  { friendOwnerEmail: 'clement@yopmail.com', friendEmail: 'alban@yopmail.com', status: 0},
 
-  { connectorEmail: 'nicolas@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 2},
-  { connectorEmail: 'nicolas@yopmail.com', friendEmail: 'come@yopmail.com', status: 2},
-  { connectorEmail: 'nicolas@yopmail.com', friendEmail: 'alban@yopmail.com', status: 2},
+  { friendOwnerEmail: 'nicolas@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 2},
+  { friendOwnerEmail: 'nicolas@yopmail.com', friendEmail: 'come@yopmail.com', status: 2},
+  { friendOwnerEmail: 'nicolas@yopmail.com', friendEmail: 'alban@yopmail.com', status: 2},
 
-  { connectorEmail: 'come@yopmail.com', friendEmail: 'alban@yopmail.com', status: 3},
-  { connectorEmail: 'come@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 3},
-  { connectorEmail: 'come@yopmail.com', friendEmail: 'erwan@yopmail.com', status: 0},
+  { friendOwnerEmail: 'come@yopmail.com', friendEmail: 'alban@yopmail.com', status: 2},
+  { friendOwnerEmail: 'come@yopmail.com', friendEmail: 'lucille@yopmail.com', status: 2},
+  { friendOwnerEmail: 'come@yopmail.com', friendEmail: 'erwan@yopmail.com', status: 0},
 ];
 
 export const blocks: BlockSeedDto[] = [
-  { blockConnectorEmail: 'erwan@yopmail.com', blockEmail: 'come@yopmail.com'},
-  { blockConnectorEmail: 'clement@yopmail.com', blockEmail: 'come@yopmail.com'},
-  { blockConnectorEmail: 'nicolas@yopmail.com', blockEmail: 'alban@yopmail.com'},
-  { blockConnectorEmail: 'come@yopmail.com', blockEmail: 'erwan@yopmail.com'},
-  { blockConnectorEmail: 'lucille@yopmail.com', blockEmail: 'erwan@yopmail.com'},
-  { blockConnectorEmail: 'alban@yopmail.com', blockEmail: 'erwan@yopmail.com'},
+  { blockOwnerEmail: 'erwan@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
+  { blockOwnerEmail: 'clement@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
+  { blockOwnerEmail: 'nicolas@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
+  { blockOwnerEmail: 'alban@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
+  { blockOwnerEmail: 'lucille@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
+];
+
+// duel.status can't equal to 1, you invert connectorEmail and friendEmail if needed
+export const duels: DuelSeedDto[] = [
+  { duelOwnerEmail: 'erwan@yopmail.com', duelEmail: 'nicolas@yopmail.com', status: 2},
+  { duelOwnerEmail: 'erwan@yopmail.com', duelEmail: 'clement@yopmail.com', status: 2},
+  { duelOwnerEmail: 'erwan@yopmail.com', duelEmail: 'lucille@yopmail.com', status: 0},
+  { duelOwnerEmail: 'erwan@yopmail.com', duelEmail: 'alban@yopmail.com', status: 0},
+
+  { duelOwnerEmail: 'clement@yopmail.com', duelEmail: 'nicolas@yopmail.com', status: 2},
+  { duelOwnerEmail: 'clement@yopmail.com', duelEmail: 'lucille@yopmail.com', status: 0},
+  { duelOwnerEmail: 'clement@yopmail.com', duelEmail: 'alban@yopmail.com', status: 0},
+
+  { duelOwnerEmail: 'nicolas@yopmail.com', duelEmail: 'lucille@yopmail.com', status: 2},
+  { duelOwnerEmail: 'nicolas@yopmail.com', duelEmail: 'come@yopmail.com', status: 2},
+  { duelOwnerEmail: 'nicolas@yopmail.com', duelEmail: 'alban@yopmail.com', status: 2},
+
+  { duelOwnerEmail: 'come@yopmail.com', duelEmail: 'alban@yopmail.com', status: 2},
+  { duelOwnerEmail: 'come@yopmail.com', duelEmail: 'lucille@yopmail.com', status: 2},
+  { duelOwnerEmail: 'come@yopmail.com', duelEmail: 'erwan@yopmail.com', status: 0},
 ];
 
 export const channels: ChannelSeedDto[] = [

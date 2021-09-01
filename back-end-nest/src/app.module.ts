@@ -8,7 +8,10 @@ import { MessageModule } from './message/message.module';
 import { SeedModule } from './seed/seed.module';
 import { FriendModule } from './friend/friend.module';
 import { BlockModule } from './block/block.module';
+import { DuelModule } from './duel/duel.module';
 import { QueueModule } from './queue/queue.module';
+import { PlayerModule } from './player/player.module';
+import { GameModule } from './game/game.module';
 import * as Joi from 'joi';
 
 import { AppService } from './app.service';
@@ -36,6 +39,9 @@ modified['port'] = 5436;
     FriendModule,
     BlockModule,
     QueueModule,
+    DuelModule,
+    PlayerModule,
+    GameModule,
   ],
   controllers: [AppController],
   providers: [AppService],

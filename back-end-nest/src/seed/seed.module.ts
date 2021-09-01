@@ -4,12 +4,14 @@ import { AuthenticationModule } from '../authentication/authentication.module';
 import { UserModule } from '../user/user.module';
 import { FriendModule } from '../friend/friend.module';
 import { BlockModule } from '../block/block.module';
+import { DuelModule } from '../duel/duel.module';
 import { ChannelModule } from '../channel/channel.module';
 import { ParticipantModule } from '../participant/participant.module';
 import { MessageModule } from '../message/message.module';
 
 import User from '../user/user.entity';
 import Friend from '../friend/friend.entity';
+import Duel from '../duel/duel.entity';
 import Block from '../block/block.entity';
 import Channel from '../channel/channel.entity';
 import Participant from '../participant/participant.entity';
@@ -20,11 +22,12 @@ import { SeedService } from './seed.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Friend, Block, Channel, Participant, Message]),
+    TypeOrmModule.forFeature([User, Friend, Block, Duel, Channel, Participant, Message]),
     AuthenticationModule,
     UserModule,
     FriendModule,
     BlockModule,
+    DuelModule,
     ChannelModule,
     ParticipantModule,
     MessageModule,
