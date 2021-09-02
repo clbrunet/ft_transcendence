@@ -83,7 +83,7 @@ export class AuthenticationController {
   @Get()
   async authenticate(@Req() request: RequestWithUser) {
     const {user} = request;
-    return await this.userService.getById(user.id);
+    return await this.userService.getActiveUser(user.id);
   }
 
 }

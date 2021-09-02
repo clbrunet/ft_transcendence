@@ -15,12 +15,6 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @UseGuards(JwtTwoFactorGuard)
-  @Get('/all')
-  async getAll() {
-    return await this.userService.getAll();
-  }
-
-  @UseGuards(JwtTwoFactorGuard)
   @Get('/index')
   async getAllLazy() {
     return await this.userService.getAllLazy();
@@ -28,6 +22,19 @@ export class UserController {
 
   @UseGuards(JwtTwoFactorGuard)
   @Get('/:id')
+  async getbyIdLazy(@Param('id') id) {
+    return await this.userService.getByIdLazy(id);
+  }
+
+  // ROUTES FOR DEV ONLY TO BE COMMENTED
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/all')
+  async getAll() {
+    return await this.userService.getAll();
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/eager/:id')
   async getbyId(@Param('id') id) {
     return await this.userService.getById(id);
   }
@@ -42,5 +49,4 @@ export class UserController {
   async delete(@Param('id') id) {
     return await this.userService.delete(id);
   }
-
 }
