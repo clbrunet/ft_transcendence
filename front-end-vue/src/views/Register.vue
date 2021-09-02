@@ -42,30 +42,38 @@ export default Vue.extend({
     }
   },
   methods: {
-    submit_register() {
+    async submit_register() {
       if (this.password != this.confirmPassword) {
         this.messages = { message: "passwords do not match" };
         return;
       }
-      axios.post("http://localhost:3000/authentication/register",
-        {
+      try {
+        await axios.post("http://localhost:3000/authentication/register", {
           email: this.email,
           name: this.name,
           password: this.password
-        },
-        {
-          withCrenditals: true
-        }
-      ).then(() => {
-          router.push({ name: "App" });
-        })
-        .catch(err => {
-          this.messages = Array.isArray(err.response.data.message) ? err.response.data.message : [err.response.data.message];
-        });
+        }, { withCrenditals: true });
+      }
+      catch (error) {
+        this.messages = Array.isArray(error.response.data.message) ? error.response.data.message : [error.response.data.message];
+        return;
+      }
+      try {
+        const { data } = await axios.post('http://localhost:3000/authentication/log-in', {
+          email: this.email,
+          password: this.password
+        }, { withCredentials: true });
+        this.$store.state.user = data;
+        this.$store.dispatch('authenticate');
+        return router.push({ name: "Profile" });
+      }
+      catch (error) {
+        return router.push({ name: "Login" });
+      }
     },
     goToLogin() {
       router.push({name: 'Login'});
-    }
+    },
   }
 });
 </script>

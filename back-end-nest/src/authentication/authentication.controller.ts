@@ -42,7 +42,9 @@ export class AuthenticationController {
     if (user.isTwoFactorAuthenticationEnabled) {
       return;
     }
-    return user;
+    let userUpdateDto = new UserUpdateDto();
+    userUpdateDto.status = 1;
+    return await this.userService.update(user.id, userUpdateDto);
   }
 
   @Post('register')
@@ -64,8 +66,7 @@ export class AuthenticationController {
     }
     let userUpdateDto = new UserUpdateDto();
     userUpdateDto.status = 1;
-    this.userService.update(user.id, userUpdateDto);
-    return this.userService.userToDto(await this.userService.findById(user.id));
+    return await this.userService.update(user.id, userUpdateDto);
   }
 
   @UseGuards(JwtTwoFactorGuard)

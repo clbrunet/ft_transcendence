@@ -30,7 +30,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    submit_login() {
+    async submit_login() {
       if (this.email == "")
       {
         this.messages = 'email should not be empty';
@@ -42,28 +42,23 @@ export default Vue.extend({
         return ;
       }
 
-      axios({
-        url: "http://localhost:3000/authentication/log-in" ,
-        method: "post",
-        data: {
+      try {
+        const res = await axios.post('http://localhost:3000/authentication/log-in', {
           email: this.email,
           password: this.password
-        },
-        headers: {
-          'Access-Control-Allow-Origin': 'http://localhost:3000'
-        },
-        withCredentials: true
-      }).then(res => {
+        }, { withCredentials: true });
         this.$store.state.user = res.data;
         this.$store.dispatch('authenticate');
         router.push({ name: "Profile" });
-      }).catch(() => {
+      }
+      catch (error) {
+        this.messages = Array.isArray(error.response.data.message) ? error.response.data.message : [error.response.data.message];
         this.messages = "email or password are not valid";
-      });
+      }
     },
     goToRegister() {
       router.push({name: 'Register'});
-    }
+    },
   }
 });
 </script>
