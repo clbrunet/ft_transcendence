@@ -29,7 +29,7 @@ export class UserService {
     private userRepository: Repository<User> ) {}
 
   public async create(registerData: RegisterDto) {
-    const newUser = await this.userRepository.create(registerData);
+    const newUser = this.userRepository.create(registerData);
     await this.userRepository.save(newUser);
     return newUser;
   }

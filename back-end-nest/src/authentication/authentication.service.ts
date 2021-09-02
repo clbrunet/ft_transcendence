@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
 import RegisterDto from './register.dto';
-
+import axios from 'axios';
 
 @Injectable()
 export class AuthenticationService {
@@ -19,13 +19,16 @@ export class AuthenticationService {
   ) {}
 
   public async register(registrationData: RegisterDto) {
+    if (registrationData.isFortyTwoAccount !== true) {
+      await this.verifyName(registrationData.name);
+    }
     const hashedPassword = await bcrypt.hash(registrationData.password, 10);
     try {
       const createdUser = await this.userService.create({
         ...registrationData,
         password: hashedPassword
       });
-      createdUser.password = undefined; //not the cleanest way to not send the password in a response
+      createdUser.password = undefined;
       return createdUser;
     } catch (error) {
       if (error?.code === '23505') {
@@ -35,11 +38,34 @@ export class AuthenticationService {
     }
   }
 
+  private async verifyName(name: string) {
+    let isNameIsAFortyTwoLogin = false;
+    try {
+      let token_res = await axios.post('https://api.intra.42.fr/oauth/token', {
+        grant_type: 'client_credentials',
+        client_id: '9bf776aebb6591e065d48ddfcc3d16da20f4390dc25be24084702d9560132e06',
+        client_secret: 'affd3a319e0abc6f0df8eb643a1524bbed9ddc481fb211952d2e4aa49fc5980f',
+      });
+      let user_res = await axios.get('https://api.intra.42.fr/v2/users?filter[login]=' + name, { headers: {
+        authorization: 'Bearer ' + token_res.data.access_token,
+      }});
+      if (user_res.data.length !== 0) {
+        isNameIsAFortyTwoLogin = true;
+      }
+    }
+    catch (error) {
+      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    if (isNameIsAFortyTwoLogin) {
+      throw new HttpException('Please choose a different name', HttpStatus.BAD_REQUEST);
+    }
+  }
+
   public async getAuthenticatedUser(email: string, plainTextPassword: string) {
     try {
       const user = await this.userService.findByEmail(email);
       await this.verifyPassword(plainTextPassword, user.password);
-      user.password = undefined; //not the cleanest way to not send the password in a response
+      user.password = undefined;
       return user;
     } catch (error) {
       throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);

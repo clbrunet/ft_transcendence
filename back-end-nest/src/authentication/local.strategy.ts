@@ -1,6 +1,6 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import User from '../user/user.entity';
 
@@ -16,6 +16,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(email: string, password: string): Promise<User> {
-    return this.authenticationService.getAuthenticatedUser(email, password);
+    const user = await this.authenticationService.getAuthenticatedUser(email, password);
+    if (user.isFortyTwoAccount === true) {
+      throw new HttpException('Please login with the 42 strategy', HttpStatus.BAD_REQUEST);
+    }
+    return user;
   }
 }
