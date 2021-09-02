@@ -16,7 +16,7 @@ import { PlayerController } from './player.controller';
   imports: [
     TypeOrmModule.forFeature([Player, User, Game]),
     UserModule,
-    GameModule,
+    forwardRef(() => GameModule),
   ],
   controllers: [PlayerController],
   providers: [PlayerService],

@@ -24,7 +24,7 @@ export class DuelService {
     private readonly userService: UserService,
   ) {}
 
-  async create(duelOwnerId: string, duelId: string) {
+  public async create(duelOwnerId: string, duelId: string) {
     if (duelOwnerId === duelId) {
       throw new HttpException('User can not duel himself', HttpStatus.BAD_REQUEST);
     }

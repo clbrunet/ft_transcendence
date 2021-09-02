@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
-import { gameStatus } from './enum.gameStatus';
+import { GameStatus } from './enum.gameStatus';
 
 import User from '../user/user.entity';
 import Player from '../player/player.entity';
@@ -15,7 +15,7 @@ class Game {
     startTime: Date;
 
 	@Column({ default: 0 })
-  	public status: gameStatus;
+  	public status: GameStatus;
 
 	@OneToMany(() => Player, player => player.game)
   	players: Player[];

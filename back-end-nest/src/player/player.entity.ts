@@ -4,7 +4,7 @@ import User from '../user/user.entity';
 import Game from '../game/game.entity';
 
 @Entity()
-@Unique(["player", "game"])
+@Unique(["user", "game"])
 class Player {
     @PrimaryGeneratedColumn('uuid')
     public id?: string;
@@ -13,7 +13,7 @@ class Player {
   	public point: number;
 
     @ManyToOne(() => User, user => user.players, { eager: true, onDelete: "CASCADE" })
-    player: User;
+    user: User;
 
     @ManyToOne(() => Game, game => game.players, { eager: true, onDelete: "CASCADE" })
     game: Game;

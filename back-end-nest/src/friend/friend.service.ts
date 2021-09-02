@@ -6,6 +6,7 @@ import Friend from './friend.entity';
 import User from '../user/user.entity';
 
 import { FriendStatus } from './enum.friendStatus';
+import { Status } from '../user/enum.status';
 
 import { UserService } from '../user/user.service';
 
@@ -24,7 +25,7 @@ export class FriendService {
     private readonly userService: UserService,
   ) {}
 
-  async create(friendOwnerId: string, friendId: string) {
+  public async create(friendOwnerId: string, friendId: string) {
     if (friendOwnerId === friendId) {
       throw new HttpException('User can not friend himself', HttpStatus.BAD_REQUEST);
     }
@@ -84,11 +85,19 @@ export class FriendService {
 
   public async getAllActiveUser(userId: string) {
     const res = await this.userService.findByIdFriendOwner(userId);
-    let dto: FriendDto[] = [];
+    let dto = [];
     for (const friendOwner of res.friendOwners) {
-      const friend = await this.findById(friendOwner.id);
-      let friendDto: FriendDto = this.friendToDto(friend);
-      dto.push(friendDto);
+      let array: FriendDto[] = [];
+
+      let friendDto: FriendDto = this.friendToDto(friendOwner);
+      array.push(friendDto);
+
+
+      const reverseFriend = await this.findByOwnerAndFriend(friendOwner.friend.id, friendOwner.friendOwner.id);
+      let reverseFriendDto: FriendDto = this.friendToDto(reverseFriend);
+      array.push(reverseFriendDto);
+
+      dto.push(array);
     }
     return dto;  
   }
@@ -187,7 +196,13 @@ export class FriendService {
     dto.friendOwnerName = friend.friendOwner.name;
     dto.friendId = friend.friend.id;
     dto.friendName = friend.friend.name;
-    dto.status = FriendStatus[friend.status];
+    dto.requestStatus = FriendStatus[friend.status];
+    if (friend.status == 2) {
+      dto.friendStatus = Status[friend.friend.status];
+    }
+    else {
+      dto.friendStatus = null;
+    }
     return dto;
   }
 }

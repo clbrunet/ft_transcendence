@@ -29,7 +29,8 @@ export class FriendDto {
   friendOwnerName: string;
   friendId: string;
   friendName: string;
-  status: string;
+  requestStatus: string;
+  friendStatus: string;
 }
 
 export class FriendForUserDto {
