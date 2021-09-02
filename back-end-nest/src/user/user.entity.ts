@@ -80,7 +80,7 @@ class User {
   @OneToMany(() => Queue, queue => queue.queuer)
   queuers: Queue[];
 
-  @OneToMany(() => Player, player => player.player)
+  @OneToMany(() => Player, player => player.user)
   players: Player[];
 }
 

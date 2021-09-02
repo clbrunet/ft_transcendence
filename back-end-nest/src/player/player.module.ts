@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../user/user.module';
+import { GameModule } from '../game/game.module';
 
 import Player from './player.entity';
 import User from '../user/user.entity';
@@ -15,6 +16,7 @@ import { PlayerController } from './player.controller';
   imports: [
     TypeOrmModule.forFeature([Player, User, Game]),
     UserModule,
+    forwardRef(() => GameModule),
   ],
   controllers: [PlayerController],
   providers: [PlayerService],

@@ -57,15 +57,15 @@ export class GameController {
 */
   // ROUTES FOR DEV ONLY TO BE COMMENTED
   @UseGuards(JwtTwoFactorGuard)
-  @Post()
+  @Post('/create')
   async create() {
     return await this.gameService.create();
   }
-/*
+
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
   async getAll() {
-    return await this.friendService.getAll();
+    return await this.gameService.getAll();
   }
-*/
+
 }
