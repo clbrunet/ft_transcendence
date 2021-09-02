@@ -19,6 +19,11 @@ const routes: Array<RouteConfig> = [
     component: () => import('../views/Login.vue')
   },
   {
+    path: '/oauth-forty-two',
+    name: 'OAuthFortyTwo',
+    component: () => import('../views/OAuthFortyTwo.vue')
+  },
+  {
     path: '/register',
     name: 'Register',
     component: () => import('../views/Register.vue')
@@ -27,11 +32,6 @@ const routes: Array<RouteConfig> = [
     path: '/chats',
     name: 'Chats',
     component: () => import('../views/Chats.vue')
-  },
-  {
-    path: '/authTest',
-    name: 'AuthTest',
-    component: () => import('../views/AuthTest.vue')
   },
 ]
 

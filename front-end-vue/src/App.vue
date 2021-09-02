@@ -9,7 +9,6 @@
       <template v-else>
         <router-link to="/login">Login</router-link>
         <router-link to="/register">Register</router-link>
-        <router-link to="/authTest">AuthTest</router-link>
       </template>
     </div>
     <router-view />
