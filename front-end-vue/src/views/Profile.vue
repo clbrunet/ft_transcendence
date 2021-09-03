@@ -1,26 +1,22 @@
 <template>
   <div class="profile">
-    <div class="top">
-      <div id="img">
-        <img v-if="user.avatar" :src="getPath(user.avatar)" alt="Avatar" >
-        <input type="file" accept="image/*" value="..." style="display:none;" @change="fileSelected" ref="fileInput">
-        <button id="button-image" @click="$refs.fileInput.click()">...</button>
+    <Banner/>
+    <div id="bottom">
+      <div id="left">
+        <MenuFriends/>
+        <MenuBlocks/>
       </div>
-      <div style="width:80%;height:100%;display:flex;flex-direction:column;justify-content:space-around;">
-        <div class="logins">
-          <span>{{user.name}}</span>
-          <span>{{user.email}}</span>
-        </div>
-        <div class="stats">
-          <span v-if="user.xp">{{user.xp}}xp</span>
-          <span v-else>0xp</span>
-
-          <span v-if="user.level">rank : {{user.level}}</span>
-          <span v-if="user.nWins">{{user.nWins}}W / {{user.nLosses}}L</span>
-        </div>
+      <div id="middle">
+        game WIP
+        <button id="play">PLAY</button>
+      </div>
+      <div id="right">
+        <MenuMatchesHistory/>
+        <MenuDuels/>
       </div>
     </div>
-    <div class="bottom">
+
+    <!--<div class="bottom">
       <div class="friends-blocks">
         <h2>Friends</h2>
         <div class="friends">
@@ -72,24 +68,39 @@
           </table>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import Store from "../store";
-import axios from "axios";
 import router from "../router";
+import axios from "axios";
+
+import Banner from "../components/Banner.vue"
+import MenuFriends from "../components/MenuFriends.vue"
+import MenuBlocks from "../components/MenuBlocks.vue"
+import MenuMatchesHistory from "../components/MenuMatchesHistory.vue"
+import MenuDuels from "../components/MenuDuels.vue"
+
 export default Vue.extend({
   name: "Profile",
   store: Store,
+  components: {
+    Banner: Banner,
+    MenuFriends: MenuFriends,
+    MenuBlocks: MenuBlocks,
+    MenuMatchesHistory: MenuMatchesHistory,
+    MenuDuels: MenuDuels
+  },
   data() {
     return {
       user: {
         realPath: undefined,
         selectedFile: null
-      }
+      },
+      data: {}
     };
   },
   mounted() {
@@ -148,17 +159,7 @@ export default Vue.extend({
   align-items: center;
   flex-direction: column;
   height: 80vh;
-}
-
-.top {
-  margin-top: 2%;
-  width: 80vw;
-  height: 27%;
-  background-color: #002a6e;
-  border-top-right-radius: 20px;
-  border-top-left-radius: 20px;
-  display: flex;
-  flex-direction: row;
+  width:100%;
 }
 
 .logins {
@@ -301,6 +302,11 @@ h2 {
   margin-bottom: 0px;
 }
 
+
+
+
+/* new css */
+
 #play {
   background-color:red;
   border-radius:25px;
@@ -314,8 +320,36 @@ h2 {
   font-weight: bold;
 }
 
+
 #play:hover {
   background-color:rgb(228, 0, 0);
 }
+
+#bottom {
+  display:flex;
+  background-color: #ebebeb;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  height: 70%;
+  width: 65%;
+}
+
+#left, #right {
+  display:flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100%;
+  width: 30%;
+  align-items:center;
+}
+
+#middle {
+  width: 40%;
+  height:100%;
+  background-color:purple;
+}
+
+
+/* */
 
 </style>
