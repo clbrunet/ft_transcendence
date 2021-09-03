@@ -317,3 +317,5 @@ h2 {
 #play:hover {
   background-color:rgb(228, 0, 0);
 }
+
+</style>

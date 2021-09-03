@@ -6,10 +6,10 @@
       <input type="password" placeholder="entrez votre mot de passe" v-model="password">
       <input type="submit" value="Valider">
     </form>
+    <p class="error"> {{ messages }} </p>
     <a href="https://api.intra.42.fr/oauth/authorize?client_id=9bf776aebb6591e065d48ddfcc3d16da20f4390dc25be24084702d9560132e06&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauth-forty-two&response_type=code">
       <button>Sign in with 42</button>
     </a>
-    <p class="error"> {{ messages }} </p>
     <p> Not <a @click="goToRegister()">register</a> yet ?</p>
   </div>
 </template>
