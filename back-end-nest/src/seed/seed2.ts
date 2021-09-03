@@ -9,33 +9,21 @@ async function bootstrap() {
   NestFactory.createApplicationContext(AppModule)
     .then(appContext => {
       const seedService = appContext.get(SeedService);
-      let resRegister = seedService.seedRegister()
-        .then((resRegister) => {
-          let resUser = seedService.seedUser();
-          return resUser;
+      let resChannel = seedService.seedChannel()
+        .then((resChannel) => {
+          let resParticipant = seedService.seedParticipant();
+          return resParticipant;
         })
-        .then((resUser) => {
-          let resFriend = seedService.seedFriend();
-          return resFriend;
-        })
-        .then((resFriend) => {
-          let resBlock = seedService.seedBlock();
-          return resBlock;
-        })
-        .then((resBlock) => {
-          let resDuel = seedService.seedDuel();
-          return resDuel;
-        })
-        .then((resDuel) => {
-          let resGame = seedService.seedGame();
-          return resGame;
+        .then((resParticipant) => {
+          let resMessage = seedService.seedMessage();
+          return resMessage;
         })
         .catch(error => {
           console.log('Seeding failed!');
           throw error;
         })
         .finally(() => {
-          console.log('Successfull seeding first part!');
+          console.log('Successfull seeding second part!');
           appContext.close();
         });
     })

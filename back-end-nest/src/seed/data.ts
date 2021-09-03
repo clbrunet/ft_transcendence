@@ -109,11 +109,13 @@ export const games: GameSeedDto[] = [
 
 export const channels: ChannelSeedDto[] = [
   { name: 'Karate budokai', status: 0, password: null, ownerEmail: 'erwan@yopmail.com'},
+  /*
   { name: 'I love Auth', status: 0, password: null, ownerEmail: 'clement@yopmail.com'},
   { name: 'La famille', status: 0, password: null, ownerEmail: 'nicolas@yopmail.com'},
   { name: 'Les bonnes recettes', status: 0, password: null, ownerEmail: 'lucille@yopmail.com'},
   { name: 'Lego technics', status: 0, password: null, ownerEmail: 'come@yopmail.com'},
   { name: 'Doudou & Cie', status: 0, password: null, ownerEmail: 'alban@yopmail.com'},
+  */
 ];
 
 export const participants: ParticipantSeedDto[] = [
@@ -121,6 +123,7 @@ export const participants: ParticipantSeedDto[] = [
   { channelName: 'Karate budokai', userEmail: 'nicolas@yopmail.com', admin: false},
   { channelName: 'Karate budokai', userEmail: 'come@yopmail.com', admin: false},
 
+  /*
   { channelName: 'I love Auth', userEmail: 'clement@yopmail.com', admin: true},
   { channelName: 'I love Auth', userEmail: 'nicolas@yopmail.com', admin: false},
   { channelName: 'I love Auth', userEmail: 'erwan@yopmail.com', admin: false},
@@ -144,13 +147,14 @@ export const participants: ParticipantSeedDto[] = [
   { channelName: 'Doudou & Cie', userEmail: 'alban@yopmail.com', admin: true},
   { channelName: 'Doudou & Cie', userEmail: 'lucille@yopmail.com', admin: false},
   { channelName: 'Doudou & Cie', userEmail: 'come@yopmail.com', admin: false},
+  */
 ];
 
 export const messages: MessageSeedDto[] = [
   { channelName: 'Karate budokai', userEmail: 'erwan@yopmail.com', content: 'Hello la team, ca va parler Karate ici!'},
   { channelName: 'Karate budokai', userEmail: 'nicolas@yopmail.com', content: 'Hate de parler Karate avec vous!'},
   { channelName: 'Karate budokai', userEmail: 'come@yopmail.com', content: 'J y connais rien au Karate moi!'},
-
+  /*
   { channelName: 'I love Auth', userEmail: 'clement@yopmail.com', content: 'Je suis facile avec l Auth system!'},
   { channelName: 'I love Auth', userEmail: 'nicolas@yopmail.com', content: 'Je Craque je comprends rien!'},
   { channelName: 'I love Auth', userEmail: 'erwan@yopmail.com', content: 'API 42 c une tuerie!'},
@@ -174,4 +178,5 @@ export const messages: MessageSeedDto[] = [
   { channelName: 'Doudou & Cie', userEmail: 'alban@yopmail.com', content: 'dclksdlhsdlkhskl'},
   { channelName: 'Doudou & Cie', userEmail: 'lucille@yopmail.com', content: 'Doudou!'},
   { channelName: 'Doudou & Cie', userEmail: 'come@yopmail.com', content: 'Doudou!'},
+  */
 ];

@@ -24,7 +24,7 @@
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "typeorm:migration:generate": "npm run typeorm -- migration:generate -n",
     "typeorm:migration:run": "npm run typeorm -- migration:run",
-    "seed:db": "npm run reset:db && ts-node -r tsconfig-paths/register ./src/seed/seed.ts",
+    "seed:db": "npm run reset:db && ts-node -r tsconfig-paths/register ./src/seed/seed.ts && ts-node -r tsconfig-paths/register ./src/seed/seed2.ts",
     "reset:db": "ts-node -r tsconfig-paths/register ./src/seed/reset.ts"
   },
   "dependencies": {
