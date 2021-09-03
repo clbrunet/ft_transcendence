@@ -182,7 +182,7 @@ export class UserService {
     throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
   }
 
-  public async update(id: string, userUpdateDto: UserUpdateDto) {
+  public async update(id: string, userUpdateDto: UserUpdateDto): Promise<UserDto> {
     const res = await this.userRepository.update(id, userUpdateDto);
     if (res) {
       const user = await this.findById(id);
@@ -202,7 +202,7 @@ export class UserService {
     return await this.getAll();
   }
 
-  public userToDto(user: User) {
+  public userToDto(user: User): UserDto {
     let dto = new UserDto();
     dto.id = user.id;
     dto.name = user.name;
