@@ -12,7 +12,10 @@ class Game {
     public id?: string;
 
     @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-    startTime: Date;
+    public startTime: Date;
+
+	@Column()
+  	public pointToVictory: number;
 
 	@Column({ default: 0 })
   	public status: GameStatus;

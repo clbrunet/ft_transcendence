@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class migr11630591565820 implements MigrationInterface {
-    name = 'migr11630591565820'
+export class migr11630670106965 implements MigrationInterface {
+    name = 'migr11630670106965'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "message" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createDateTime" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "content" character varying NOT NULL, "authorId" uuid, CONSTRAINT "PK_ba01f0a3e0123651915008bc578" PRIMARY KEY ("id"))`);
@@ -10,7 +10,7 @@ export class migr11630591565820 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "friend" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "status" integer NOT NULL, "friendOwnerId" uuid, "friendId" uuid, CONSTRAINT "UQ_10f4cea527fc5f1b4913e1738c1" UNIQUE ("friendOwnerId", "friendId"), CONSTRAINT "PK_1b301ac8ac5fcee876db96069b6" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "duel" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "status" integer NOT NULL, "duelOwnerId" uuid, "duelId" uuid, CONSTRAINT "UQ_5a11e41a5458c0c51fb46d56ed3" UNIQUE ("duelOwnerId", "duelId"), CONSTRAINT "PK_1575a4255b3bdf1f11398841d0d" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "queue" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "queueTime" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "queuerId" uuid, CONSTRAINT "PK_4adefbd9c73b3f9a49985a5529f" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "game" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "startTime" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "status" integer NOT NULL DEFAULT '0', CONSTRAINT "PK_352a30652cd352f552fef73dec5" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "game" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "startTime" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "pointToVictory" integer NOT NULL, "status" integer NOT NULL DEFAULT '0', CONSTRAINT "PK_352a30652cd352f552fef73dec5" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "player" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "point" integer NOT NULL DEFAULT '0', "userId" uuid, "gameId" uuid, CONSTRAINT "UQ_1226352721f49996c9bf0bbe9d2" UNIQUE ("userId", "gameId"), CONSTRAINT "PK_65edadc946a7faf4b638d5e8885" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "user" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "email" character varying NOT NULL, "password" character varying NOT NULL, "isFortyTwoAccount" boolean NOT NULL DEFAULT false, "twoFactorAuthenticationSecret" character varying, "isTwoFactorAuthenticationEnabled" boolean NOT NULL DEFAULT false, "avatar" character varying NOT NULL DEFAULT '../assets/default_avatar.png', "status" integer NOT NULL DEFAULT '0', "level" integer NOT NULL DEFAULT '0', "nGames" integer NOT NULL DEFAULT '0', "nWins" integer NOT NULL DEFAULT '0', "nLosses" integer NOT NULL DEFAULT '0', "xp" integer NOT NULL DEFAULT '0', CONSTRAINT "UQ_065d4d8f3b5adb4a08841eae3c8" UNIQUE ("name"), CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"), CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "block" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "status" integer NOT NULL, "blockOwnerId" uuid, "blockId" uuid, CONSTRAINT "UQ_f69164dd0dcdaee0d26f42c8fff" UNIQUE ("blockOwnerId", "blockId"), CONSTRAINT "PK_d0925763efb591c2e2ffb267572" PRIMARY KEY ("id"))`);

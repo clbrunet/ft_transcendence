@@ -182,6 +182,15 @@ export class UserService {
     throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
   }
 
+  // Return User Object without any relation
+  public async findByEmailLazy(email: string) {
+    const user = await this.userRepository.findOne( { email } );
+    if (user) {
+      return user;
+    }
+    throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
+  }
+
   public async update(id: string, userUpdateDto: UserUpdateDto): Promise<UserDto> {
     const res = await this.userRepository.update(id, userUpdateDto);
     if (res) {
