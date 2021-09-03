@@ -5,8 +5,9 @@
       <input type="email" placeholder="entrez votre email" v-model="email">
       <input type="password" placeholder="entrez votre mot de passe" v-model="password">
       <input type="submit" value="Valider">
-      <p class="error"> {{ messages }} </p>
     </form>
+    <p class="error"> {{ messages }} </p>
+    <p> Not <a @click="goToRegister()">register</a> yet ?</p>
   </div>
 </template>
 
@@ -56,6 +57,9 @@ export default Vue.extend({
       }).catch(() => {
         this.messages = "email or password are not valid";
       });
+    },
+    goToRegister() {
+      router.push({name: 'Register'});
     }
   }
 });
@@ -77,5 +81,10 @@ form input {
 .error {
   color:red;
 }
-</style>
 
+a{
+  text-decoration: underline;
+  color:blue;
+  cursor:pointer;
+}
+</style>
