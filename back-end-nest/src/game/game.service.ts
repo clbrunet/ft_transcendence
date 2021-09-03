@@ -70,18 +70,18 @@ export class GameService {
     })
     return dto;    
   }
-/*
-  public async getAllActiveUser(userId: string) {
-    const res = await this.gameService.findByIdFriendOwner(userId);
-    let dto: FriendDto[] = [];
-    for (const friendOwner of res.friendOwners) {
-      const friend = await this.findById(friendOwner.id);
-      let friendDto: FriendDto = this.friendToDto(friend);
-      dto.push(friendDto);
+
+  public async getAllGivenUser(userId: string) {
+    const user = await this.userService.findByIdPlayer(userId);
+    let dto: GameDto[] = [];
+    for (const player of user.players) {
+      const game = await this.findById(player.game.id);
+      let gameDto: GameDto = this.gameToDto(game);
+      dto.push(gameDto);
     }
-    return dto;  
+    return dto;
   }
-*/
+
   // Return Game Dto
   public async getById(id: string) {
     const game = await this.gameRepo.findOne( id, { relations: ['players'] } );

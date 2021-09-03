@@ -15,14 +15,19 @@ export class GameController {
   constructor( 
   	private readonly gameService: GameService
   ) {}
-/*
+
   @UseGuards(JwtTwoFactorGuard)
   @Get('/index')
   async getAllActiveUser(@Req() request: RequestWithUser) {
     const {user} = request;
-    return await this.friendService.getAllActiveUser(user.id);
+    return await this.gameService.getAllGivenUser(user.id);
   }
-*/
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/index/:userId')
+  async getAllGivenUser(@Param('userId') userId) {
+    return await this.gameService.getAllGivenUser(userId);
+  }
 
   // ROUTES FOR DEV ONLY TO BE COMMENTED
   @UseGuards(JwtTwoFactorGuard)
