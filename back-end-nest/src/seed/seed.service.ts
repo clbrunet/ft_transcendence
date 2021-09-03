@@ -7,6 +7,8 @@ import Friend from '../friend/friend.entity';
 import Block from '../block/block.entity';
 import Duel from '../duel/duel.entity';
 import Channel from '../channel/channel.entity';
+import Game from '../game/game.entity';
+import Player from '../player/player.entity';
 import Participant from '../participant/participant.entity';
 import Message from '../message/message.entity';
 
@@ -15,6 +17,8 @@ import { UserService } from '../user/user.service';
 import { FriendService } from '../friend/friend.service';
 import { BlockService } from '../block/block.service';
 import { DuelService } from '../duel/duel.service';
+import { GameService } from '../game/game.service';
+import { PlayerService } from '../player/player.service';
 import { ChannelService } from '../channel/channel.service';
 import { ParticipantService } from '../participant/participant.service';
 import { MessageService } from '../message/message.service';
@@ -24,6 +28,7 @@ import { users } from './data';
 import { friends } from './data';
 import { blocks } from './data';
 import { duels } from './data';
+import { games } from './data';
 import { channels } from './data';
 import { participants } from './data';
 import { messages } from './data';
@@ -57,6 +62,8 @@ export class SeedService {
     private readonly friendService: FriendService,
     private readonly blockService: BlockService,
     private readonly duelService: DuelService,
+    private readonly gameService: GameService,
+    private readonly playerService: PlayerService,
     private readonly channelService: ChannelService,
     private readonly participantService: ParticipantService,
     private readonly messageService: MessageService,
@@ -136,6 +143,22 @@ export class SeedService {
       }
     }
     console.log('Duel seeding complete!');
+    return true;
+  }
+
+  async seedGame() {
+    console.log('Seeding games...');
+    for await (const game of games) {
+      const match = await this.gameService.create(game.pointToVictory);
+      await this.gameService.finish(match.id);
+      const user1 = await this.userService.findByEmailLazy(game.userEmail1);
+      const user2 = await this.userService.findByEmailLazy(game.userEmail2);
+      const player1 = await this.playerService.create(user1.id, match.id);
+      const player2 = await this.playerService.create(user2.id, match.id);
+      await this.playerService.score(match.id, user1.id, game.playerPoint1);
+      await this.playerService.score(match.id, user2.id, game.playerPoint2);
+    }
+    console.log('Game seeding complete!');
     return true;
   }
 

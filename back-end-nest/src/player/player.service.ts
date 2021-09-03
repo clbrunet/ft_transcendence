@@ -10,6 +10,7 @@ import { UserService } from '../user/user.service';
 import { GameService } from '../game/game.service';
 
 import { PlayerDto } from './player.dto';
+import { PlayerUpdateDto } from './player.dto';
 
 
 @Injectable()
@@ -65,63 +66,53 @@ export class PlayerService {
     })
     return dto;    
   }
-/*
-  public async getAllLazy() {
-    let res: Game[] = [];
-    res = await this.gameRepo.find();
-    let dto: GameDtoLazy[] = [];
-    res.forEach( game => {
-      let gameDtoLazy: GameDtoLazy = this.gameToDtoLazy(game);
-      dto.push(gameDtoLazy);
-    })
-    return dto;    
-  }
-/*
-  public async getAllActiveUser(userId: string) {
-    const res = await this.gameService.findByIdFriendOwner(userId);
-    let dto: FriendDto[] = [];
-    for (const friendOwner of res.friendOwners) {
-      const friend = await this.findById(friendOwner.id);
-      let friendDto: FriendDto = this.friendToDto(friend);
-      dto.push(friendDto);
-    }
-    return dto;  
-  }
 
-  // Return Game Dto
+  // Return Player Dto
   public async getById(id: string) {
-    const game = await this.gameRepo.findOne( id, { relations: ['players'] } );
-    if (game) { 
-      return this.gameToDto(game);
+    const player = await this.playerRepo.findOne(id);
+    if (player) { 
+      return this.playerToDto(player);
     }
-    throw new HttpException('Game with this id does not exist', HttpStatus.NOT_FOUND);
+    throw new HttpException('Player with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Game Object with all relations
+  // Return Player Object
   public async findById(id: string) {
-    const game = await this.gameRepo.findOne( id, { relations: ['players'] } );
-    if (game) {
-      return game;
+    const player = await this.playerRepo.findOne(id);
+    if (player) {
+      return player;
     }
-    throw new HttpException('Game with this id does not exist', HttpStatus.NOT_FOUND);
+    throw new HttpException('Player with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Game Object without any relation
-  public async findByIdLazy(id: string) {
-    const game = await this.gameRepo.findOne();
-    if (game) {
-      return game;
+  // Return Player Object
+  public async findByGameAndUser(gameId: string, userId: string) {
+    const game = await this.gameService.findByIdLazy(gameId);
+    const user = await this.userService.findByIdLazy(userId);
+    const player = await this.playerRepo.findOne( { game, user } );
+    if (player) {
+      return player;
     }
-    throw new HttpException('Game with this id does not exist', HttpStatus.NOT_FOUND);
+    throw new HttpException('Player with this (gameId, userId) does not exist', HttpStatus.NOT_FOUND);
   }
 
-  public async update(id: string, gameUpdateDto: GameUpdateDto) {
-    const res = await this.gameRepo.update(id, gameUpdateDto);
+  public async update(id: string, playerUpdateDto: PlayerUpdateDto) {
+    const res = await this.playerRepo.update(id, playerUpdateDto);
     if (res) {
-      const game = await this.findByIdLazy(id);
-      return this.gameToDtoLazy(game);
+      const player = await this.findById(id);
+      return this.playerToDto(player);
     }
-    throw new HttpException('Game update failed', HttpStatus.NOT_FOUND);
+    throw new HttpException('Player update failed', HttpStatus.NOT_FOUND);
+  }
+
+  public async score(gameId: string, userId: string, addedPoint: number) {
+    const player = await this.findByGameAndUser(gameId, userId);
+    if (player.point + addedPoint > player.game.pointToVictory) {
+      throw new HttpException('A player can not have a more point than pointToVictory', HttpStatus.NOT_FOUND);
+    }
+    let playerUpdateDto = new PlayerUpdateDto();
+    playerUpdateDto.point = player.point + addedPoint;
+    return this.update(player.id, playerUpdateDto);
   }
 
   public async delete(id: string) {
@@ -129,19 +120,19 @@ export class PlayerService {
       await this.findById(id);
     }
     catch(error) {
-      throw new HttpException('Game with this id does not exist', HttpStatus.NOT_FOUND); 
+      throw new HttpException('Player with this id does not exist', HttpStatus.NOT_FOUND); 
     }
-    await this.gameRepo.delete(id);
+    await this.playerRepo.delete(id);
     return await this.getAll();
   }
-*/
+
   public playerToDto(player: Player) {
     let dto = new PlayerDto();
     dto.id = player.id;
-    dto.userId = player.id;
+    dto.userId = player.user.id;
     dto.userName = player.user.name;
     dto.gameId = player.game.id;
-    dto.score = player.point;
+    dto.point = player.point;
     return dto;
   }
 }

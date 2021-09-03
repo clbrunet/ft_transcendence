@@ -3,6 +3,7 @@ import { UserSeedDto } from '../user/user.dto';
 import { FriendSeedDto } from '../friend/friend.dto';
 import { BlockSeedDto } from '../block/block.dto';
 import { DuelSeedDto } from '../duel/duel.dto';
+import { GameSeedDto } from '../game/game.dto';
 import { ChannelSeedDto } from '../channel/channel.dto';
 import { ParticipantSeedDto } from '../participant/participant.dto';
 import { MessageSeedDto } from '../message/message.dto';
@@ -72,6 +73,38 @@ export const duels: DuelSeedDto[] = [
   { duelOwnerEmail: 'come@yopmail.com', duelEmail: 'alban@yopmail.com', status: 2},
   { duelOwnerEmail: 'come@yopmail.com', duelEmail: 'lucille@yopmail.com', status: 2},
   { duelOwnerEmail: 'come@yopmail.com', duelEmail: 'erwan@yopmail.com', status: 0},
+];
+
+export const games: GameSeedDto[] = [
+  { userEmail1: 'erwan@yopmail.com', playerPoint1: 3, userEmail2: 'nicolas@yopmail.com', playerPoint2: 5, pointToVictory: 5},
+  { userEmail1: 'erwan@yopmail.com', playerPoint1: 2, userEmail2: 'clement@yopmail.com', playerPoint2: 5, pointToVictory: 5},
+  { userEmail1: 'erwan@yopmail.com', playerPoint1: 1, userEmail2: 'lucille@yopmail.com', playerPoint2: 5, pointToVictory: 5},
+  { userEmail1: 'erwan@yopmail.com', playerPoint1: 2, userEmail2: 'alban@yopmail.com', playerPoint2: 5, pointToVictory: 5},
+  { userEmail1: 'erwan@yopmail.com', playerPoint1: 4, userEmail2: 'come@yopmail.com', playerPoint2: 5, pointToVictory: 5},
+
+  { userEmail1: 'nicolas@yopmail.com', playerPoint1: 1, userEmail2: 'erwan@yopmail.com', playerPoint2: 3, pointToVictory: 3},
+  { userEmail1: 'nicolas@yopmail.com', playerPoint1: 2, userEmail2: 'clement@yopmail.com', playerPoint2: 3, pointToVictory: 3},
+  { userEmail1: 'nicolas@yopmail.com', playerPoint1: 1, userEmail2: 'lucille@yopmail.com', playerPoint2: 3, pointToVictory: 3},
+  { userEmail1: 'nicolas@yopmail.com', playerPoint1: 2, userEmail2: 'alban@yopmail.com', playerPoint2: 3, pointToVictory: 3},
+  { userEmail1: 'nicolas@yopmail.com', playerPoint1: 2, userEmail2: 'come@yopmail.com', playerPoint2: 3, pointToVictory: 3},
+
+  { userEmail1: 'clement@yopmail.com', playerPoint1: 7, userEmail2: 'erwan@yopmail.com', playerPoint2: 8, pointToVictory: 8},
+  { userEmail1: 'clement@yopmail.com', playerPoint1: 5, userEmail2: 'nicolas@yopmail.com', playerPoint2: 8, pointToVictory: 8},
+  { userEmail1: 'clement@yopmail.com', playerPoint1: 4, userEmail2: 'lucille@yopmail.com', playerPoint2: 8, pointToVictory: 8},
+  { userEmail1: 'clement@yopmail.com', playerPoint1: 1, userEmail2: 'alban@yopmail.com', playerPoint2: 8, pointToVictory: 8},
+  { userEmail1: 'clement@yopmail.com', playerPoint1: 7, userEmail2: 'come@yopmail.com', playerPoint2: 8, pointToVictory: 8},
+
+  { userEmail1: 'lucille@yopmail.com', playerPoint1: 7, userEmail2: 'erwan@yopmail.com', playerPoint2: 8, pointToVictory: 8},
+  { userEmail1: 'lucille@yopmail.com', playerPoint1: 5, userEmail2: 'nicolas@yopmail.com', playerPoint2: 8, pointToVictory: 8},
+  { userEmail1: 'lucille@yopmail.com', playerPoint1: 4, userEmail2: 'clement@yopmail.com', playerPoint2: 8, pointToVictory: 8},
+  { userEmail1: 'lucille@yopmail.com', playerPoint1: 1, userEmail2: 'alban@yopmail.com', playerPoint2: 8, pointToVictory: 8},
+  { userEmail1: 'lucille@yopmail.com', playerPoint1: 7, userEmail2: 'come@yopmail.com', playerPoint2: 8, pointToVictory: 8},
+
+  { userEmail1: 'come@yopmail.com', playerPoint1: 1, userEmail2: 'erwan@yopmail.com', playerPoint2: 3, pointToVictory: 3},
+  { userEmail1: 'come@yopmail.com', playerPoint1: 2, userEmail2: 'clement@yopmail.com', playerPoint2: 3, pointToVictory: 3},
+  { userEmail1: 'come@yopmail.com', playerPoint1: 1, userEmail2: 'lucille@yopmail.com', playerPoint2: 3, pointToVictory: 3},
+  { userEmail1: 'come@yopmail.com', playerPoint1: 2, userEmail2: 'alban@yopmail.com', playerPoint2: 3, pointToVictory: 3},
+  { userEmail1: 'come@yopmail.com', playerPoint1: 2, userEmail2: 'nicolas@yopmail.com', playerPoint2: 3, pointToVictory: 3},
 ];
 
 export const channels: ChannelSeedDto[] = [

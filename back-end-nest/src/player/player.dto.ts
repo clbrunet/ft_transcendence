@@ -3,10 +3,27 @@ export class PlayerCreationDto {
   gameId: string;
 }
 
+export class PlayerUpdateDto {
+  point: number;
+}
+
+export class PlayerScoreDto {
+  userId: string;
+  gameId: string;
+  addedPoint: number;
+}
+
 export class PlayerDto {
   id: string;
   userId: string;
   userName: string;
   gameId: string;
-  score: number;
+  point: number;
+}
+
+export class PlayerForGameDto {
+  id: string;
+  userId: string;
+  userName: string;
+  point: number;
 }
