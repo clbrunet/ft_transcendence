@@ -5,11 +5,12 @@
       <input type="email" placeholder="entrez votre email" v-model="email">
       <input type="password" placeholder="entrez votre mot de passe" v-model="password">
       <input type="submit" value="Valider">
-      <p class="error"> {{ messages }} </p>
     </form>
+    <p class="error" v-for="(message, index) in messages" :key="index"> {{ message }} </p>
     <a href="https://api.intra.42.fr/oauth/authorize?client_id=9bf776aebb6591e065d48ddfcc3d16da20f4390dc25be24084702d9560132e06&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauth-forty-two&response_type=code">
       <button>Sign in with 42</button>
     </a>
+    <p> Not <a @click="goToRegister()">register</a> yet ?</p>
   </div>
 </template>
 
@@ -25,41 +26,38 @@ export default Vue.extend({
       email: "",
       name: "",
       password: "",
-      messages: ""
+      messages: [""]
     }
   },
   methods: {
-    submit_login() {
+    async submit_login() {
       if (this.email == "")
       {
-        this.messages = 'email should not be empty';
+        this.messages = ['email should not be empty'];
         return ;
       }
       if (this.password == "")
       {
-        this.messages = 'password should not be empty';
+        this.messages = ['password should not be empty'];
         return ;
       }
 
-      axios({
-        url: "http://localhost:3000/authentication/log-in" ,
-        method: "post",
-        data: {
+      try {
+        const res = await axios.post('http://localhost:3000/authentication/log-in', {
           email: this.email,
           password: this.password
-        },
-        headers: {
-          'Access-Control-Allow-Origin': 'http://localhost:3000'
-        },
-        withCredentials: true
-      }).then(res => {
+        }, { withCredentials: true });
         this.$store.state.user = res.data;
         this.$store.dispatch('authenticate');
         router.push({ name: "Profile" });
-      }).catch(() => {
-        this.messages = "email or password are not valid";
-      });
-    }
+      }
+      catch (error) {
+        this.messages = Array.isArray(error.response.data.message) ? error.response.data.message : [error.response.data.message];
+      }
+    },
+    goToRegister() {
+      router.push({name: 'Register'});
+    },
   }
 });
 </script>
@@ -80,5 +78,10 @@ form input {
 .error {
   color:red;
 }
-</style>
 
+a{
+  text-decoration: underline;
+  color:blue;
+  cursor:pointer;
+}
+</style>
