@@ -9,6 +9,7 @@
       <input type="submit" value="Valider"/>
     </form>
     <p class="error" v-for="(message, index) in messages" :key="index"> {{ message }} </p>
+    <p> Already have an account ? <a @click="goToLogin()">login</a> now </p>
   </div>
 </template>
 
@@ -52,13 +53,15 @@ export default Vue.extend({
         {
           withCrenditals: true
         }
-      ).then(res => {
-          console.log(res);
+      ).then(() => {
           router.push({ name: "App" });
         })
         .catch(err => {
           this.messages = Array.isArray(err.response.data.message) ? err.response.data.message : [err.response.data.message];
         });
+    },
+    goToLogin() {
+      router.push({name: 'Login'});
     }
   }
 });
@@ -79,6 +82,12 @@ form input {
 
 .error {
   color:red;
+}
+
+a{
+  text-decoration: underline;
+  color:blue;
+  cursor:pointer;
 }
 </style>
 
