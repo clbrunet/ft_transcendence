@@ -68,7 +68,7 @@ export class AuthenticationService {
       user.password = undefined;
       return user;
     } catch (error) {
-      throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Wrong email or password provided', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -78,7 +78,7 @@ export class AuthenticationService {
       hashedPassword
     );
     if (!isPasswordMatching) {
-      throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Wrong email or password provided', HttpStatus.BAD_REQUEST);
     }
   }
 
