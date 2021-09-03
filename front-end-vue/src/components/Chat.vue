@@ -1,6 +1,16 @@
 <template>
-    <div class="chat">
-    <span> {{dataChat.owner.name }} owner from {{ dataChat.name}}</span>
+  <div class="chat">
+    <span class="title" v-if="data.name"> {{data.name}} by {{data.owner.name }}</span>
+    <div class="messages">
+      <p>bla bla messages simulés</p>
+      <p>bla bla blaaaaaa</p>
+      <p>bla bla blooo msg simulés</p>
+      <p>bli blou bla bla blop</p>
+    </div>
+    <div class="buttons">
+      <input class="message" type="text" placeholder="type your message here">
+      <input class="send" type="submit" value="send">
+    </div>
   </div>
 </template>
 
@@ -9,18 +19,41 @@ import Vue from "vue";
 export default Vue.extend({
   name: "Chat",
   props: {
-    dataChat: {}
+    data: {}
   },
   mounted() {
-      console.log("OK");
-      //console.log(this.dataChat);
+    console.log(this.$props.data);
   }
 });
 </script>
 
 <style scoped>
 .chat{
-    border: 1px solid black;
-    width:350px;
+  display:flex;
+  border: 1px solid black;
+  width:350px;
+  flex-direction:column;
+  position:relative;
+}
+
+.title {
+  color:white;
+  background-color:black;
+  padding:15px;
+}
+
+.buttons{
+  display:flex;
+  position:absolute;
+  bottom:0;
+  width:100%;
+}
+
+.message {
+  flex:3;
+}
+
+.send{
+  flex:1;
 }
 </style>

@@ -83,6 +83,21 @@ export class UserDtoLazy {
   xp: number;
 }
 
+export class ActiveUserDto {
+  id: string;
+  name: string;
+  email: string;
+  isTwoFactorAuthenticationEnabled: boolean;
+  avatar: string;
+  status: string;
+  level: string;
+  nGames: number;
+  nWins: number;
+  nLosses: number;
+  xp: number;
+  inQueue: boolean;
+}
+
 export class UserForChannelDto {
   id: string;
   name: string;

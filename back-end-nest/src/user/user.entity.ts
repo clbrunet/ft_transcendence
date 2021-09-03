@@ -26,6 +26,9 @@ class User {
   @Column()
   public password: string;
 
+  @Column({ default: false })
+  public isFortyTwoAccount: boolean;
+
   @Column({ nullable: true })
   public twoFactorAuthenticationSecret?: string;
 

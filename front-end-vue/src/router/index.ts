@@ -30,6 +30,11 @@ const routes: Array<RouteConfig> = [
     }
   },
   {
+    path: '/oauth-forty-two',
+    name: 'OAuthFortyTwo',
+    component: () => import('../views/OAuthFortyTwo.vue')
+  },
+  {
     path: '/register',
     name: 'Register',
     component: () => import('../views/Register.vue'),

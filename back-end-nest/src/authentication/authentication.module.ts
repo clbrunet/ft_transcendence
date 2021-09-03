@@ -13,6 +13,7 @@ import { TwoFactorAuthenticationService } from './twoFactor/twoFactorAuthenticat
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtTwoFactorStrategy } from './twoFactor/jwtTwoFactor.strategy';
+import { FortyTwoStrategy } from './fortyTwo.strategy';
 
 import { AuthenticationController } from './authentication.controller';
 import { TwoFactorAuthenticationController } from './twoFactor/twoFactorAuthentication.controller';
@@ -35,7 +36,7 @@ import { TwoFactorAuthenticationController } from './twoFactor/twoFactorAuthenti
       }),
     }),
   ],
-  providers: [AuthenticationService, LocalStrategy, JwtStrategy, TwoFactorAuthenticationService, JwtTwoFactorStrategy],
+  providers: [AuthenticationService, LocalStrategy, JwtStrategy, TwoFactorAuthenticationService, JwtTwoFactorStrategy, FortyTwoStrategy],
   controllers: [AuthenticationController, TwoFactorAuthenticationController],
   exports: [AuthenticationService]
 })

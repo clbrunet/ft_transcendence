@@ -3,6 +3,7 @@
     <div id="nav">
       <template v-if="is_auth">
         <router-link to="/profile">Profile</router-link>
+        <router-link to="/users">Users</router-link>
         <router-link to="/chats">Chats</router-link>
         <button id="btn-disconnect" @click="logout">Disconnect</button>
       </template>
@@ -16,6 +17,7 @@
 </template>
 
 <script lang="ts">
+
 import Vue from "vue";
 import Store from "./store/index";
 import axios from "axios";
@@ -41,12 +43,8 @@ export default Vue.extend({
       })
       .then(() => {
         this.$store.dispatch("unauthenticate");
-        console.log(router);
         router.push({ name: "App" });
       })
-      .catch(err => {
-          console.log(err);
-      });
     }
   },
   computed: {
@@ -75,6 +73,7 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
@@ -83,9 +82,10 @@ export default Vue.extend({
 
 #nav {
   display: flex;
+  align-items: center;
   width: 100%;
-  height: 100px;
   justify-content: space-between;
+  border-bottom: 1px solid black;
 }
 
 #nav a {
