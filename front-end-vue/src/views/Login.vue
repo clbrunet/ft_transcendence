@@ -26,19 +26,19 @@ export default Vue.extend({
       email: "",
       name: "",
       password: "",
-      messages: ""
+      messages: [""]
     }
   },
   methods: {
     async submit_login() {
       if (this.email == "")
       {
-        this.messages = 'email should not be empty';
+        this.messages = ['email should not be empty'];
         return ;
       }
       if (this.password == "")
       {
-        this.messages = 'password should not be empty';
+        this.messages = ['password should not be empty'];
         return ;
       }
 
