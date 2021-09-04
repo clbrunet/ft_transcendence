@@ -21,7 +21,7 @@ import { AppController } from './app.controller';
 
 
 let modified = configService.getTypeOrmConfig();
-modified['port'] = 5436;
+modified['port'] = process.env.POSTGRES_PORT;
 
 @Module({
   imports: [
