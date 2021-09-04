@@ -46,11 +46,11 @@ export default Vue.extend({
   },
   mounted() {
     axios({
-      url: "http://localhost:3000/friend/index",
+      url: `${ process.env.VUE_APP_API_URL }/friend/index`,
       method: "get",
       withCredentials: true,
       headers: {
-        "Access-Control-Allow-Origin": "http://localhost:3000"
+        "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
       }
     }).then(res => {
       this.friends = res.data;

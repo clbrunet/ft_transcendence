@@ -14,7 +14,7 @@ export default Vue.extend({
     let code = this.$route.query.code
     if (code) {
       try {
-        const { data } = await axios.post('http://localhost:3000/authentication/fortyTwo?code=' + code, null, { withCredentials: true });
+        const { data } = await axios.post(`${ process.env.VUE_APP_API_URL }/authentication/fortyTwo?code=` + code, null, { withCredentials: true });
         this.$store.state.user = data;
         this.$store.dispatch('authenticate');
         return router.push({ name: "Profile" });

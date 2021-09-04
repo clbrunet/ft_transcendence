@@ -48,7 +48,7 @@ export default Vue.extend({
         return;
       }
       try {
-        await axios.post("http://localhost:3000/authentication/register", {
+        await axios.post(`${ process.env.VUE_APP_API_URL }/authentication/register`, {
           email: this.email,
           name: this.name,
           password: this.password
@@ -59,7 +59,7 @@ export default Vue.extend({
         return;
       }
       try {
-        const { data } = await axios.post('http://localhost:3000/authentication/log-in', {
+        const { data } = await axios.post(`${ process.env.VUE_APP_API_URL }/authentication/log-in`, {
           email: this.email,
           password: this.password
         }, { withCredentials: true });

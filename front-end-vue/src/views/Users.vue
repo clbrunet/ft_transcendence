@@ -68,13 +68,13 @@ export default Vue.extend({
     },
     methods: {
         refresh_users() {
-            const url = "http://localhost:3000/user/" + this.$store.user.id;
+            const url = `${ process.env.VUE_APP_API_URL }/user/` + this.$store.user.id;
             axios({
                 url: url,
                 method: "get",
                 withCredentials: true,
                 headers: {
-                    "Access-Control-Allow-Origin": "http://localhost:3000"
+                    "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
                 }
             }).then(res => {
                 this.users = res.data;
@@ -82,11 +82,11 @@ export default Vue.extend({
         },
         get_users() {
             axios({
-                url: "http://localhost:3000/user/index",
+                url: `${ process.env.VUE_APP_API_URL }/user/index`,
                 method: "get",
                 withCredentials: true,
                 headers: {
-                    "Access-Control-Allow-Origin": "http://localhost:3000"
+                    "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
                 }
             }).then(res => {
                 this.users = res.data;
@@ -95,11 +95,11 @@ export default Vue.extend({
         },
         get_blocks() {
             axios({
-                url: "http://localhost:3000/block/index",
+                url: `${ process.env.VUE_APP_API_URL }/block/index`,
                 method: "get",
                 withCredentials: true,
                 headers: {
-                    "Access-Control-Allow-Origin": "http://localhost:3000"
+                    "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
                 }
             }).then(res => {
                 this.blocks = res.data;
@@ -107,11 +107,11 @@ export default Vue.extend({
         },
         get_friends() {
             axios({
-                url: "http://localhost:3000/friend/index",
+                url: `${ process.env.VUE_APP_API_URL }/friend/index`,
                 method: "get",
                 withCredentials: true,
                 headers: {
-                    "Access-Control-Allow-Origin": "http://localhost:3000"
+                    "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
                 }
             }).then(res => {
                 this.friends = res.data;
@@ -148,12 +148,12 @@ export default Vue.extend({
         },
         add_friend (user: any) {
 
-            const url = "http://localhost:3000/friend/" + user.id;
+            const url = `${ process.env.VUE_APP_API_URL }/friend/` + user.id;
             axios({
                 url: url,
                 method: "post",
                 headers: {
-                    'Access-Control-Allow-Origin': 'http://localhost:3000'
+                    'Access-Control-Allow-Origin': `${ process.env.VUE_APP_API_URL }`
                 },
                 withCredentials: true
             }).then(() => {
@@ -161,12 +161,12 @@ export default Vue.extend({
             });
         },
         remove_friend (user: any) {
-            const url = "http://localhost:3000/friend/unfriend/" + user.id;
+            const url = `${ process.env.VUE_APP_API_URL }/friend/unfriend/` + user.id;
             axios({
                 url: url,
                 method: "delete",
                 headers: {
-                    'Access-Control-Allow-Origin': 'http://localhost:3000'
+                    'Access-Control-Allow-Origin': `${ process.env.VUE_APP_API_URL }`
                 },
                 withCredentials: true
             }).then(() => {
@@ -174,12 +174,12 @@ export default Vue.extend({
             });
         },
         accept_friend_request(user: any) {
-            const url = "http://localhost:3000/friend/accept/" + user.id;
+            const url = `${ process.env.VUE_APP_API_URL }/friend/accept/` + user.id;
             axios({
                 url: url,
                 method: "patch",
                 headers: {
-                    'Access-Control-Allow-Origin': 'http://localhost:3000'
+                    'Access-Control-Allow-Origin': `${ process.env.VUE_APP_API_URL }`
                 },
                 withCredentials: true
             }).then(() => {
@@ -187,12 +187,12 @@ export default Vue.extend({
             });
         },
         deny_friend_request(user: any) {
-            const url = "http://localhost:3000/friend/reject/" + user.id;
+            const url = `${ process.env.VUE_APP_API_URL }/friend/reject/` + user.id;
             axios({
                 url: url,
                 method: "patch",
                 headers: {
-                    'Access-Control-Allow-Origin': 'http://localhost:3000'
+                    'Access-Control-Allow-Origin': `${ process.env.VUE_APP_API_URL }`
                 },
                 withCredentials: true
             }).then(() => {

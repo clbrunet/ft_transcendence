@@ -74,9 +74,9 @@ router.beforeEach((to, from, next) => {
   {
     axios({
       method: "get",
-      url: "http://localhost:3000/authentication",
+      url: `${ process.env.VUE_APP_API_URL }/authentication`,
       headers: {
-        "Access-Control-Allow-Origin": "http://localhost:3000"
+        "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
       },
       withCredentials: true
     }).then(res => {
@@ -96,9 +96,9 @@ router.beforeEach((to, from, next) => {
 
     axios({
       method: "get",
-      url: "http://localhost:3000/authentication",
+      url: `${ process.env.VUE_APP_API_URL }/authentication`,
       headers: {
-        "Access-Control-Allow-Origin": "http://localhost:3000"
+        "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
       },
       withCredentials: true
     }).then(res => {

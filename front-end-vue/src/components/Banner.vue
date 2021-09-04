@@ -39,11 +39,11 @@ export default Vue.extend({
   },
   mounted() {
     axios({
-      url: "http://localhost:3000/authentication/",
+      url: `${ process.env.VUE_APP_API_URL }/authentication/`,
       method: "get",
       withCredentials: true,
       headers: {
-        "Access-Control-Allow-Origin": "http://localhost:3000"
+        "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
       }
     }).then(res => {
       this.user = res.data;
