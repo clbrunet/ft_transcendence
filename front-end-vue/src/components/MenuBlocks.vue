@@ -55,7 +55,6 @@ export default Vue.extend({
       }
     }).then(res => {
       this.blocks = res.data;
-      console.log(this.blocks);
     });
   }
 });

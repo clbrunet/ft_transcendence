@@ -2,15 +2,17 @@
   <div id="body">
     <div id="left">
       <img id="avatar" src="/assets/come.png" alt="avatar" />
-      <input
-        type="file"
-        accept="image/*"
-        value="..."
-        style="display:none;"
-        @change="fileSelected"
-        ref="fileInput"
-      />
-      <button id="btn-image" @click="$refs.fileInput.click()">...</button>
+      <template v-if="is_auth">
+        <input
+          type="file"
+          accept="image/*"
+          value="..."
+          style="display:none;"
+          @change="fileSelected"
+          ref="fileInput"
+        />
+        <button id="btn-image" @click="$refs.fileInput.click()">...</button>
+      </template>
     </div>
     <div id="right">
       <div id="top">
@@ -32,14 +34,18 @@ import Vue from "vue";
 import axios from "axios";
 export default Vue.extend({
   name: "Banner",
+  props: ['id'],
   data() {
     return {
-      user: null
+      user: null,
+      is_auth: false
     };
   },
   mounted() {
+    if (this.id == this.$store.state.user.id)
+      this.is_auth = true;
     axios({
-      url: `${ process.env.VUE_APP_API_URL }/authentication/`,
+      url: `${ process.env.VUE_APP_API_URL }/user/` + this.id,
       method: "get",
       withCredentials: true,
       headers: {

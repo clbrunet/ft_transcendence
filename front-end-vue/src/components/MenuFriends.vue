@@ -11,19 +11,19 @@
             <td>
               <span>{{ friend[0].friendName }}</span>
             </td>
-            <td>
+            <td v-if="is_auth">
               <span>{{ friend[0].friendStatus }}</span>
               <img
                 v-if="friend[0].friendStatus == 'offline'"
                 src="/assets/offline.svg"
                 alt="offline"
-                style="width:15px;"
+                style="width:15px;margin-left:5px;"
               />
               <img
                 v-else-if="friend[0].friendStatus == 'online'"
                 src="/assets/online.svg"
                 alt="online"
-                style="width:15px;"
+                style="width:15px;margin-left:5px;"
               />
             </td>
           </tr>
@@ -39,14 +39,18 @@ import Vue from "vue";
 import axios from "axios";
 export default Vue.extend({
   name: "MenuFriends",
+  props: ['id'],
   data() {
     return {
-      friends: null
+      friends: null,
+      is_auth: false
     };
   },
   mounted() {
+    if (this.id == this.$store.state.user.id)
+      this.is_auth = true;
     axios({
-      url: `${ process.env.VUE_APP_API_URL }/friend/index`,
+      url: `${ process.env.VUE_APP_API_URL }/friend/` + this.id,
       method: "get",
       withCredentials: true,
       headers: {
@@ -54,7 +58,6 @@ export default Vue.extend({
       }
     }).then(res => {
       this.friends = res.data;
-      console.log(this.friends);
     });
   }
 });

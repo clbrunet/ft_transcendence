@@ -22,6 +22,14 @@ const routes: Array<RouteConfig> = [
     }
   },
   {
+    path: '/profile/:id',
+    name: 'ProfileId',
+    component: () => import('../views/Profile.vue'),
+    meta: {
+      requiresAuth: true,
+    }
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('../views/Login.vue'),

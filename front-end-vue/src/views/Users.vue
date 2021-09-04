@@ -4,7 +4,7 @@
         <table>
             <tr v-for="(user, index) in users" :key="index">
                 <template v-if="user.id != $store.state.user.id">
-                    <td class="field"> {{user.name}} </td>
+                    <td class="field" @click="goToProfile(user)" style="cursor:pointer;"> {{user.name}} </td>
                     <td class="field"> {{user.level}} </td>
                     <td class="field"> {{user.xp}} xp </td>
                     <td class="field"> {{user.nWins}}W / {{user.nLosses}}L </td>
@@ -52,6 +52,7 @@
 /* eslint-disable */
 import Vue from 'vue'
 import axios from 'axios'
+import router from '../router'
 export default Vue.extend({
     name: 'Users',
     data() {
@@ -194,6 +195,10 @@ export default Vue.extend({
         },
         send_message(user: any) {
             alert(this.$store.state.user.name + ' wants to send a message to ' + user.name);
+        },
+        goToProfile(user: any) {
+            const path = '/profile/' + user.id;
+            router.push({path: path});
         }
     }
 })
