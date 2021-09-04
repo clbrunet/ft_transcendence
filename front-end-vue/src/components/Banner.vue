@@ -1,7 +1,7 @@
 <template>
   <div id="body">
     <div id="left">
-      <img id="avatar" src="/assets/come.png" alt="avatar" />
+      <img id="avatar" :src="getPath(user.avatar)" alt="avatar" />
       <template v-if="is_auth">
         <input
           type="file"
@@ -30,6 +30,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable */
 import Vue from "vue";
 import axios from "axios";
 export default Vue.extend({
@@ -40,6 +41,12 @@ export default Vue.extend({
       user: null,
       is_auth: false
     };
+  },
+  methods: {
+    getPath(avatar: any) {
+      avatar = avatar.substring(10);
+      return "/assets/" + avatar;
+    }
   },
   mounted() {
     if (this.id == this.$store.state.user.id)

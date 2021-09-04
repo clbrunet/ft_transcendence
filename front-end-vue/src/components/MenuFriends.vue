@@ -50,7 +50,7 @@ export default Vue.extend({
     if (this.id == this.$store.state.user.id)
       this.is_auth = true;
     axios({
-      url: `${ process.env.VUE_APP_API_URL }/friend/` + this.id,
+      url: `${ process.env.VUE_APP_API_URL }/user/` + this.id,
       method: "get",
       withCredentials: true,
       headers: {
@@ -58,6 +58,8 @@ export default Vue.extend({
       }
     }).then(res => {
       this.friends = res.data;
+    }).catch(() => {
+      console.log("not implemented");
     });
   }
 });

@@ -65,10 +65,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    getPath(avatar: any) {
-      avatar = avatar.substring(10);
-      return "/assets/" + avatar;
-    },
     checkAuth(id: string) {
       const url = `${ process.env.VUE_APP_API_URL }/user/` + id;
       axios({
