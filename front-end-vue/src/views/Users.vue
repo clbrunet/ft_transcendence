@@ -67,19 +67,6 @@ export default Vue.extend({
         this.get_blocks();
     },
     methods: {
-        refresh_users() {
-            const url = `${ process.env.VUE_APP_API_URL }/user/` + this.$store.user.id;
-            axios({
-                url: url,
-                method: "get",
-                withCredentials: true,
-                headers: {
-                    "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
-                }
-            }).then(res => {
-                this.users = res.data;
-            });
-        },
         get_users() {
             axios({
                 url: `${ process.env.VUE_APP_API_URL }/user/index`,
@@ -116,10 +103,10 @@ export default Vue.extend({
             }).then(res => {
                 this.friends = res.data;
                 this.tab.length = 0;
-                for (let i: number = 0; i < this.users.length; i++)
+                for (let i = 0; i < this.users.length; i++)
                 {
                     var flag = false;
-                    for (let j: number = 0; j < this.friends.length; j++)
+                    for (let j = 0; j < this.friends.length; j++)
                     {
                         if (this.users[i].id == this.friends[j][0].friendId)
                         {
@@ -135,7 +122,7 @@ export default Vue.extend({
         is_blocked(user: any) {
             if (this.blocks)
             {
-                for (let i:number = 0; i < this.blocks.length; i++)
+                for (let i = 0; i < this.blocks.length; i++)
                 {
                     if (user.id == this.blocks[i].blockId)
                      return (true);
