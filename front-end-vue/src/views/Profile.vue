@@ -73,6 +73,8 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable */
+
 import Vue from "vue";
 import Store from "../store";
 import router from "../router";
