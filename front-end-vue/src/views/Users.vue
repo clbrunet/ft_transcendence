@@ -51,15 +51,14 @@
 <script lang="ts">
 import Vue from 'vue'
 import axios from 'axios'
-import router from '../router'
 export default Vue.extend({
     name: 'Users',
     data() {
         return {
-            users: {},
-            blocks: {},
-            friends: {},
-            tab: []
+            users: {} as any,
+            blocks: {} as any,
+            friends: {} as any,
+            tab: [] as any
         }
     },
     mounted() {

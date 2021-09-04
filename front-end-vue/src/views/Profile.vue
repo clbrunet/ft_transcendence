@@ -96,10 +96,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      user: {
-        realPath: undefined,
-        selectedFile: null
-      },
+      selectedFile: null,
+      user: {},
       data: {}
     };
   },
@@ -109,17 +107,17 @@ export default Vue.extend({
     }
   },
   methods: {
-    getPath(avatar) {
+    getPath(avatar: any) {
       avatar = avatar.substring(10);
       return "/assets/" + avatar;
-    },
+    }/*,
     fileSelected(event) {
       this.selectedFile = event.target.files[0];
       const fd = new FormData();
       fd.append('image', this.selectedFile, this.selectedFile.name);
       console.log(fd);
       console.log(this.selectedFile);
-    }
+    }*/
   }
 });
 </script>
