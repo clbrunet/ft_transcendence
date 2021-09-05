@@ -49,10 +49,7 @@ export default Vue.extend({
     axios({
       url: `${ process.env.VUE_APP_API_URL }/block/index`,
       method: "get",
-      withCredentials: true,
-      headers: {
-        "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
-      }
+      withCredentials: true
     }).then(res => {
       this.blocks = res.data;
     });

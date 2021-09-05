@@ -65,6 +65,14 @@ const routes: Array<RouteConfig> = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: '/auth',
+    name: 'Auth',
+    component: () => import('../views/Auth.vue'),
+    meta: {
+      requiresAuth: false
+    }
   }
 ]
 
@@ -83,9 +91,6 @@ router.beforeEach((to, from, next) => {
     axios({
       method: "get",
       url: `${ process.env.VUE_APP_API_URL }/authentication`,
-      headers: {
-        "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
-      },
       withCredentials: true
     }).then(res => {
       store.state.is_auth = true;
@@ -105,9 +110,6 @@ router.beforeEach((to, from, next) => {
     axios({
       method: "get",
       url: `${ process.env.VUE_APP_API_URL }/authentication`,
-      headers: {
-        "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
-      },
       withCredentials: true
     }).then(res => {
       if (to.matched.some((record) => record.meta.hideForAuth))

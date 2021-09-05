@@ -35,9 +35,6 @@ export default Vue.extend({
     axios({
       method: "get",
       url: `${ process.env.VUE_APP_API_URL }/channel/all`,
-      headers: {
-        "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
-      },
       withCredentials: true
     })
       .then(res => {

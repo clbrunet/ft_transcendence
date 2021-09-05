@@ -55,9 +55,6 @@ export default Vue.extend({
       url: `${ process.env.VUE_APP_API_URL }/user/` + this.id,
       method: "get",
       withCredentials: true,
-      headers: {
-        "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
-      }
     }).then(res => {
       this.user = res.data;
     });

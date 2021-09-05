@@ -72,10 +72,7 @@ export default Vue.extend({
             axios({
                 url: `${ process.env.VUE_APP_API_URL }/user/index`,
                 method: "get",
-                withCredentials: true,
-                headers: {
-                    "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
-                }
+                withCredentials: true
             }).then(res => {
                 this.users = res.data;
                 this.get_friends();
@@ -85,10 +82,7 @@ export default Vue.extend({
             axios({
                 url: `${ process.env.VUE_APP_API_URL }/block/index`,
                 method: "get",
-                withCredentials: true,
-                headers: {
-                    "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
-                }
+                withCredentials: true
             }).then(res => {
                 this.blocks = res.data;
             });
@@ -97,10 +91,7 @@ export default Vue.extend({
             axios({
                 url: `${ process.env.VUE_APP_API_URL }/friend/index`,
                 method: "get",
-                withCredentials: true,
-                headers: {
-                    "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
-                }
+                withCredentials: true
             }).then(res => {
                 this.friends = res.data;
                 this.tab.length = 0;
@@ -140,9 +131,6 @@ export default Vue.extend({
             axios({
                 url: url,
                 method: "post",
-                headers: {
-                    'Access-Control-Allow-Origin': `${ process.env.VUE_APP_API_URL }`
-                },
                 withCredentials: true
             }).then(() => {
                 this.get_users();
@@ -153,9 +141,6 @@ export default Vue.extend({
             axios({
                 url: url,
                 method: "delete",
-                headers: {
-                    'Access-Control-Allow-Origin': `${ process.env.VUE_APP_API_URL }`
-                },
                 withCredentials: true
             }).then(() => {
                 this.get_users();
@@ -166,9 +151,6 @@ export default Vue.extend({
             axios({
                 url: url,
                 method: "patch",
-                headers: {
-                    'Access-Control-Allow-Origin': `${ process.env.VUE_APP_API_URL }`
-                },
                 withCredentials: true
             }).then(() => {
                 this.get_users();
@@ -179,9 +161,6 @@ export default Vue.extend({
             axios({
                 url: url,
                 method: "patch",
-                headers: {
-                    'Access-Control-Allow-Origin': `${ process.env.VUE_APP_API_URL }`
-                },
                 withCredentials: true
             }).then(() => {
                 this.get_users();

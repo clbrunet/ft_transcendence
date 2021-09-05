@@ -47,9 +47,16 @@ export default Vue.extend({
           email: this.email,
           password: this.password
         }, { withCredentials: true });
-        this.$store.state.user = res.data;
-        this.$store.dispatch('authenticate');
-        router.push({ name: "Profile" });
+        if (res.data != "")
+        {
+          this.$store.state.user = res.data;
+          this.$store.dispatch('authenticate');
+          router.push({ name: "Profile" });
+        }
+        else
+        {
+          router.push({ name: "Auth" });
+        }
       }
       catch (error) {
         this.messages = Array.isArray(error.response.data.message) ? error.response.data.message : [error.response.data.message];

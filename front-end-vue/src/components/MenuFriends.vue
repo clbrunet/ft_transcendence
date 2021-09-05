@@ -50,12 +50,9 @@ export default Vue.extend({
     if (this.id == this.$store.state.user.id)
       this.is_auth = true;
     axios({
-      url: `${ process.env.VUE_APP_API_URL }/user/` + this.id,
+      url: `${ process.env.VUE_APP_API_URL }/friend/index`,
       method: "get",
-      withCredentials: true,
-      headers: {
-        "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
-      }
+      withCredentials: true
     }).then(res => {
       this.friends = res.data;
     }).catch(() => {

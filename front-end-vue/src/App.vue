@@ -36,12 +36,11 @@ export default Vue.extend({
       axios({
         method: "post",
         url: `${ process.env.VUE_APP_API_URL }/authentication/log-out`,
-        headers: {
-          "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
-        },
         withCredentials: true
       })
       .then(() => {
+        this.$store.state.expired = undefined;
+        this.$store.state.user = undefined;
         this.$store.dispatch("unauthenticate");
         router.push({ name: "App" });
       })
@@ -56,9 +55,6 @@ export default Vue.extend({
     axios({
       method: "get",
       url: `${ process.env.VUE_APP_API_URL }/authentication`,
-      headers: {
-        "Access-Control-Allow-Origin": `${ process.env.VUE_APP_API_URL }`
-      },
       withCredentials: true
     })
       .then(res => {
@@ -78,6 +74,7 @@ export default Vue.extend({
   font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
   color: #2c3e50;
+  height:100vh;
 }
 
 #nav {
@@ -86,6 +83,9 @@ export default Vue.extend({
   width: 100%;
   justify-content: space-between;
   border-bottom: 1px solid black;
+  height: 8vh;
+  margin: 0;
+  padding: 0;
 }
 
 #nav a {
