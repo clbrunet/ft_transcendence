@@ -141,7 +141,6 @@ export default Vue.extend({
         withCredentials: true
       })
         .then(() => {
-          this.turnOnCode = "";
           this.$store.state.user.isTwoFactorAuthenticationEnabled = true;
           axios({
             url: `${process.env.VUE_APP_API_URL}/2fa/authenticate/`,
@@ -152,6 +151,7 @@ export default Vue.extend({
             withCredentials: true
           })
             .then(() => {
+              this.turnOnCode = "";
               this.showModal = false;
             })
             .catch(() => {
