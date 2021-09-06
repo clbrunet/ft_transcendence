@@ -68,7 +68,6 @@ export class TwoFactorAuthenticationController {
     request.res.setHeader('Set-Cookie', [accessTokenCookie]);
     let userUpdateDto = new UserUpdateDto();
     userUpdateDto.status = 1;
-    this.userService.update(request.user.id, userUpdateDto);
-    return this.userService.userToDto(await this.userService.findById(request.user.id));
+    return this.userService.update(request.user.id, userUpdateDto);
   }
 }

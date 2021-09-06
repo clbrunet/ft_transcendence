@@ -20,6 +20,14 @@ export class UserController {
     return await this.userService.getAllLazy();
   }
 
+  // ROUTES FOR DEV ONLY TO BE COMMENTED
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/all')
+  async findAll() {
+    return await this.userService.findAll();
+  }
+
+  // ROUTES NOT FOR DEV
   @UseGuards(JwtTwoFactorGuard)
   @Get('/:id')
   async getbyIdLazy(@Param('id') id) {
@@ -28,15 +36,9 @@ export class UserController {
 
   // ROUTES FOR DEV ONLY TO BE COMMENTED
   @UseGuards(JwtTwoFactorGuard)
-  @Get('/all')
-  async getAll() {
-    return await this.userService.getAll();
-  }
-
-  @UseGuards(JwtTwoFactorGuard)
   @Get('/eager/:id')
-  async getbyId(@Param('id') id) {
-    return await this.userService.getById(id);
+  async findbyId(@Param('id') id) {
+    return await this.userService.findById(id);
   }
 
   @Patch('/:id')

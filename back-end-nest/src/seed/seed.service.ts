@@ -70,7 +70,7 @@ export class SeedService {
   ) {}
 
   async eraseUser() {
-  	const users = await this.userService.getAll();
+  	const users = await this.userService.findAll();
     for await (const user of users) {
 	  	await this.userService.delete(user.id);
     }

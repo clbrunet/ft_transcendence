@@ -13,7 +13,7 @@ class Message {
     @Column()
     public content: string;
 
-    @ManyToOne(() => Participant, participant => participant.messages, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => Participant, participant => participant.messages, { eager: false, onDelete: "CASCADE" })
     author: Participant;
 }
 

@@ -14,10 +14,10 @@ class Friend {
     @Column()
     public status: FriendStatus;
 
-    @ManyToOne(() => User, user => user.friendOwners, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => User, user => user.friendOwners, { eager: false, onDelete: "CASCADE" })
     friendOwner: User;
 
-    @ManyToOne(() => User, user => user.friends, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => User, user => user.friends, { eager: false, onDelete: "CASCADE" })
     friend: User;
 }
 

@@ -50,27 +50,6 @@ export class UserSeedDto {
   xp: number;
 }
 
-export class UserDto {
-  id: string;
-  name: string;
-  email: string;
-  twoFactorAuthenticationSecret: string;
-  isTwoFactorAuthenticationEnabled: boolean;
-  avatar: string;
-  status: string;
-  level: string;
-  nGames: number;
-  nWins: number;
-  nLosses: number;
-  xp: number;
-  channels: ChannelForUserDto[];
-  participants: ParticipantForUserDto[];
-  friends: FriendForUserDto[];
-  blocks: BlockForUserDto[];
-  duels: DuelForUserDto[];
-  inQueue: boolean;
-}
-
 export class UserDtoLazy {
   id: string;
   name: string;

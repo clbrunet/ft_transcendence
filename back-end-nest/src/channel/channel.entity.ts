@@ -19,7 +19,7 @@ class Channel {
     @Column({ nullable: true })
     public password: string;
 
-    @ManyToOne(() => User, user => user.channels, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => User, user => user.channels, { eager: false, onDelete: "CASCADE" })
     owner: User;
 
     @OneToMany(() => Participant, participant => participant.channel)

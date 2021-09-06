@@ -12,10 +12,10 @@ class Player {
 	@Column({ default: 0 })
   	public point: number;
 
-    @ManyToOne(() => User, user => user.players, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => User, user => user.players, { eager: false, onDelete: "CASCADE" })
     user: User;
 
-    @ManyToOne(() => Game, game => game.players, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => Game, game => game.players, { eager: false, onDelete: "CASCADE" })
     game: Game;
 }
 
