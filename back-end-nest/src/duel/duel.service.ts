@@ -200,7 +200,7 @@ export class DuelService {
 
   public async delete(id: string) {
     try {
-      await this.findById(id);
+      await this.findByIdLazy(id);
     }
     catch(error) {
       throw new HttpException('Duel with this id does not exist', HttpStatus.NOT_FOUND);

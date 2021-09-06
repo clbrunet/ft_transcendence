@@ -26,8 +26,8 @@ export class PlayerController {
 
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
-  async getAll() {
-    return await this.playerService.getAll();
+  async findAll() {
+    return await this.playerService.findAll();
   }
 
   @UseGuards(JwtTwoFactorGuard)

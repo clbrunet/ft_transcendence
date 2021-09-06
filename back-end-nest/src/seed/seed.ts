@@ -26,10 +26,10 @@ async function bootstrap() {
           let resDuel = seedService.seedDuel();
           return resDuel;
         })
-        /*.then((resDuel) => {
+        .then((resDuel) => {
           let resGame = seedService.seedGame();
           return resGame;
-        })*/
+        })
         .catch(error => {
           console.log('Seeding failed!');
           throw error;

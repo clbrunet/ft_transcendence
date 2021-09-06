@@ -49,34 +49,21 @@ export class GameService {
     return this.gameToDto(await this.findById(game.id));
   }
 
-  public async getAll() {
-    let res: Game[] = [];
-    res = await this.gameRepo.find( { relations: ['players'] } );
-    let dto: GameDto[] = [];
-    res.forEach( game => {
-      let gameDto: GameDto = this.gameToDto(game);
-      dto.push(gameDto);
-    })
-    return dto;    
+  public async findAll() {
+    return await this.gameRepo.find( { relations: ['players'] } );
   }
 
-  public async getAllLazy() {
-    let res: Game[] = [];
-    res = await this.gameRepo.find();
-    let dto: GameDtoLazy[] = [];
-    res.forEach( game => {
-      let gameDtoLazy: GameDtoLazy = this.gameToDtoLazy(game);
-      dto.push(gameDtoLazy);
-    })
-    return dto;    
+  public async findAllLazy() {
+    return await this.gameRepo.find();
   }
 
   public async getAllGivenUser(userId: string) {
     const user = await this.userService.findByIdPlayer(userId);
     let dto: GameDto[] = [];
     for (const player of user.players) {
-      const game = await this.findById(player.game.id);
-      let gameDto: GameDto = this.gameToDto(game);
+      const playerObject = await this.playerService.findById(player.id);
+      const game = await this.findById(playerObject.game.id);
+      let gameDto: GameDto = await this.gameToDto(game);
       dto.push(gameDto);
     }
     return dto;
@@ -126,16 +113,16 @@ export class GameService {
 
   public async delete(id: string) {
     try {
-      await this.findById(id);
+      await this.findByIdLazy(id);
     }
     catch(error) {
       throw new HttpException('Game with this id does not exist', HttpStatus.NOT_FOUND); 
     }
     await this.gameRepo.delete(id);
-    return await this.getAllLazy();
+    return "Successfull Game deletion";
   }
 
-  public gameToDto(game: Game) {
+  public async gameToDto(game: Game) {
     let dto = new GameDto();
     dto.id = game.id;
     dto.status = GameStatus[game.status];
@@ -143,14 +130,15 @@ export class GameService {
     dto.pointToVictory = game.pointToVictory;
     dto.players = [];
     if (game.players) {
-      game.players.forEach( player => {
+      for (const player of game.players) {
+        const playerObject = await this.playerService.findById(player.id);
         let playerForGameDto = new PlayerForGameDto();
-        playerForGameDto.id = player.id;
-        playerForGameDto.userId = player.user.id;
-        playerForGameDto.userName = player.user.name;
-        playerForGameDto.point = player.point;      
+        playerForGameDto.id = playerObject.id;
+        playerForGameDto.userId = playerObject.user.id;
+        playerForGameDto.userName = playerObject.user.name;
+        playerForGameDto.point = playerObject.point;      
         dto.players.push(playerForGameDto);
-      })
+      }
     }
     return dto;
   }
