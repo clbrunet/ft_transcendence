@@ -14,10 +14,10 @@ class Block {
     @Column()
     public status: BlockStatus;
 
-    @ManyToOne(() => User, user => user.blockOwners, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => User, user => user.blockOwners, { eager: false, onDelete: "CASCADE" })
     blockOwner: User;
 
-    @ManyToOne(() => User, user => user.blocks, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => User, user => user.blocks, { eager: false, onDelete: "CASCADE" })
     block: User;
 }
 

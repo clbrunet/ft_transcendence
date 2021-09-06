@@ -14,10 +14,10 @@ class Duel {
     @Column()
     public status: DuelStatus;
 
-    @ManyToOne(() => User, user => user.duelOwners, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => User, user => user.duelOwners, { eager: false, onDelete: "CASCADE" })
     duelOwner: User;
 
-    @ManyToOne(() => User, user => user.duels, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => User, user => user.duels, { eager: false, onDelete: "CASCADE" })
     duel: User;
 }
 

@@ -42,8 +42,8 @@ export class BlockController {
 /*
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
-  async getAll() {
-    return await this.blockService.getAll();
+  async findAll() {
+    return await this.blockService.findAll();
   }
 */
 }

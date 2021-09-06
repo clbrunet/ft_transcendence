@@ -50,7 +50,7 @@ export class AuthenticationController {
   @Post('register')
   async register(@Body() registrationData: RegisterDto) {
     const res = await this.authenticationService.register(registrationData);
-    return await this.userService.getById(res.id);
+    return await this.userService.getByIdLazy(res.id);
   }
 
   @HttpCode(200)

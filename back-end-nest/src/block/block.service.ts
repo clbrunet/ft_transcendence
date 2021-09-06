@@ -71,20 +71,30 @@ export class BlockService {
     return ret;
   }
 
-  public async getAll() {
-    let res: Block[] = [];
-    res = await this.blockRepo.find();
-    let dto: BlockDto[] = [];
-    res.forEach( block => {
-      let blockDto: BlockDto = this.blockToDto(block);
-      dto.push(blockDto);
-    })
-    return dto;    
+  // Return all Block Objects with all joined tables
+  public async findAll() {
+    return await this.blockRepo.find(
+      {
+        join: {
+          alias: "block",
+          leftJoinAndSelect: {
+            blockOwner: "block.blockOwner",
+            blockUser: "block.block",
+          },
+        },
+      }    
+    );
   }
 
+  // Return all Block Objects without any joined table
+  public async findAllLazy() {
+    return await this.blockRepo.find();
+  }
+
+  // Return all Block Dtos
   public async getAllActiveUser(userId: string) {
     const res = await this.userService.findByIdBlockOwner(userId);
-    let dto: BlockDto[] = [];
+    let dto = [];
     for (const blockOwner of res.blockOwners) {
       const block = await this.findById(blockOwner.id);
       let blockDto: BlockDto = this.blockToDto(block);
@@ -93,8 +103,27 @@ export class BlockService {
     return dto;  
   }
 
-  // Return Block Object
+  // Return Block Object with joined tables
   public async findById(id: string) {
+    const block = await this.blockRepo.findOne(id,
+      {
+        join: {
+          alias: "block",
+          leftJoinAndSelect: {
+            blockOwner: "block.blockOwner",
+            blockUser: "block.block",
+          },
+        },
+      }
+    );
+    if (block) {
+      return block;
+    }
+    throw new HttpException('Block with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return Block Object without any joined table
+  public async findByIdLazy(id: string) {
     const block = await this.blockRepo.findOne(id);
     if (block) {
       return block;
@@ -102,11 +131,32 @@ export class BlockService {
     throw new HttpException('Block with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Block Object
+  // Return Block Object with all joined tables
   public async findByOwnerAndBlock(blockOwnerId: string, blockId: string) {
     const blockOwner = await this.userService.findByIdLazy(blockOwnerId);
     const block = await this.userService.findByIdLazy(blockId);
-    const blockObject = await this.blockRepo.findOne( { blockOwner, block } );
+    const blockObject = await this.blockRepo.findOne( { blockOwner, block },
+      {
+        join: {
+          alias: "block",
+          leftJoinAndSelect: {
+            blockOwner: "block.blockOwner",
+            blockUser: "block.block",
+          },
+        },
+      }
+    );
+    if (blockObject) {
+      return blockObject;
+    }
+    throw new HttpException('Block with this (blockOwnerId, blockId) does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return Block Object without any joined table
+  public async findByOwnerAndBlockLazy(blockOwnerId: string, blockId: string) {
+    const blockOwner = await this.userService.findByIdLazy(blockOwnerId);
+    const block = await this.userService.findByIdLazy(blockId);
+    const blockObject = await this.blockRepo.findOne( { blockOwner, block });
     if (blockObject) {
       return blockObject;
     }
@@ -115,24 +165,24 @@ export class BlockService {
 
   public async delete(id: string) {
     try {
-      await this.findById(id);
+      await this.findByIdLazy(id);
     }
     catch(error) {
       throw new HttpException('Block with this id does not exist', HttpStatus.NOT_FOUND);
     }
     await this.blockRepo.delete(id);
-    return;
+    return "Successfull Block deletion";
   }
 
   public async unblock(userId: string, blockId: string) {
-    const block = await this.findByOwnerAndBlock(userId, blockId);
+    const block = await this.findByOwnerAndBlockLazy(userId, blockId);
     if (block.status == 1) {
       throw new HttpException('Only the blocker can unblock a Block', HttpStatus.NOT_FOUND);      
     }
-    const block2 = await this.findByOwnerAndBlock(blockId, userId);
+    const block2 = await this.findByOwnerAndBlockLazy(blockId, userId);
     await this.delete(block.id);
     await this.delete(block2.id);
-    return await this.getAllActiveUser(userId);
+    return "Successfull unblock";
   }
 
   public blockToDto(block: Block) {

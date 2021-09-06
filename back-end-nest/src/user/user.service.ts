@@ -12,7 +12,6 @@ import { DuelStatus } from '../duel/enum.duelStatus';
 import User from './user.entity';
 
 import RegisterDto from '../authentication/register.dto';
-import { UserDto } from './user.dto';
 import { UserDtoLazy } from './user.dto';
 import { ActiveUserDto } from './user.dto';
 import { UserUpdateDto } from './user.dto';
@@ -47,35 +46,21 @@ export class UserService {
     return this.userRepository.update(userId, { isTwoFactorAuthenticationEnabled: true });
   }
 
-  public async getAll() {
-    let res: User[] = [];
-    res = await this.userRepository.find( { relations: ['channels', 'participants', 'friends', 'friendOwners', 'blocks', 'blockOwners', 'duels', 'duelOwners', 'queuers', 'players'] } );
-    let dto: UserDto[] = [];
-    res.forEach( user => {
-      let userDto: UserDto = this.userToDto(user);
-      dto.push(userDto);
-    })
-    return dto;    
+  // return all User objects with all relations
+  public async findAll() {
+    return await this.userRepository.find( { relations: ['channels', 'participants', 'friends', 'friendOwners', 'blocks', 'blockOwners', 'duels', 'duelOwners', 'queuers', 'players'] } );
   }
 
+  // return all User dtos without any relation
   public async getAllLazy() {
-    let res: User[] = [];
-    res = await this.userRepository.find();
+    let users = [];
+    users = await this.userRepository.find();
     let dto: UserDtoLazy[] = [];
-    res.forEach( user => {
+    for (const user of users) {
       let userDtoLazy: UserDtoLazy = this.userToDtoLazy(user);
       dto.push(userDtoLazy);
-    })
-    return dto;    
-  }
-
-  // Return User Dto with all relations
-  public async getById(id: string) {
-    const user = await this.userRepository.findOne( id, { relations: ['channels', 'participants', 'friends', 'friendOwners', 'blocks', 'blockOwners', 'duels', 'duelOwners', 'queuers', 'players'] } );
-    if (user) { 
-      return this.userToDto(user);
     }
-    throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+    return dto;    
   }
 
   // Return User DtoLazy without any relation
@@ -87,9 +72,9 @@ export class UserService {
     throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return active User Dto without any relation
+  // Return active User Dto without any relation (except queuers)
   public async getActiveUser(id: string) {
-    const user = await this.userRepository.findOne( id, { relations: ['queuers'] } );
+    const user = await this.userRepository.findOne(id, { relations: ['queuers'] } );
     if (user) { 
       return this.activeUserToDto(user);
     }
@@ -195,11 +180,11 @@ export class UserService {
     throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
   }
 
-  public async update(id: string, userUpdateDto: UserUpdateDto): Promise<UserDto> {
+  public async update(id: string, userUpdateDto: UserUpdateDto): Promise<UserDtoLazy> {
     const res = await this.userRepository.update(id, userUpdateDto);
     if (res) {
       const user = await this.findById(id);
-      return this.userToDto(user);
+      return this.userToDtoLazy(user);
     }
     throw new HttpException('User update failed', HttpStatus.NOT_FOUND);
   }
@@ -212,78 +197,7 @@ export class UserService {
       throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND); 
     }
     await this.userRepository.delete(id);
-    return await this.getAll();
-  }
-
-  public userToDto(user: User): UserDto {
-    let dto = new UserDto();
-    dto.id = user.id;
-    dto.name = user.name;
-    dto.email = user.email;
-    dto.twoFactorAuthenticationSecret = user.twoFactorAuthenticationSecret;
-    dto.isTwoFactorAuthenticationEnabled = user.isTwoFactorAuthenticationEnabled;
-    dto.avatar = user.avatar;
-    dto.status = Status[user.status];
-    dto.level = Level[user.level];
-    dto.nGames = user.nGames;
-    dto.nWins = user.nWins;
-    dto.nLosses = user.nLosses;
-    dto.xp = user.xp;
-    dto.channels = [];
-    user.channels.forEach( channel => {
-      let channelForUserDto = new ChannelForUserDto();
-      channelForUserDto.id = channel.id;
-      channelForUserDto.name = channel.name;
-      channelForUserDto.status = ChannelStatus[channel.status];
-      dto.channels.push(channelForUserDto);
-    })
-    dto.participants = [];
-    user.participants.forEach( participant => {
-      let participantForUserDto = new ParticipantForUserDto();
-      participantForUserDto.channelId = participant.channel.id;
-      participantForUserDto.channelName = participant.channel.name;
-      participantForUserDto.admin = participant.admin;
-      participantForUserDto.mute = participant.mute;
-      participantForUserDto.ban = participant.ban;
-      dto.participants.push(participantForUserDto);
-    })
-    dto.friends = [];
-    user.friendOwners.forEach( friendOwner => {
-      let friendForUserDto = new FriendForUserDto();
-      friendForUserDto.friendId = friendOwner.friend.id;
-      friendForUserDto.friendName = friendOwner.friend.name;
-      friendForUserDto.requestStatus = FriendStatus[friendOwner.status];
-      if (friendOwner.status === 2) {
-        friendForUserDto.userStatus = Status[friendOwner.friend.status];
-      }
-      else {
-        friendForUserDto.userStatus = null;
-      }
-      dto.friends.push(friendForUserDto);
-    })
-    dto.blocks = [];
-    user.blockOwners.forEach( blockOwner => {
-      let blockForUserDto = new BlockForUserDto();
-      blockForUserDto.blockId = blockOwner.block.id;
-      blockForUserDto.blockName = blockOwner.block.name;
-      blockForUserDto.requestStatus = BlockStatus[blockOwner.status];
-      dto.blocks.push(blockForUserDto);
-    })
-    dto.duels = [];
-    user.duelOwners.forEach( duelOwner => {
-      let duelForUserDto = new DuelForUserDto();
-      duelForUserDto.duelId = duelOwner.duel.id;
-      duelForUserDto.duelName = duelOwner.duel.name;
-      duelForUserDto.requestStatus = DuelStatus[duelOwner.status];
-      dto.duels.push(duelForUserDto);
-    })
-    if (user.queuers.length === 0) {
-      dto.inQueue = false;
-    }
-    else {
-      dto.inQueue = true;      
-    }
-    return dto;
+    return await this.findAll();
   }
 
   public activeUserToDto(user: User) {

@@ -10,10 +10,10 @@ class Participant {
     @PrimaryGeneratedColumn('uuid')
     public id?: string;
 
-    @ManyToOne(() => User, user => user.participants, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => User, user => user.participants, { eager: false, onDelete: "CASCADE" })
     user: User;
 
-    @ManyToOne(() => Channel, channel => channel.participants, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => Channel, channel => channel.participants, { eager: false, onDelete: "CASCADE" })
     channel: Channel;
 
     @Column({ type: 'boolean', default: false })

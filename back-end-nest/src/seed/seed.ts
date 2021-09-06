@@ -35,7 +35,6 @@ async function bootstrap() {
           throw error;
         })
         .finally(() => {
-          console.log('Successfull seeding first part!');
           appContext.close();
         });
     })

@@ -45,8 +45,8 @@ export class GameController {
 
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
-  async getAll() {
-    return await this.gameService.getAll();
+  async findAll() {
+    return await this.gameService.findAll();
   }
 
   @UseGuards(JwtTwoFactorGuard)

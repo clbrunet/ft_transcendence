@@ -56,28 +56,66 @@ export class PlayerService {
     return this.playerToDto(res);
   }
 
-  public async getAll() {
-    let res: Player[] = [];
-    res = await this.playerRepo.find();
-    let dto: PlayerDto[] = [];
-    res.forEach( player => {
-      let playerDto: PlayerDto = this.playerToDto(player);
-      dto.push(playerDto);
-    })
-    return dto;    
+  // Return all Player objects with all joined tables
+  public async findAll() {
+    return await this.playerRepo.find(
+      {
+        join: {
+          alias: "player",
+          leftJoinAndSelect: {
+            user: "player.user",
+            game: "player.game",
+          },
+        },
+      }
+    );    
   }
 
-  // Return Player Dto
+  // Return all Player objects without any joined tables
+  public async findAllLazy() {
+    return await this.playerRepo.find();    
+  }
+
+  // Return Player Dto with all joined tables
   public async getById(id: string) {
-    const player = await this.playerRepo.findOne(id);
+    const player = await this.playerRepo.findOne(id,
+      {
+        join: {
+          alias: "player",
+          leftJoinAndSelect: {
+            user: "player.user",
+            game: "player.game",
+          },
+        },
+      }
+    );
     if (player) { 
       return this.playerToDto(player);
     }
     throw new HttpException('Player with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Player Object
+  // Return Player Object with all joined tables
   public async findById(id: string) {
+    const player = await this.playerRepo.findOne(id,
+      {
+        join: {
+          alias: "player",
+          leftJoinAndSelect: {
+            user: "player.user",
+            game: "player.game",
+          },
+        },
+      }  
+    );
+    if (player) {
+      return player;
+    }
+    throw new HttpException('Player with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return Player Object without any joined tables
+  public async findByIdLazy(id: string) {
     const player = await this.playerRepo.findOne(id);
     if (player) {
       return player;
@@ -85,8 +123,29 @@ export class PlayerService {
     throw new HttpException('Player with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Player Object
+  // Return Player Object with all joined tables
   public async findByGameAndUser(gameId: string, userId: string) {
+    const game = await this.gameService.findByIdLazy(gameId);
+    const user = await this.userService.findByIdLazy(userId);
+    const player = await this.playerRepo.findOne( { game, user },
+      {
+        join: {
+          alias: "player",
+          leftJoinAndSelect: {
+            user: "player.user",
+            game: "player.game",
+          },
+        },
+      }
+    );
+    if (player) {
+      return player;
+    }
+    throw new HttpException('Player with this (gameId, userId) does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return Player Object without any joined tables
+  public async findByGameAndUserLazy(gameId: string, userId: string) {
     const game = await this.gameService.findByIdLazy(gameId);
     const user = await this.userService.findByIdLazy(userId);
     const player = await this.playerRepo.findOne( { game, user } );
@@ -117,13 +176,13 @@ export class PlayerService {
 
   public async delete(id: string) {
     try {
-      await this.findById(id);
+      await this.findByIdLazy(id);
     }
     catch(error) {
       throw new HttpException('Player with this id does not exist', HttpStatus.NOT_FOUND); 
     }
     await this.playerRepo.delete(id);
-    return await this.getAll();
+    return "Successfull Player deletion";
   }
 
   public playerToDto(player: Player) {

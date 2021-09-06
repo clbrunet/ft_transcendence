@@ -58,8 +58,14 @@ export class FriendController {
 /*
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
-  async getAll() {
-    return await this.friendService.getAll();
+  async findAll() {
+    return await this.friendService.findAll();
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/:id')
+  async findById(@Param('id') id) {
+    return await this.friendService.findById(id);
   }
 */
 }
