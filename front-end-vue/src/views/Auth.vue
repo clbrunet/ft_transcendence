@@ -25,6 +25,7 @@ export default Vue.extend({
   name: "Auth",
   data() {
     return {
+      loading: "",
       QRCodeSRC: "",
       loginCode: "",
       errorCode: ""
