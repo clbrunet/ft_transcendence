@@ -11,7 +11,7 @@ class Queue {
     @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     queueTime: Date;
 
-    @ManyToOne(() => User, user => user.queuers, { eager: true, onDelete: "CASCADE" })
+    @ManyToOne(() => User, user => user.queuers, { eager: false, onDelete: "CASCADE" })
     queuer: User;
 }
 

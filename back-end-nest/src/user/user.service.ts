@@ -53,13 +53,13 @@ export class UserService {
 
   // return all User dtos without any relation
   public async getAllLazy() {
-    let res: User[] = [];
-    res = await this.userRepository.find();
+    let users = [];
+    users = await this.userRepository.find();
     let dto: UserDtoLazy[] = [];
-    res.forEach( user => {
+    for (const user of users) {
       let userDtoLazy: UserDtoLazy = this.userToDtoLazy(user);
       dto.push(userDtoLazy);
-    })
+    }
     return dto;    
   }
 
