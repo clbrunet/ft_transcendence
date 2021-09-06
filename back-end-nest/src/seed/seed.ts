@@ -18,7 +18,7 @@ async function bootstrap() {
           let resFriend = seedService.seedFriend();
           return resFriend;
         })
-        .then((resFriend) => {
+        /*.then((resFriend) => {
           let resBlock = seedService.seedBlock();
           return resBlock;
         })
@@ -29,13 +29,12 @@ async function bootstrap() {
         .then((resDuel) => {
           let resGame = seedService.seedGame();
           return resGame;
-        })
+        })*/
         .catch(error => {
           console.log('Seeding failed!');
           throw error;
         })
         .finally(() => {
-          console.log('Successfull seeding first part!');
           appContext.close();
         });
     })

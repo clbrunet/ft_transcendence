@@ -72,38 +72,59 @@ export class FriendService {
     return ret;
   }
 
-  public async getAll() {
-    let res: Friend[] = [];
-    res = await this.friendRepo.find();
-    let dto: FriendDto[] = [];
-    res.forEach( friend => {
-      let friendDto: FriendDto = this.friendToDto(friend);
-      dto.push(friendDto);
-    })
-    return dto;    
+  // Return all Friend Objects with all joined tables
+  public async findAll() {
+    return await this.friendRepo.find(
+      {
+        join: {
+          alias: "friend",
+          leftJoinAndSelect: {
+            friendOwner: "friend.friendOwner",
+            friendUser: "friend.friend",
+          },
+        },
+      }    
+    );
   }
 
+  // Return Friend Object without any joined table
+  public async findAllLazy() {
+    return await this.friendRepo.find();
+  }
+
+  // Return all Friend Dtos
   public async getAllActiveUser(userId: string) {
     const res = await this.userService.findByIdFriendOwner(userId);
     let dto = [];
     for (const friendOwner of res.friendOwners) {
-      let array: FriendDto[] = [];
-
-      let friendDto: FriendDto = this.friendToDto(friendOwner);
-      array.push(friendDto);
-
-
-      const reverseFriend = await this.findByOwnerAndFriend(friendOwner.friend.id, friendOwner.friendOwner.id);
-      let reverseFriendDto: FriendDto = this.friendToDto(reverseFriend);
-      array.push(reverseFriendDto);
-
-      dto.push(array);
+      const friendOwnerObject = await this.findById(friendOwner.id);
+      let friendDto: FriendDto = this.friendToDto(friendOwnerObject);
+      dto.push(friendDto);
     }
     return dto;  
   }
 
-  // Return Friend Object
+  // Return Friend Object with joined tables
   public async findById(id: string) {
+    const friend = await this.friendRepo.findOne(id,
+      {
+        join: {
+          alias: "friend",
+          leftJoinAndSelect: {
+            friendOwner: "friend.friendOwner",
+            friendUser: "friend.friend",
+          },
+        },
+      }    
+    );
+    if (friend) {
+      return friend;
+    }
+    throw new HttpException('Friend with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return Friend Object without any joined table
+  public async findByIdLazy(id: string) {
     const friend = await this.friendRepo.findOne(id);
     if (friend) {
       return friend;
@@ -111,17 +132,49 @@ export class FriendService {
     throw new HttpException('Friend with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Friend Object
+  // Return Friend Object with joined table
   public async findByOwnerAndFriend(friendOwnerId: string, friendId: string) {
     const friendOwner = await this.userService.findByIdLazy(friendOwnerId);
     const friend = await this.userService.findByIdLazy(friendId);
-    const friendObject = await this.friendRepo.findOne( { friendOwner, friend } );
+    const friendObject = await this.friendRepo.findOne( { friendOwner, friend },
+      {
+        join: {
+          alias: "friend",
+          leftJoinAndSelect: {
+            friendOwner: "friend.friendOwner",
+            friendUser: "friend.friend",
+          },
+        },
+      }
+    );
     if (friendObject) {
       return friendObject;
     }
     throw new HttpException('Friend with this (friendOwnerId, friendId) does not exist', HttpStatus.NOT_FOUND);
   }
 
+  // Return Friend Object without any joined table
+  public async findByOwnerAndFriendLazy(friendOwnerId: string, friendId: string) {
+    const friendOwner = await this.userService.findByIdLazy(friendOwnerId);
+    const friend = await this.userService.findByIdLazy(friendId);
+    const friendObject = await this.friendRepo.findOne( { friendOwner, friend },
+      {
+        join: {
+          alias: "friend",
+          leftJoinAndSelect: {
+            friendOwner: "friend.friendOwner",
+            friendUser: "friend.friend",
+          },
+        },
+      }
+    );
+    if (friendObject) {
+      return friendObject;
+    }
+    throw new HttpException('Friend with this (friendOwnerId, friendId) does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // Return Friend dto
   public async update(id: string, friendUpdateDto: FriendUpdateDto) {
     const res = await this.friendRepo.update(id, friendUpdateDto);
     if (res) {
@@ -132,7 +185,7 @@ export class FriendService {
   }
 
   public async updateStatus(userId: string, friendId: string, status: number) {
-    let friend = await this.findByOwnerAndFriend(userId, friendId);
+    let friend = await this.findByOwnerAndFriendLazy(userId, friendId);
     if (friend.status === 0) {
       throw new HttpException('You have to wait for Friend to accept', HttpStatus.NOT_FOUND);
     }
@@ -146,7 +199,7 @@ export class FriendService {
     let ret = [];
     ret.push(this.friendToDto(res));
 
-    let friend2 = await this.findByOwnerAndFriend(friendId, userId);
+    let friend2 = await this.findByOwnerAndFriendLazy(friendId, userId);
     let friendUpdateDto2 = new FriendUpdateDto();
     friendUpdateDto2.status = status;
     await this.update(friend2.id, friendUpdateDto2);
@@ -164,29 +217,29 @@ export class FriendService {
       throw new HttpException('Friend with this id does not exist', HttpStatus.NOT_FOUND);
     }
     await this.friendRepo.delete(id);
-    return;
+    return "Successfull Friend deletion";
   }
 
   public async reject(userId: string, friendId: string) {
-    const friend = await this.findByOwnerAndFriend(userId, friendId);
+    const friend = await this.findByOwnerAndFriendLazy(userId, friendId);
     if (friend.status == 0) {
       throw new HttpException('User can not reject a Friend he has sent', HttpStatus.NOT_FOUND);      
     }
-    const friend2 = await this.findByOwnerAndFriend(friendId, userId);
+    const friend2 = await this.findByOwnerAndFriendLazy(friendId, userId);
     await this.delete(friend.id);
     await this.delete(friend2.id);
-    return await this.getAllActiveUser(userId);
+    return "Successfull Friend rejection";
   }
 
   public async unfriend(userId: string, friendId: string) {
-    const friend = await this.findByOwnerAndFriend(userId, friendId);
+    const friend = await this.findByOwnerAndFriendLazy(userId, friendId);
     if (friend.status == 1) {
-      throw new HttpException('User can not unfriend before accepting', HttpStatus.NOT_FOUND);      
+      throw new HttpException('User can not unfriend before accepting', HttpStatus.NOT_FOUND);
     }
-    const friend2 = await this.findByOwnerAndFriend(friendId, userId);
+    const friend2 = await this.findByOwnerAndFriendLazy(friendId, userId);
     await this.delete(friend.id);
     await this.delete(friend2.id);
-    return await this.getAllActiveUser(userId);
+    return "Successfull unfriend";
   }
 
   public friendToDto(friend: Friend) {
