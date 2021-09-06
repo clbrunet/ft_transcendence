@@ -18,7 +18,7 @@ async function bootstrap() {
           let resFriend = seedService.seedFriend();
           return resFriend;
         })
-        /*.then((resFriend) => {
+        .then((resFriend) => {
           let resBlock = seedService.seedBlock();
           return resBlock;
         })
@@ -26,7 +26,7 @@ async function bootstrap() {
           let resDuel = seedService.seedDuel();
           return resDuel;
         })
-        .then((resDuel) => {
+        /*.then((resDuel) => {
           let resGame = seedService.seedGame();
           return resGame;
         })*/

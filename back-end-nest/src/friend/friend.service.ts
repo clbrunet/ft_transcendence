@@ -87,7 +87,7 @@ export class FriendService {
     );
   }
 
-  // Return Friend Object without any joined table
+  // Return all Friend Objects without any joined table
   public async findAllLazy() {
     return await this.friendRepo.find();
   }

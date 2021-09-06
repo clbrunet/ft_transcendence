@@ -55,11 +55,11 @@ export class DuelController {
   }
 
   // ROUTES FOR DEV ONLY TO BE COMMENTED
-/*
+
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
-  async getAll() {
-    return await this.duelService.getAll();
+  async findAll() {
+    return await this.duelService.findAll();
   }
-*/
+
 }
