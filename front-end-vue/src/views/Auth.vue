@@ -75,6 +75,8 @@ export default Vue.extend({
 #body {
     display:flex;
     flex-direction: column;
+    align-items:center;
+    width: 50%;
 }
 
 </style>
