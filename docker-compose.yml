@@ -1,0 +1,29 @@
+version: "2.3"
+
+services:
+
+  postgres:
+    image: postgres:9.6.23
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: my_database
+    ports:
+      - "5436:5432"
+
+  front-end-vue:
+    build: ./front-end-vue/
+    image: front-end-vue
+    container_name: front-end-vue
+    ports:
+      - "8080:8080"
+
+  back-end-nest:
+    build: ./back-end-nest/
+    image: back-end-nest
+    container_name: back-end-nest
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+    ports:
+      - "3000:3000"

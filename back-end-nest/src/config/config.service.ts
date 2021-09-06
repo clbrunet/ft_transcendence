@@ -39,29 +39,26 @@ class ConfigService {
       password: this.getValue('POSTGRES_PASSWORD'),
       database: this.getValue('POSTGRES_DATABASE'),
 
-      entities: ['**/*.entity{.ts,.js}'],
+      entities: this.isProduction() ? ['dist/**/*.entity.js'] : ['src/**/*.entity.ts'],
 
       migrationsTableName: 'migration',
 
-      migrations: ['src/migration/*.ts'],
+      migrations: this.isProduction() ? ['dist/migration/*.js'] : ['src/migration/*.ts'],
 
       cli: {
-        migrationsDir: 'src/migration',
+        migrationsDir: this.isProduction() ? 'dist/migration' : 'src/migration',
       },
-
-      ssl: this.isProduction(),
     };
   }
-
 }
 
 const configService = new ConfigService(process.env)
-  .ensureValues([
-    'POSTGRES_HOST',
-    'POSTGRES_PORT',
-    'POSTGRES_USER',
-    'POSTGRES_PASSWORD',
-    'POSTGRES_DATABASE'
-  ]);
+.ensureValues([
+  'POSTGRES_HOST',
+  'POSTGRES_PORT',
+  'POSTGRES_USER',
+  'POSTGRES_PASSWORD',
+  'POSTGRES_DATABASE'
+]);
 
 export { configService };
