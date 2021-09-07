@@ -12,6 +12,7 @@ import { ParticipantCreationDto } from './participant.dto';
 export class ParticipantController {
   constructor( private readonly participantService: ParticipantService ) {}
 
+  // ROUTES FOR DEV ONLY TO BE COMMENTED
   @UseGuards(JwtTwoFactorGuard)
   @Post('/create')
   async create(@Body() data: ParticipantCreationDto) {
@@ -20,8 +21,8 @@ export class ParticipantController {
 
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
-  async getAll() {
-    return await this.participantService.getAll();
+  async findAll() {
+    return await this.participantService.findAll();
   }
 
   @UseGuards(JwtTwoFactorGuard)
@@ -35,5 +36,4 @@ export class ParticipantController {
   async delete(@Param('id') id) {
     return await this.participantService.delete(id);
   }
-
 }

@@ -30,6 +30,18 @@ async function bootstrap() {
           let resGame = seedService.seedGame();
           return resGame;
         })
+        .then((resGame) => {
+          let resChannel = seedService.seedChannel();
+          return resChannel;
+        })
+        .then((resChannel) => {
+          let resParticipant = seedService.seedParticipant();
+          return resParticipant;
+        })
+        .then((resParticipant) => {
+          let resMessage = seedService.seedMessage();
+          return resMessage;
+        })
         .catch(error => {
           console.log('Seeding failed!');
           throw error;

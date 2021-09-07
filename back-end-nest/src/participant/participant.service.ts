@@ -10,6 +10,7 @@ import { UserService } from '../user/user.service';
 import { ChannelService } from '../channel/channel.service';
 
 import { ParticipantCreationDto } from './participant.dto';
+import { ParticipantUpdateDto } from './participant.dto';
 import { ParticipantDto } from './participant.dto';
 import { MessageForParticipantDto } from '../message/message.dto';
 
@@ -26,23 +27,29 @@ export class ParticipantService {
     private readonly channelService: ChannelService,
   ) {}
 
-  public async create(data: ParticipantCreationDto) {
+  public async create(participantCreationDto: ParticipantCreationDto) {
     let participant = new Participant();
-    const user = await this.userService.findById(data.userId);
+    const user = await this.userService.findByIdLazy(participantCreationDto.userId);
     if (user) {
       participant.user = user;
     }
     else {
       throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
     }
-    const channel = await this.channelService.findById(data.channelId);
+    const channel = await this.channelService.findByIdOwner(participantCreationDto.channelId);
     if (channel) {
       participant.channel = channel;     
     }
     else {
       throw new HttpException('Channel with this id does not exist', HttpStatus.NOT_FOUND);
     }
-    participant.admin = data.admin; 
+    if (channel.status === 0 || channel.status === 1 || channel.owner.id === user.id) {
+      participant.authorized = true;
+    }
+    else {
+      participant.authorized = false;
+    }
+    participant.admin = participantCreationDto.admin; 
     let res;
     try {
       res = await this.participantRepo.save(participant);
@@ -56,18 +63,106 @@ export class ParticipantService {
     return this.participantToDto(res);
   }
 
-  public async getAll() {
-    let res: Participant[] = [];
-    res = await this.participantRepo.find( { relations: ['messages'] } );
-    let dto: ParticipantDto[] = [];
-    res.forEach( participant => {
-      let participantDto: ParticipantDto = this.participantToDto(participant);
-      dto.push(participantDto);
-    })
-    return dto;    
+  public async findAll() {
+    return await this.participantRepo.find(
+      {
+        relations: ['messages'],
+        join: {
+          alias: "participant",
+          leftJoinAndSelect: {
+            user: "participant.user",
+            channel: "participant.channel",
+          },
+        },
+      }     
+    );
   }
 
-  // Return Participant Dto 
+  public async findAllMessage() {
+    return await this.participantRepo.find(
+      {
+        relations: ['messages'],
+      }     
+    );
+  }
+
+  public async findAllLazy() {
+    return await this.participantRepo.find();
+  }
+
+  public async findById(id: string) {
+    const participant = await this.participantRepo.findOne(id,
+      {
+        relations: ['messages'],
+        join: {
+          alias: "participant",
+          leftJoinAndSelect: {
+            user: "participant.user",
+            channel: "participant.channel",
+          },
+        },
+      } 
+    );
+    if (participant) {
+      return participant;
+    }
+    throw new HttpException('Participant with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  public async findByIdUser(id: string) {
+    const participant = await this.participantRepo.findOne(id,
+      {
+        join: {
+          alias: "participant",
+          leftJoinAndSelect: {
+            user: "participant.user",
+          },
+        },
+      } 
+    );
+    if (participant) {
+      return participant;
+    }
+    throw new HttpException('Participant with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  public async findByIdChannel(id: string) {
+    const participant = await this.participantRepo.findOne(id,
+      {
+        join: {
+          alias: "participant",
+          leftJoinAndSelect: {
+            channel: "participant.channel",
+          },
+        },
+      } 
+    );
+    if (participant) {
+      return participant;
+    }
+    throw new HttpException('Participant with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  public async findByIdMessage(id: string) {
+    const participant = await this.participantRepo.findOne(id,
+      {
+        relations: ['messages'],
+      } 
+    );
+    if (participant) {
+      return participant;
+    }
+    throw new HttpException('Participant with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  public async findByIdLazy(id: string) {
+    const participant = await this.participantRepo.findOne(id);
+    if (participant) {
+      return participant;
+    }
+    throw new HttpException('Participant with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
   public async getById(id: string) {
     const participant = await this.participantRepo.findOne(id, { relations: ['messages'] });
     if (participant) {
@@ -76,24 +171,57 @@ export class ParticipantService {
     throw new HttpException('Participant with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Participant Object
-  public async findById(id: string) {
-    const participant = await this.participantRepo.findOne(id, { relations: ['messages'] });
-    if (participant) {
-      return participant;
-    }
-    throw new HttpException('Participant with this id does not exist', HttpStatus.NOT_FOUND);
-  }
-
-  // Return Participant Object
   public async findByUserAndChannel(userId: string, channelId: string) {
-    const user = await this.userService.findById(userId);
-    const channel = await this.channelService.findById(channelId);
-    const participant = await this.participantRepo.findOne( { user, channel }, { relations: ['messages'] });
+    const user = await this.userService.findByIdLazy(userId);
+    const channel = await this.channelService.findByIdLazy(channelId);
+    const participant = await this.participantRepo.findOne( { user, channel },
+      {
+        relations: ['messages'],
+        join: {
+          alias: "participant",
+          leftJoinAndSelect: {
+            user: "participant.user",
+            channel: "participant.channel",
+          },
+        },
+      }
+    );
     if (participant) {
       return participant;
     }
     throw new HttpException('Participant with this (userId, channelId) does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  public async findByUserAndChannelMessage(userId: string, channelId: string) {
+    const user = await this.userService.findByIdLazy(userId);
+    const channel = await this.channelService.findByIdLazy(channelId);
+    const participant = await this.participantRepo.findOne( { user, channel },
+      {
+        relations: ['messages'],
+      }
+    );
+    if (participant) {
+      return participant;
+    }
+    throw new HttpException('Participant with this (userId, channelId) does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  public async findByUserAndChannelLazy(userId: string, channelId: string) {
+    const user = await this.userService.findByIdLazy(userId);
+    const channel = await this.channelService.findByIdLazy(channelId);
+    const participant = await this.participantRepo.findOne( { user, channel } );
+    if (participant) {
+      return participant;
+    }
+    throw new HttpException('Participant with this (userId, channelId) does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  public async update(id: string, participantUpdateDto: ParticipantUpdateDto) {
+    const res = await this.participantRepo.update(id, participantUpdateDto);
+    if (res) {
+      return await this.findByIdLazy(id);
+    }
+    throw new HttpException('Participant update failed', HttpStatus.NOT_FOUND);
   }
 
   public async delete(id: string) {
@@ -104,7 +232,17 @@ export class ParticipantService {
       throw new HttpException('Participant with this id does not exist', HttpStatus.NOT_FOUND);  
     }
     await this.participantRepo.delete(id);
-    return await this.getAll();
+    return "Successful Participant deletion";
+  }
+
+  public async isParticipant(userId: string, channelId: string) {
+    const user = await this.userService.findByIdLazy(userId);
+    const channel = await this.channelService.findByIdLazy(channelId);
+    const participant = await this.participantRepo.findOne( { user, channel } );
+    if (participant) {
+      return true;
+    }
+    return false;
   }
 
   public participantToDto(participant: Participant) {
@@ -114,11 +252,12 @@ export class ParticipantService {
     dto.userName = participant.user.name;
     dto.channelId = participant.channel.id;
     dto.channelName = participant.channel.name;
+    dto.authorized = participant.authorized;
     dto.admin = participant.admin;
     dto.mute = participant.mute;
-    dto.muteDateTime = participant.muteDateTime;
+    dto.muteEndDateTime = participant.muteEndDateTime;
     dto.ban = participant.ban;
-    dto.banDateTime = participant.banDateTime;
+    dto.banEndDateTime = participant.banEndDateTime;
     dto.messages = [];
     if (participant.messages) {
         participant.messages.forEach( message => {

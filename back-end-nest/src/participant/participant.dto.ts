@@ -11,13 +11,36 @@ export class ParticipantCreationDto {
 
   @IsOptional()
   @IsBoolean()
+  authorized: boolean;
+
+  @IsOptional()
+  @IsBoolean()
   admin: boolean;
 }
 
 export class ParticipantSeedDto {
   userEmail: string;
   channelName: string;
+  authorized: boolean;
   admin: boolean;
+}
+
+export class ParticipantUpdateDto {
+  @IsOptional()
+  @IsBoolean()
+  authorized: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  admin: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  ban: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  mute: boolean;
 }
 
 export class ParticipantDto {
@@ -26,30 +49,11 @@ export class ParticipantDto {
   userName: string;
   channelId: string;
   channelName: string;
+  authorized: boolean;
   admin: boolean;
   mute: boolean;
-  muteDateTime: Date; 
+  muteEndDateTime: Date; 
   ban: boolean;
-  banDateTime: Date;
+  banEndDateTime: Date;
   messages: MessageForParticipantDto[];
-}
-
-export class ParticipantForChannelDto {
-  id: string;
-  name: string;
-  admin: boolean;
-  mute: boolean;
-  muteDateTime: Date; 
-  ban: boolean;
-  banDateTime: Date;
-}
-
-export class ParticipantForUserDto {
-  channelId: string;
-  channelName: string;
-  admin: boolean;
-  mute: boolean;
-  muteDateTime: Date; 
-  ban: boolean;
-  banDateTime: Date;
 }

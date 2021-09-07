@@ -31,10 +31,3 @@ export class DuelDto {
   duelName: string;
   status: string;
 }
-
-export class DuelForUserDto {
-  duelId: string;
-  duelName: string;
-  requestStatus: string;
-  userStatus: string;
-}

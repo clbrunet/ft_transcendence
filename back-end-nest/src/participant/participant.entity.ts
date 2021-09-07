@@ -17,19 +17,22 @@ class Participant {
     channel: Channel;
 
     @Column({ type: 'boolean', default: false })
+    authorized: boolean;
+
+    @Column({ type: 'boolean', default: false })
     admin: boolean;
 
     @Column({ type: 'boolean', default: false })
     mute: boolean;
 
-    @Column({ type: 'timestamptz', nullable: true })
-    muteDateTime: Date;
+    @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+    muteEndDateTime: Date;
 
     @Column({ type: 'boolean', default: false })
     ban: boolean;
 
-    @Column({ type: 'timestamptz', nullable: true })
-    banDateTime: Date;
+    @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+    banEndDateTime: Date;
 
     @OneToMany(() => Message, message => message.author)
     messages: Message[];

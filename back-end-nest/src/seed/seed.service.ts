@@ -169,7 +169,6 @@ export class SeedService {
     	let channelCreationDto = new ChannelCreationDto();
     	channelCreationDto.name = channel.name;
     	channelCreationDto.status = channel.status;
-    	channelCreationDto.password = channel.password;
     	channelCreationDto.ownerId = owner.id;
 	  	await this.channelService.create(channelCreationDto);
     }

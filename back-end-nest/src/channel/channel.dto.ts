@@ -2,9 +2,6 @@ import { IsString, IsNotEmpty, MinLength, IsOptional, IsEnum } from 'class-valid
 
 import { ChannelStatus } from './enum.channelStatus';
 
-import { ParticipantForChannelDto } from '../participant/participant.dto';
-import { UserForChannelDto } from '../user/user.dto';
-
 
 export class ChannelCreationDto {
   @IsString()
@@ -27,25 +24,51 @@ export class ChannelCreationDto {
 export class ChannelSeedDto {
   name: string;
   status: ChannelStatus;
-  password: string;
   ownerEmail: string;
 }
 
-export class ChannelDto {
+export class ChannelUpdateDto {
+  @IsOptional()
+  @IsEnum(ChannelStatus)
+  status: ChannelStatus;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(7)
+  password: string;
+
+  @IsOptional()
+  @IsString()
+  ownerId: string;
+}
+
+export class AuthorizationDto {
+  channelId: string;
+  password: string;
+}
+
+export class ChannelDtoActiveUser {
   id: string;
   name: string;
   status: string;
-  owner: UserForChannelDto;
-  participants: ParticipantForChannelDto[];
+  ownerId: string;
+  ownerName: string;
+  nParticipants: number;
+  nUnreadMessages: number;
+  activeUserParticipant: boolean;
+  activeUserAuthorized: boolean;
+  activeUserAdmin: boolean;
+  activeUserMute: boolean;
+  activeUserMuteEndDateTime: Date; 
+  activeUserBan: boolean;
+  activeUserBanEndDateTime: Date;
 }
 
-export class ChannelForUserDto {
+export class ChannelDtoLazy {
   id: string;
   name: string;
   status: string;
-}
-
-export class ChannelForParticipantDto {
-  id: string;
-  name: string;
+  password: string;
+  ownerId: string;
+  ownerName: string;
 }

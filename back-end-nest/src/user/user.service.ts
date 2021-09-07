@@ -4,10 +4,6 @@ import { Repository } from 'typeorm';
 
 import { Level } from './enum.level';
 import { Status } from './enum.status';
-import { ChannelStatus } from '../channel/enum.channelStatus';
-import { FriendStatus } from '../friend/enum.friendStatus';
-import { BlockStatus } from '../block/enum.blockStatus';
-import { DuelStatus } from '../duel/enum.duelStatus';
 
 import User from './user.entity';
 
@@ -15,11 +11,6 @@ import RegisterDto from '../authentication/register.dto';
 import { UserDtoLazy } from './user.dto';
 import { ActiveUserDto } from './user.dto';
 import { UserUpdateDto } from './user.dto';
-import { ParticipantForUserDto } from '../participant/participant.dto';
-import { ChannelForUserDto } from '../channel/channel.dto';
-import { FriendForUserDto } from '../friend/friend.dto';
-import { BlockForUserDto } from '../block/block.dto';
-import { DuelForUserDto } from '../duel/duel.dto';
 
 
 @Injectable()
