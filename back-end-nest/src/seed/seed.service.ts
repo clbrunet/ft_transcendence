@@ -81,8 +81,6 @@ export class SeedService {
     console.log('Seeding registers...');
     for await (const register of registers) {
 	  	await this.authenticationService.register(register);
-	  	// wait 0.5 sec between registers because of the 42 API limit of 2 requests/second
-      await new Promise(resolve => setTimeout(resolve, 500));
     }
     console.log('Register seeding complete!');
     return true;

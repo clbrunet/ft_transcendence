@@ -3,7 +3,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import axios from 'axios';
-import RegisterDto from './register.dto';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy, 'fortyTwo') {
@@ -18,21 +17,25 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, 'fortyTwo') {
   }
 
   async validate(accessToken: string): Promise<any> {
-    try {
-      const { data } = await axios.get('https://api.intra.42.fr/v2/me', { headers: {
-      authorization: 'Bearer ' + accessToken,
-      }});
-      const user: RegisterDto = {
-      email: data.email,
-      name: data.login,
-      password: '',
-      isFortyTwoAccount: true,
-      avatar: data.image_url,
-      };
-      return user;
-    }
-    catch {
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    do {
+      try {
+        const { data } = await axios.get('https://api.intra.42.fr/v2/me', { headers: {
+          authorization: 'Bearer ' + accessToken,
+        }});
+        return {
+          email: data.email,
+          name: data.login,
+          password: '',
+          isFortyTwoAccount: true,
+          avatar: data.image_url,
+        };
+      }
+      catch ({ response }) {
+        if (response.status !== 429) {
+          throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        await new Promise(resolve => setTimeout(resolve, 250));
+      }
+    } while (true);
   }
 }
