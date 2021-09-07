@@ -14,7 +14,7 @@ const routes: Array<RouteConfig> = [
     }
   },
   {
-    path: '/profile',
+    path: '/profile/',
     name: 'Profile',
     component: () => import('../views/Profile.vue'),
     meta: {
@@ -88,6 +88,8 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth))
   {
+    if (store.state.is_auth == true)
+      next();
     axios({
       method: "get",
       url: `${ process.env.VUE_APP_API_URL }/authentication`,
@@ -106,6 +108,8 @@ router.beforeEach((to, from, next) => {
     next();
   }
 
+  if (store.state.is_auth == true)
+    next();
 
     axios({
       method: "get",

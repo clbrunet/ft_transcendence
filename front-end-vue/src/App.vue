@@ -50,20 +50,6 @@ export default Vue.extend({
     is_auth() {
       return this.$store.state.is_auth;
     }
-  },
-  mounted() {
-    axios({
-      method: "get",
-      url: `${ process.env.VUE_APP_API_URL }/authentication`,
-      withCredentials: true
-    })
-      .then(res => {
-        this.$store.state.user = res.data;
-        this.$store.dispatch("authenticate");
-      })
-      .catch(() => {
-        this.$store.dispatch("unauthenticate");
-      });
   }
 });
 </script>

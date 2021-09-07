@@ -1,29 +1,31 @@
 <template>
   <div class="profile" id="body">
-    <button id="settings" class="button" @click="showModal = true">Settings</button>
-    <transition name="fade" appear>
-      <div class="modal-overlay" v-if="showModal" @click="showModal = false"></div>
-    </transition>
-    <transition name="slide">
-      <div class="modal" v-if="showModal">
+    <template v-if="is_auth">
+      <button id="settings" class="button" @click="showModal = true">Settings</button>
+      <transition name="fade" appear>
+        <div class="modal-overlay" v-if="showModal" @click="showModal = false"></div>
+      </transition>
+      <transition name="slide">
+        <div class="modal" v-if="showModal">
 
-        <template v-if="$store.state.user.isTwoFactorAuthenticationEnabled == false">
-          <button @click="generate" class="btn">Generate</button>
-          <span v-if="loading != '' && QRCodeSRC == ''">{{ loading }}</span>
-          <img v-if="QRCodeSRC != ''" :src="QRCodeSRC" alt="qr" />
-        </template>
+          <template v-if="$store.state.user.isTwoFactorAuthenticationEnabled == false">
+            <button @click="generate" class="btn">Generate</button>
+            <span v-if="loading != '' && QRCodeSRC == ''">{{ loading }}</span>
+            <img v-if="QRCodeSRC != ''" :src="QRCodeSRC" alt="qr" />
+          </template>
 
-        <template v-if="$store.state.user.isTwoFactorAuthenticationEnabled == false">
-            <input v-if="QRCodeSRC != ''" type="text" v-model="turnOnCode" placeholder="??????" />
-            <button v-if="QRCodeSRC != ''" class="btn" @click="turnOn">Enable</button>
-        </template>
-        <template v-else>
-            <span> Your double factor authentication is enabled. </span>
-            <button class="btn" @click="turnOff">Disable</button>
-        </template>
-        <span v-if="errorQRCode != ''" class="error">{{ errorQRCode }}</span>
-      </div>
-    </transition>
+          <template v-if="$store.state.user.isTwoFactorAuthenticationEnabled == false">
+              <input v-if="QRCodeSRC != ''" type="text" v-model="turnOnCode" placeholder="??????" />
+              <button v-if="QRCodeSRC != ''" class="btn" @click="turnOn">Enable</button>
+          </template>
+          <template v-else>
+              <span> Your double factor authentication is enabled. </span>
+              <button class="btn" @click="turnOff">Disable</button>
+          </template>
+          <span v-if="errorQRCode != ''" class="error">{{ errorQRCode }}</span>
+        </div>
+      </transition>
+    </template>
     <Banner :id="user.id" />
     <div id="bottom">
       <div id="left">
