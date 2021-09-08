@@ -41,6 +41,10 @@ export class ParticipantUpdateDto {
   @IsOptional()
   @IsBoolean()
   mute: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  left: boolean;
 }
 
 export class ParticipantDto {
@@ -55,5 +59,6 @@ export class ParticipantDto {
   muteEndDateTime: Date; 
   ban: boolean;
   banEndDateTime: Date;
+  left: boolean;
   messages: MessageForParticipantDto[];
 }

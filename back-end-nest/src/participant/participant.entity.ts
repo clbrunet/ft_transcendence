@@ -34,6 +34,9 @@ class Participant {
     @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     banEndDateTime: Date;
 
+    @Column({ type: 'boolean', default: false })
+    left: boolean;
+
     @OneToMany(() => Message, message => message.author)
     messages: Message[];
 }

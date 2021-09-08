@@ -49,6 +49,13 @@ export class ChannelController {
     return await this.channelService.authorizeActiveUser(user.id, authorizationDto);
   }
 
+  @UseGuards(JwtTwoFactorGuard)
+  @Post('/leave/:id')
+  async leaveActiveUser(@Req() request: RequestWithUser, @Param('id') id) {
+    const {user} = request;
+    return await this.channelService.leaveActiveUser(user.id, id);
+  }
+
   // ROUTES FOR DEV ONLY TO BE COMMENTED
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')

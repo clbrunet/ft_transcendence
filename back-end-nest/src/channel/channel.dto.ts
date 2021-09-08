@@ -62,13 +62,13 @@ export class ChannelDtoActiveUser {
   activeUserMuteEndDateTime: Date; 
   activeUserBan: boolean;
   activeUserBanEndDateTime: Date;
+  activeUserLeft: boolean;
 }
 
 export class ChannelDtoLazy {
   id: string;
   name: string;
   status: string;
-  password: string;
   ownerId: string;
   ownerName: string;
 }

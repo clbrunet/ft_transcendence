@@ -56,7 +56,7 @@ export class ParticipantService {
     }
     catch(error) {
       if (error?.code === '23505') {
-        throw new HttpException('User has already joind Channel', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Participant with this (userId, channelId) already exists', HttpStatus.BAD_REQUEST);
       }
       throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -224,6 +224,24 @@ export class ParticipantService {
     throw new HttpException('Participant update failed', HttpStatus.NOT_FOUND);
   }
 
+  public async updateAuthorized(id: string, authorized: boolean) {
+    let participantUpdateDto = new ParticipantUpdateDto();
+    participantUpdateDto.authorized = authorized;
+    return this.update(id, participantUpdateDto);
+  }
+
+  public async updateAdmin(id: string, admin: boolean) {
+    let participantUpdateDto = new ParticipantUpdateDto();
+    participantUpdateDto.admin = admin;
+    return this.update(id, participantUpdateDto);
+  }
+
+  public async updateLeft(id: string, left: boolean) {
+    let participantUpdateDto = new ParticipantUpdateDto();
+    participantUpdateDto.left = left;
+    return this.update(id, participantUpdateDto);
+  }
+
   public async delete(id: string) {
     try {
       await this.findById(id);
@@ -239,7 +257,7 @@ export class ParticipantService {
     const user = await this.userService.findByIdLazy(userId);
     const channel = await this.channelService.findByIdLazy(channelId);
     const participant = await this.participantRepo.findOne( { user, channel } );
-    if (participant) {
+    if (participant && !participant.left) {
       return true;
     }
     return false;
@@ -258,6 +276,7 @@ export class ParticipantService {
     dto.muteEndDateTime = participant.muteEndDateTime;
     dto.ban = participant.ban;
     dto.banEndDateTime = participant.banEndDateTime;
+    dto.left = participant.left;
     dto.messages = [];
     if (participant.messages) {
         participant.messages.forEach( message => {

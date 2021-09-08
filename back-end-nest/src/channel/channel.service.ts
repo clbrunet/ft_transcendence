@@ -179,44 +179,32 @@ export class ChannelService {
     }
     throw new HttpException('Channel update failed', HttpStatus.NOT_FOUND);
   }
-/*
-  public async updateActiveUser(id: string, userId: string, channelUpdateDto: ChannelUpdateDto) {
-    const res = await this.findByIdLazy(id);
-    if (res.owner.id != userId) {
-      throw new HttpException('User is not the owner of the channel', HttpStatus.NOT_FOUND);      
-    }
-    return await this.update(id, channelUpdateDto);
-  }
 
-  public async updateOwnerActiveUser(id: string, userId: string, newOwnerId: string) {
-    const channel = await this.findById(id);
-    if (channel.owner.id != userId) {
-      throw new HttpException('User is not the owner of the channel', HttpStatus.NOT_FOUND);      
-    }
-    if (this.isParticipant(newOwnerId, channel) == false) {
-      throw new HttpException('New owner is not a participant of the channel', HttpStatus.NOT_FOUND);   
-    }
-    let channelUpdateDto = new ChannelUpdateDto();
-    channelUpdateDto.ownerId = newOwnerId;
-    return await this.update(id, channelUpdateDto);
-  }
-*/
   public async addParticipantActiveUser(userId: string, participantCreationDto: ParticipantCreationDto) {
+    if (!await this.participantService.isParticipant(userId, participantCreationDto.channelId)) {
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
+    }
     const participantActiveUser = await this.participantService.findByUserAndChannelLazy(userId, participantCreationDto.channelId);
     if (!participantActiveUser.admin) {
       throw new HttpException('User is not an admin of this Channel', HttpStatus.NOT_FOUND);
     }
+    if (await this.participantService.isParticipant(participantCreationDto.userId, participantCreationDto.channelId)) {
+      throw new HttpException('User can not add an existing Participant to the channel', HttpStatus.NOT_FOUND);
+    }   
     let newParticipant;
     try {
       newParticipant = await this.participantService.findByUserAndChannelLazy(participantCreationDto.userId, participantCreationDto.channelId);
     }
     catch(error) {
-      return this.participantService.create(participantCreationDto);
+      return await this.participantService.create(participantCreationDto);
     }
-    throw new HttpException('User is already a Participant of this Channel', HttpStatus.NOT_FOUND);    
+    return await this.participantService.updateLeft(newParticipant.id, false);
   }
 
   public async authorizeActiveUser(userId: string, authorizationDto: AuthorizationDto) {
+    if (!await this.participantService.isParticipant(userId, authorizationDto.channelId)) {
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
+    }    
     const participantActiveUser = await this.participantService.findByUserAndChannelLazy(userId, authorizationDto.channelId);
     if (participantActiveUser.authorized) {
       throw new HttpException('User is already authorized for this protected Channel', HttpStatus.NOT_FOUND);
@@ -226,10 +214,20 @@ export class ChannelService {
     if (!isPasswordMatching) {
       throw new HttpException('Wrong email or password provided', HttpStatus.BAD_REQUEST);
     }
-    let participantUpdateDto = new ParticipantUpdateDto();
-    participantUpdateDto.authorized = true;
-    return await this.participantService.update(participantActiveUser.id, participantUpdateDto);
+    return this.participantService.updateAuthorized(participantActiveUser.id, true);
    }
+
+  public async leaveActiveUser(userId: string, id: string) {
+    if (!await this.participantService.isParticipant(userId, id)) {
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
+    }
+    const channel = await this.findByIdOwner(id);
+    if (channel.owner.id === userId) {
+      throw new HttpException('The owner can not leave the channel', HttpStatus.NOT_FOUND);
+    }
+    const participantActiveUser = await this.participantService.findByUserAndChannelLazy(userId, id);
+    return this.participantService.updateLeft(participantActiveUser.id, true);
+  }
 
   public async delete(id: string) {
     try {
@@ -260,6 +258,7 @@ export class ChannelService {
       dto.activeUserMuteEndDateTime = participantActiveUser.muteEndDateTime;
       dto.activeUserBan = participantActiveUser.ban;
       dto.activeUserBanEndDateTime = participantActiveUser.banEndDateTime;
+      dto.activeUserLeft = participantActiveUser.left;
     }
     else {
       dto.activeUserParticipant = false;
@@ -269,6 +268,7 @@ export class ChannelService {
       dto.activeUserMuteEndDateTime = null;
       dto.activeUserBan = null;
       dto.activeUserBanEndDateTime = null;
+      dto.activeUserLeft = null;
     }
     return dto;
   }
@@ -278,7 +278,6 @@ export class ChannelService {
     dto.id = channel.id;
     dto.name = channel.name;
     dto.status = ChannelStatus[channel.status];
-    dto.password = channel.password;
     dto.ownerId = channel.owner.id;
     dto.ownerName = channel.owner.name;
     return dto;
