@@ -17,11 +17,13 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable */
 
 import Vue from "vue";
 import Store from "./store/index";
 import axios from "axios";
 import router from "./router";
+import io from "socket.io-client";
 
 export default Vue.extend({
   name: "App",
@@ -41,6 +43,7 @@ export default Vue.extend({
       .then(() => {
         this.$store.state.expired = undefined;
         this.$store.state.user = undefined;
+        this.$store.state.socket = undefined;
         this.$store.dispatch("unauthenticate");
         router.push({ name: "App" });
       })
@@ -50,6 +53,10 @@ export default Vue.extend({
     is_auth() {
       return this.$store.state.is_auth;
     }
+  },
+  mounted() {
+    this.$store.state.socket = io("http://localhost:3012");
+    console.log("Ok : ", this.$store.state.socket);
   }
 });
 </script>
