@@ -36,7 +36,7 @@ export class ParticipantService {
     else {
       throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
     }
-    const channel = await this.channelService.findByIdOwner(participantCreationDto.channelId);
+    const channel = await this.channelService.findByIdOwnerBoth(participantCreationDto.channelId);
     if (channel) {
       participant.channel = channel;     
     }
@@ -173,7 +173,7 @@ export class ParticipantService {
 
   public async findByUserAndChannel(userId: string, channelId: string) {
     const user = await this.userService.findByIdLazy(userId);
-    const channel = await this.channelService.findByIdLazy(channelId);
+    const channel = await this.channelService.findByIdLazyBoth(channelId);
     const participant = await this.participantRepo.findOne( { user, channel },
       {
         relations: ['messages'],
@@ -194,7 +194,7 @@ export class ParticipantService {
 
   public async findByUserAndChannelMessage(userId: string, channelId: string) {
     const user = await this.userService.findByIdLazy(userId);
-    const channel = await this.channelService.findByIdLazy(channelId);
+    const channel = await this.channelService.findByIdLazyBoth(channelId);
     const participant = await this.participantRepo.findOne( { user, channel },
       {
         relations: ['messages'],
@@ -208,7 +208,7 @@ export class ParticipantService {
 
   public async findByUserAndChannelLazy(userId: string, channelId: string) {
     const user = await this.userService.findByIdLazy(userId);
-    const channel = await this.channelService.findByIdLazy(channelId);
+    const channel = await this.channelService.findByIdLazyBoth(channelId);
     const participant = await this.participantRepo.findOne( { user, channel } );
     if (participant) {
       return participant;
@@ -236,6 +236,22 @@ export class ParticipantService {
     return this.update(id, participantUpdateDto);
   }
 
+  public async updateMute(id: string, mute: boolean, minutes: number) {
+    let participantUpdateDto = new ParticipantUpdateDto();
+    participantUpdateDto.mute = mute;
+    const currentTime = new Date();
+    participantUpdateDto.muteEndDateTime = new Date(currentTime.getTime() + minutes * 60000);
+    return this.update(id, participantUpdateDto);
+  }
+
+  public async updateBan(id: string, ban: boolean, minutes: number) {
+    let participantUpdateDto = new ParticipantUpdateDto();
+    participantUpdateDto.ban = ban;
+    const currentTime = new Date();
+    participantUpdateDto.banEndDateTime = new Date(currentTime.getTime() + minutes * 60000);
+    return this.update(id, participantUpdateDto);
+  }
+
   public async updateLeft(id: string, left: boolean) {
     let participantUpdateDto = new ParticipantUpdateDto();
     participantUpdateDto.left = left;
@@ -255,7 +271,7 @@ export class ParticipantService {
 
   public async isParticipant(userId: string, channelId: string) {
     const user = await this.userService.findByIdLazy(userId);
-    const channel = await this.channelService.findByIdLazy(channelId);
+    const channel = await this.channelService.findByIdLazyBoth(channelId);
     const participant = await this.participantRepo.findOne( { user, channel } );
     if (participant && !participant.left) {
       return true;

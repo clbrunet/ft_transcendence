@@ -13,6 +13,9 @@ class Channel {
     @Column({ unique: true })
     public name: string;
 
+    @Column({ type: 'boolean', default: false })
+    public direct: boolean ;
+
     @Column()
     public status: ChannelStatus;
 

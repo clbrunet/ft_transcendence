@@ -1,6 +1,10 @@
 import { IsString, IsNotEmpty, MinLength, IsOptional, IsEnum } from 'class-validator';
 
+import User from '../user/user.entity';
+
 import { ChannelStatus } from './enum.channelStatus';
+
+import { ParticipantForChannelDto } from '../participant/participant.dto';
 
 
 export class ChannelCreationDto {
@@ -40,11 +44,34 @@ export class ChannelUpdateDto {
   @IsOptional()
   @IsString()
   ownerId: string;
+
+  @IsOptional()
+  owner: User;
+}
+
+export class MuteBanDto {
+  userId: string;
+  channelId: string;
+  always: boolean;
+
+  @IsOptional()
+  minutes: number;
 }
 
 export class AuthorizationDto {
   channelId: string;
   password: string;
+}
+
+export class ChannelDto {
+  id: string;
+  name: string;
+  status: string;
+  ownerId: string;
+  ownerName: string;
+  nParticipants: number;
+  nUnreadMessages: number;
+  participants: ParticipantForChannelDto[];
 }
 
 export class ChannelDtoActiveUser {
