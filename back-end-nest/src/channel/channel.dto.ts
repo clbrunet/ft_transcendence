@@ -1,9 +1,10 @@
 import { IsString, IsNotEmpty, MinLength, IsOptional, IsEnum } from 'class-validator';
 
+import User from '../user/user.entity';
+
 import { ChannelStatus } from './enum.channelStatus';
 
 import { ParticipantForChannelDto } from '../participant/participant.dto';
-import { UserForChannelDto } from '../user/user.dto';
 
 
 export class ChannelCreationDto {
@@ -31,21 +32,71 @@ export class ChannelSeedDto {
   ownerEmail: string;
 }
 
+export class ChannelUpdateDto {
+  @IsOptional()
+  @IsEnum(ChannelStatus)
+  status: ChannelStatus;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(7)
+  password: string;
+
+  @IsOptional()
+  @IsString()
+  ownerId: string;
+
+  @IsOptional()
+  owner: User;
+}
+
+export class MuteBanDto {
+  userId: string;
+  channelId: string;
+  always: boolean;
+
+  @IsOptional()
+  minutes: number;
+}
+
+export class AuthorizationDto {
+  channelId: string;
+  password: string;
+}
+
 export class ChannelDto {
   id: string;
   name: string;
   status: string;
-  owner: UserForChannelDto;
+  ownerId: string;
+  ownerName: string;
+  nParticipants: number;
+  nUnreadMessages: number;
   participants: ParticipantForChannelDto[];
 }
 
-export class ChannelForUserDto {
+export class ChannelDtoActiveUser {
   id: string;
   name: string;
   status: string;
+  ownerId: string;
+  ownerName: string;
+  nParticipants: number;
+  nUnreadMessages: number;
+  activeUserParticipant: boolean;
+  activeUserAuthorized: boolean;
+  activeUserAdmin: boolean;
+  activeUserMute: boolean;
+  activeUserMuteEndDateTime: Date; 
+  activeUserBan: boolean;
+  activeUserBanEndDateTime: Date;
+  activeUserLeft: boolean;
 }
 
-export class ChannelForParticipantDto {
+export class ChannelDtoLazy {
   id: string;
   name: string;
+  status: string;
+  ownerId: string;
+  ownerName: string;
 }

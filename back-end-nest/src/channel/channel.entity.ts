@@ -13,13 +13,16 @@ class Channel {
     @Column({ unique: true })
     public name: string;
 
+    @Column({ type: 'boolean', default: false })
+    public direct: boolean ;
+
     @Column()
     public status: ChannelStatus;
 
     @Column({ nullable: true })
     public password: string;
 
-    @ManyToOne(() => User, user => user.channels, { eager: false, onDelete: "CASCADE" })
+    @ManyToOne(() => User, user => user.channels, { nullable: true, eager: false, onDelete: "CASCADE" })
     owner: User;
 
     @OneToMany(() => Participant, participant => participant.channel)

@@ -31,10 +31,3 @@ export class BlockDto {
   blockName: string;
   status: string;
 }
-
-export class BlockForUserDto {
-  blockId: string;
-  blockName: string;
-  requestStatus: string;
-  userStatus: string;
-}

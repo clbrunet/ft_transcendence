@@ -32,10 +32,3 @@ export class FriendDto {
   requestStatus: string;
   friendStatus: string;
 }
-
-export class FriendForUserDto {
-  friendId: string;
-  friendName: string;
-  requestStatus: string;
-  userStatus: string;
-}
