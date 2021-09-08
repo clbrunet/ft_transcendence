@@ -44,7 +44,8 @@ export default Vue.extend({
       name: "",
       password: "",
       confirmPassword: "",
-      messages: []
+      messages: [],
+      authorize_url_42: process.env.VUE_APP_AUTHORIZE_URL_42,
     };
   },
   computed: {

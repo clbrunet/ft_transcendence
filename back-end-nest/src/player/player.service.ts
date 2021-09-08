@@ -51,7 +51,7 @@ export class PlayerService {
       if (error?.code === '23505') {
         throw new HttpException('User is already a Player of that Game', HttpStatus.BAD_REQUEST);
       }
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Something went wrong while creating a player', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return this.playerToDto(res);
   }
