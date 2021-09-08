@@ -64,7 +64,7 @@ export default Vue.extend({
 
 <style scoped>
 #body {
-  background-color: #00286e;
+  background-color: #3040F0;
   display: flex;
   width: 65vw;
   height: 30%;
@@ -112,7 +112,7 @@ export default Vue.extend({
 #bottom {
   height: 35%;
   width: 80%;
-  background-color: #001333;
+  background-color: rgb(8, 19, 136);
   display: flex;
   justify-content: space-around;
   align-items: center;

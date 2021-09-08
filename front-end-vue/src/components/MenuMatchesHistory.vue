@@ -105,7 +105,7 @@ export default Vue.extend({
 #title {
   width: 100%;
   font-weight: bold;
-  background-color: #00286e;
+  background-color: #3040F0;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 }

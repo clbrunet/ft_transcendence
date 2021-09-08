@@ -231,12 +231,12 @@ export default Vue.extend({
 <style scoped>
 
 .title {
-    background-color:#003796;
-    padding: 3%;
-    width: 50vw;
-    color:white;
-    height:20px; 
-    border-top-right-radius: 25px;
+  background-color:#3040F0;
+  padding: 3%;
+  width: 50vw;
+  color:white;
+  height:20px; 
+  border-top-right-radius: 25px;
   border-top-left-radius: 25px;
 }
 
@@ -257,12 +257,15 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 6%;
+  background-color: rgb(250, 99, 137);
+  height: 91vh;
+  width: 100%;
   flex-direction: column;
 }
 
 table {
-  border: 1px solid #003796;
+  border: 1px solid #3040F0;
+  background-color:white;
   padding: 3%;
     width: 50vw;
   border-bottom-right-radius: 25px;
@@ -276,7 +279,7 @@ td {
 }
 tr:nth-child(even) {
   color: white;
-  background-image: linear-gradient(to right, #003796, #003796);
+  background-color: #3040F0;
   border: 1px solid black;
 }
 

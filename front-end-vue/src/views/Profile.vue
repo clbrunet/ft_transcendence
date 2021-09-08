@@ -1,7 +1,7 @@
 <template>
-  <div class="profile" id="body">
+  <div class="profile">
     <template v-if="is_auth">
-      <button id="settings" class="button" @click="showModal = true">Settings</button>
+      <button id="settings" class="button" @click="showModal = true">2 FactorAuth</button>
       <transition name="fade" appear>
         <div class="modal-overlay" v-if="showModal" @click="showModal = false"></div>
       </transition>
@@ -33,7 +33,6 @@
         <MenuBlocks v-if="is_auth" />
       </div>
       <div id="middle">
-        game WIP
         <button id="play">PLAY</button>
       </div>
       <div id="right">
@@ -216,13 +215,13 @@ input {
   background: none;
   cursor: pointer;
   transition: border-radius 0.4s ease-in-out;
-  background-image: linear-gradient(to right, #0758da, #0758da);
+  background-image: linear-gradient(to right, #3040F0, #3040F0);
   font-weight: 700;
   font-size: 15px;
 }
 
 .btn:hover {
-  background-image: linear-gradient(to right, #00286e, #002566);
+  background-image: linear-gradient(to right, #3040F0, #002566);
   border-radius: 12px;
 
 }
@@ -247,7 +246,7 @@ input {
 
   display: inline-block;
   padding: 8px 18px;
-  background-image: linear-gradient(to right, #00286e, #002566);
+  background-image: linear-gradient(to right, #3040F0, rgb(9, 68, 170));
   border-radius: 8px;
   font-size: 18px;
   font-weight: 700;
@@ -307,15 +306,14 @@ input {
 
 /* */
 
-body {
-  height: 100vh;
-}
 
 .profile {
   display: flex;
   align-items: center;
   flex-direction: column;
   height: 91.5vh;
+  height: 91vh;
+  background-color: rgb(250, 99, 137);
   width: 100%;
 
   position: relative;
@@ -323,7 +321,6 @@ body {
   justify-content: center;
   align-items: center;
 
-  width: 100vw;
   overflow-x: hidden;
 }
 
@@ -369,6 +366,9 @@ body {
   width: 40%;
   height: 100%;
   background-color: #ebebeb;
+  display:flex;
+  justify-content: center;
+  align-items:center;
 }
 
 /* */
