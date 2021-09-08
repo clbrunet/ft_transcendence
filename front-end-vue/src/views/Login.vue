@@ -7,7 +7,7 @@
       <input type="submit" value="Valider">
     </form>
     <p class="error" v-for="(message, index) in messages" :key="index"> {{ message }} </p>
-    <a href="https://api.intra.42.fr/oauth/authorize?client_id=9bf776aebb6591e065d48ddfcc3d16da20f4390dc25be24084702d9560132e06&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foauth-forty-two&response_type=code">
+    <a v-bind:href="authorize_url_42">
       <button>Sign in with 42</button>
     </a>
     <p> Not <a @click="goToRegister()">register</a> yet ?</p>
@@ -26,7 +26,8 @@ export default Vue.extend({
       email: "",
       name: "",
       password: "",
-      messages: [""]
+      messages: [""],
+      authorize_url_42: process.env.VUE_APP_AUTHORIZE_URL_42,
     }
   },
   methods: {
