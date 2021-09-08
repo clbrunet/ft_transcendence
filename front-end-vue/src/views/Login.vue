@@ -74,8 +74,10 @@ export default Vue.extend({
           router.push({ name: "Auth" });
         }
       }
-      catch (error) {
-        this.messages = Array.isArray(error.response.data.message) ? error.response.data.message : [error.response.data.message];
+      catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          this.messages = Array.isArray(error.response?.data.message) ? error.response?.data.message : [error.response?.data.message];
+        }
       }
     },
     goToRegister() {
