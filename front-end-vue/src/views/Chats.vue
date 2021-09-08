@@ -46,7 +46,7 @@ export default Vue.extend({
         router.push({name: 'App'});
       });
 
-      console.log(this.selectedChat);
+      //console.log(this.selectedChat);
 
       /* socket io */
       this.$store.state.socket.emit("join_chats", this.$store.state.user);
