@@ -58,7 +58,7 @@ export class ParticipantService {
       if (error?.code === '23505') {
         throw new HttpException('Participant with this (userId, channelId) already exists', HttpStatus.BAD_REQUEST);
       }
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Something went wrong while creating a participant', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return this.participantToDto(res);
   }

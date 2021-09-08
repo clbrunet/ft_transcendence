@@ -7,32 +7,36 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "start": "node server.js"
   },
   "main": ".eslintrc.js",
   "dependencies": {
-    "axios": "^0.21.1",
-    "core-js": "^3.6.5",
+    "axios": "^0.21.4",
+    "core-js": "^3.17.2",
+    "express": "^4.17.1",
+    "serve-static": "^1.14.1",
+    "socket.io-client": "^4.2.0",
     "validator": "^13.6.0",
-    "vue": "^2.6.11",
-    "vue-router": "^3.2.0",
-    "vuex": "^3.4.0"
+    "vue": "^2.6.14",
+    "vue-router": "^3.5.2",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@types/validator": "^13.6.3",
-    "@typescript-eslint/eslint-plugin": "^4.18.0",
-    "@typescript-eslint/parser": "^4.18.0",
-    "@vue/cli-plugin-babel": "~4.5.0",
+    "@typescript-eslint/eslint-plugin": "^4.31.0",
+    "@typescript-eslint/parser": "^4.31.0",
+    "@vue/cli-plugin-babel": "~4.5.13",
     "@vue/cli-plugin-eslint": "~4.5.13",
-    "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-plugin-typescript": "~4.5.0",
-    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.13",
+    "@vue/cli-plugin-typescript": "~4.5.13",
+    "@vue/cli-plugin-vuex": "~4.5.13",
     "@vue/cli-service": "^4.5.13",
     "@vue/eslint-config-typescript": "^7.0.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "typescript": "~4.1.5",
-    "vue-template-compiler": "^2.6.11"
+    "eslint": "^6.8.0",
+    "eslint-plugin-vue": "^7.17.0",
+    "typescript": "~4.4.2",
+    "vue-template-compiler": "^2.6.14"
   },
   "keywords": [],
   "license": "ISC"

@@ -6,21 +6,21 @@
     <div id="table">
     <table>
       <template v-for="(friend, index) in friends">
-        <template v-if="friend[0].requestStatus == 'accepted'">
+        <template v-if="friend.requestStatus == 'accepted'">
           <tr class="row" :key="index">
             <td>
-              <span>{{ friend[0].friendName }}</span>
+              <span>{{ friend.friendName }}</span>
             </td>
             <td v-if="is_auth">
-              <span>{{ friend[0].friendStatus }}</span>
+              <span>{{ friend.friendStatus }}</span>
               <img
-                v-if="friend[0].friendStatus == 'offline'"
+                v-if="friend.friendStatus == 'offline'"
                 src="/assets/offline.svg"
                 alt="offline"
                 style="width:15px;margin-left:5px;"
               />
               <img
-                v-else-if="friend[0].friendStatus == 'online'"
+                v-else-if="friend.friendStatus == 'online'"
                 src="/assets/online.svg"
                 alt="online"
                 style="width:15px;margin-left:5px;"
@@ -76,7 +76,7 @@ export default Vue.extend({
 #title {
   width: 100%;
   font-weight: bold;
-  background-color: #00286e;
+  background-color: #3040F0;
 }
 
 #title span {
