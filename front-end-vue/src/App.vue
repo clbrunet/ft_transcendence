@@ -55,7 +55,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    this.$store.state.socket = io("http://localhost:3012");
+    this.$store.state.socket = io(`${ process.env.SOCKET_URL }`);
     console.log("Ok : ", this.$store.state.socket);
   }
 });
