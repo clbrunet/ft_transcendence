@@ -55,8 +55,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    this.$store.state.socket = io(`${ process.env.SOCKET_URL }`);
-    console.log("Ok : ", this.$store.state.socket);
+    this.$store.state.socket = io(`${ process.env.VUE_APP_SOCKET_URL }`);
   }
 });
 </script>
