@@ -247,7 +247,12 @@ export class ChannelService {
     dto.status = ChannelStatus[channel.status]; 
     dto.ownerId = channel.owner.id;
     dto.ownerName = channel.owner.name;
-    dto.nParticipants = channel.participants.length;
+    dto.nParticipants = 0;
+    for (const participant of channel.participants) {
+      if (!participant.left) {
+        dto.nParticipants += 1;
+      }
+    }
     dto.nUnreadMessages = 0;
     if (await this.participantService.isParticipant(userId, channel.id)) {
       const participantActiveUser = await this.participantService.findByUserAndChannel(userId, channel.id);
