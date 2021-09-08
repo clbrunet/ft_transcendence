@@ -28,6 +28,7 @@ export class ChannelCreationDto {
 export class ChannelSeedDto {
   name: string;
   status: ChannelStatus;
+  password: string;
   ownerEmail: string;
 }
 

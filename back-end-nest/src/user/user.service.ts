@@ -42,6 +42,11 @@ export class UserService {
     return await this.userRepository.find( { relations: ['channels', 'participants', 'friends', 'friendOwners', 'blocks', 'blockOwners', 'duels', 'duelOwners', 'queuers', 'players'] } );
   }
 
+  // return all User objects without any relation
+  public async findAllLazy() {
+    return await this.userRepository.find();
+  }
+
   // return all User dtos without any relation
   public async getAllLazy() {
     let users = [];

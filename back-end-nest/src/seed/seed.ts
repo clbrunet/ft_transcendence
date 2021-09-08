@@ -30,7 +30,7 @@ async function bootstrap() {
           let resGame = seedService.seedGame();
           return resGame;
         })
-        /*.then((resGame) => {
+        .then((resGame) => {
           let resChannel = seedService.seedChannel();
           return resChannel;
         })
@@ -38,7 +38,7 @@ async function bootstrap() {
           let resParticipant = seedService.seedParticipant();
           return resParticipant;
         })
-        .then((resParticipant) => {
+        /*.then((resParticipant) => {
           let resMessage = seedService.seedMessage();
           return resMessage;
         })*/

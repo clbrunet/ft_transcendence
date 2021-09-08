@@ -186,14 +186,8 @@ export class ChannelService {
   } 
 
   // Return Channel Object without any relation nor joined table
-  public async findByNameLazy(name: string) {
-    const channel = await this.channelRepo.findOne( { name },
-      {
-        where: {
-          direct: false,
-        },
-      }
-    );
+  public async findByNameLazyBoth(name: string) {
+    const channel = await this.channelRepo.findOne( { name } );
     if (channel) {
       return channel;
     }

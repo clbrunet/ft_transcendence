@@ -21,8 +21,6 @@ export class ParticipantCreationDto {
 export class ParticipantSeedDto {
   userEmail: string;
   channelName: string;
-  authorized: boolean;
-  admin: boolean;
 }
 
 export class ParticipantUpdateDto {

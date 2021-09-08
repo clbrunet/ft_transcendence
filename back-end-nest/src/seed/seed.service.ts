@@ -70,7 +70,7 @@ export class SeedService {
   ) {}
 
   async eraseUser() {
-  	const users = await this.userService.findAll();
+  	const users = await this.userService.findAllLazy();
     for await (const user of users) {
 	  	await this.userService.delete(user.id);
     }
@@ -91,7 +91,7 @@ export class SeedService {
   async seedUser() {
     console.log('Seeding users...');
     for await (const user of users) {
-      let user2 = await this.userService.findByEmail(user.email);
+      let user2 = await this.userService.findByEmailLazy(user.email);
       let userUpdateDto = new UserUpdateDto();
       userUpdateDto.avatar = user.avatar;
       userUpdateDto.level = user.level;
@@ -108,8 +108,8 @@ export class SeedService {
   async seedFriend() {
     console.log('Seeding friends...');
     for await (const friend of friends) {
-      let friendOwner = await this.userService.findByEmail(friend.friendOwnerEmail);
-      let friendAttribute = await this.userService.findByEmail(friend.friendEmail);
+      let friendOwner = await this.userService.findByEmailLazy(friend.friendOwnerEmail);
+      let friendAttribute = await this.userService.findByEmailLazy(friend.friendEmail);
       await this.friendService.create(friendOwner.id, friendAttribute.id);
       const friendObject = await this.friendService.findByOwnerAndFriend(friendOwner.id, friendAttribute.id);
       if (friend.status === 2) {
@@ -123,8 +123,8 @@ export class SeedService {
   async seedBlock() {
     console.log('Seeding blocks...');
     for await (const block of blocks) {
-      let blockOwner = await this.userService.findByEmail(block.blockOwnerEmail);
-      let blockAttribute = await this.userService.findByEmail(block.blockEmail);
+      let blockOwner = await this.userService.findByEmailLazy(block.blockOwnerEmail);
+      let blockAttribute = await this.userService.findByEmailLazy(block.blockEmail);
       await this.blockService.create(blockOwner.id, blockAttribute.id);
     }
     console.log('Block seeding complete!');
@@ -134,8 +134,8 @@ export class SeedService {
   async seedDuel() {
     console.log('Seeding duels...');
     for await (const duel of duels) {
-      let duelOwner = await this.userService.findByEmail(duel.duelOwnerEmail);
-      let duelAttribute = await this.userService.findByEmail(duel.duelEmail);
+      let duelOwner = await this.userService.findByEmailLazy(duel.duelOwnerEmail);
+      let duelAttribute = await this.userService.findByEmailLazy(duel.duelEmail);
       await this.duelService.create(duelOwner.id, duelAttribute.id);
       const duelObject = await this.duelService.findByOwnerAndDuel(duelOwner.id, duelAttribute.id);
       if (duel.status === 2) {
@@ -165,10 +165,11 @@ export class SeedService {
   async seedChannel() {
     console.log('Seeding channels...');
     for await (const channel of channels) {
-    	let owner = await this.userService.findByEmail(channel.ownerEmail);
+    	let owner = await this.userService.findByEmailLazy(channel.ownerEmail);
     	let channelCreationDto = new ChannelCreationDto();
     	channelCreationDto.name = channel.name;
     	channelCreationDto.status = channel.status;
+      channelCreationDto.password = channel.password;
     	channelCreationDto.ownerId = owner.id;
 	  	await this.channelService.create(channelCreationDto);
     }
@@ -179,12 +180,11 @@ export class SeedService {
   async seedParticipant() {
     console.log('Seeding participants...');
     for await (const participant of participants) {
-      let user = await this.userService.findByEmail(participant.userEmail);
-      let channel = await this.channelService.findByNameLazy(participant.channelName);
+      let user = await this.userService.findByEmailLazy(participant.userEmail);
+      let channel = await this.channelService.findByNameLazyBoth(participant.channelName);
       let participantCreationDto = new ParticipantCreationDto();
       participantCreationDto.userId = user.id;
       participantCreationDto.channelId = channel.id;
-      participantCreationDto.admin = participant.admin;
       await this.participantService.create(participantCreationDto);
     }
     console.log('Participant seeding complete!');
@@ -195,7 +195,7 @@ export class SeedService {
     console.log('Seeding messages...');
     for await (const message of messages) {
       let user = await this.userService.findByEmail(message.userEmail);
-      let channel = await this.channelService.findByNameLazy(message.channelName);
+      let channel = await this.channelService.findByNameLazyBoth(message.channelName);
       let author = await this.participantService.findByUserAndChannel(user.id, channel.id);
       let messageCreationDto = new MessageCreationDto();
       messageCreationDto.authorId = author.id;
