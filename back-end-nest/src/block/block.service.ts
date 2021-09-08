@@ -49,7 +49,7 @@ export class BlockService {
       if (error?.code === '23505') {
         throw new HttpException('Block between those two users already exists', HttpStatus.BAD_REQUEST);
       }
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Something went wrong while creating a block', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     let ret = [];
     ret.push(this.blockToDto(res));
@@ -65,7 +65,7 @@ export class BlockService {
       if (error?.code === '23505') {
         throw new HttpException('Block between those two users already exists', HttpStatus.BAD_REQUEST);
       }
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Something went wrong while creating a block', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     ret.push(this.blockToDto(res));
     return ret;

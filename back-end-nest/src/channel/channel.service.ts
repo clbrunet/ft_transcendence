@@ -41,7 +41,7 @@ export class ChannelService {
         if (error?.code === '23505') {
           throw new HttpException('Channel with that name already exists', HttpStatus.BAD_REQUEST);
         }
-        throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException('Something went wrong while creating a channel', HttpStatus.INTERNAL_SERVER_ERROR);
       }
       return this.channelToDto(res);
     }

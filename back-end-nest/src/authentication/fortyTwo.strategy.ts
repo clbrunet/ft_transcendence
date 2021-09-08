@@ -32,7 +32,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, 'fortyTwo') {
       }
       catch ({ response }) {
         if (response.status !== 429) {
-          throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+          throw new HttpException('Something went wrong while connecting the 42 API', HttpStatus.INTERNAL_SERVER_ERROR);
         }
         await new Promise(resolve => setTimeout(resolve, 250));
       }

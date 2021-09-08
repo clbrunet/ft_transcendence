@@ -50,7 +50,7 @@ export class FriendService {
       if (error?.code === '23505') {
         throw new HttpException('Friend between those two users already exists', HttpStatus.BAD_REQUEST);
       }
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Something went wrong while creating a friend', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     let ret = [];
     ret.push(this.friendToDto(res));
@@ -66,7 +66,7 @@ export class FriendService {
       if (error?.code === '23505') {
         throw new HttpException('Friend relationship between those two users already exists', HttpStatus.BAD_REQUEST);
       }
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Something went wrong while creating a friend', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     ret.push(this.friendToDto(res));
     return ret;

@@ -49,7 +49,7 @@ export class DuelService {
       if (error?.code === '23505') {
         throw new HttpException('Duel between those two users already exists', HttpStatus.BAD_REQUEST);
       }
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Something went wrong while creating a duel', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     let ret = [];
     ret.push(this.duelToDto(res));
@@ -65,7 +65,7 @@ export class DuelService {
       if (error?.code === '23505') {
         throw new HttpException('Duel relationship between those two users already exists', HttpStatus.BAD_REQUEST);
       }
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Something went wrong while creating a duel', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     ret.push(this.duelToDto(res));
     return ret;
