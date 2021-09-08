@@ -10,6 +10,7 @@ import Participant from '../participant/participant.entity';
 import { ChannelService } from './channel.service';
 
 import { ChannelController } from './channel.controller';
+import { DirectController } from './channel.controller';
 
 
 @Module({
@@ -18,7 +19,7 @@ import { ChannelController } from './channel.controller';
     UserModule,
     forwardRef(() => ParticipantModule)
   ],
-  controllers: [ChannelController],
+  controllers: [ChannelController, DirectController],
   providers: [ChannelService],
   exports: [ChannelService]
 })

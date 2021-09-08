@@ -22,7 +22,6 @@ export class ChannelController {
     private readonly channelService: ChannelService
   ) {}
 
-  // ROUTES FOR N CHANNELS
   @UseGuards(JwtTwoFactorGuard)
   @Get('/index')
   async getAllActiveUser(@Req() request: RequestWithUser) {
@@ -100,10 +99,6 @@ export class ChannelController {
     return await this.channelService.leaveActiveUser(user.id, id);
   }
 
-  // ROUTES FOR 1T1 CHANNELS
-
-
-
   // ROUTES FOR DEV ONLY TO BE COMMENTED
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all/:direct')
@@ -115,5 +110,20 @@ export class ChannelController {
   @Delete('/:id')
   async delete(@Param('id') id) {
     return await this.channelService.delete(id);
+  }
+}
+
+@Controller('direct')
+export class DirectController {
+  constructor(
+    private readonly channelService: ChannelService
+  ) {}
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/index')
+  async getAllActiveUser(@Req() request: RequestWithUser) {
+    const {user} = request;
+    //return await this.channelService.getAllActiveUser(user.id);
+    return 'hello new controller'
   }
 }
