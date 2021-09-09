@@ -181,7 +181,7 @@ export class SeedService {
     console.log('Seeding participants...');
     for await (const participant of participants) {
       let user = await this.userService.findByEmailLazy(participant.userEmail);
-      let channel = await this.channelService.findByNameLazyBoth(participant.channelName);
+      let channel = await this.channelService.findByNameLazy(participant.channelName);
       let participantCreationDto = new ParticipantCreationDto();
       participantCreationDto.userId = user.id;
       participantCreationDto.channelId = channel.id;
@@ -195,7 +195,7 @@ export class SeedService {
     console.log('Seeding messages...');
     for await (const message of messages) {
       let user = await this.userService.findByEmail(message.userEmail);
-      let channel = await this.channelService.findByNameLazyBoth(message.channelName);
+      let channel = await this.channelService.findByNameLazy(message.channelName);
       let author = await this.participantService.findByUserAndChannel(user.id, channel.id);
       let messageCreationDto = new MessageCreationDto();
       messageCreationDto.authorId = author.id;

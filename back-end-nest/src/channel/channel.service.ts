@@ -101,7 +101,7 @@ export class ChannelService {
     return dto;    
   }
 
-  public async findById(id: string, direct: boolean) {
+  public async findById(id: string) {
     const channel = await this.channelRepo.findOne(id,
       {
         relations: ['participants'],
@@ -111,9 +111,6 @@ export class ChannelService {
             owner: "channel.owner",
           },
         },
-        where: {
-          direct: direct,
-        },
       }
     );
     if (channel) {
@@ -122,13 +119,10 @@ export class ChannelService {
     throw new HttpException('Channel with this (id, direct) does not exist', HttpStatus.NOT_FOUND);
   }
 
-  public async findByIdParticipant(id: string, direct: boolean) {
+  public async findByIdParticipant(id: string) {
     const channel = await this.channelRepo.findOne(id,
       {
         relations: ['participants'],
-        where: {
-          direct: direct,
-        },
       }
     );
     if (channel) {
@@ -137,27 +131,7 @@ export class ChannelService {
     throw new HttpException('Channel with this (id, direct) does not exist', HttpStatus.NOT_FOUND);
   }
 
-  public async findByIdOwner(id: string, direct: boolean) {
-    const channel = await this.channelRepo.findOne(id,
-      {
-        join: {
-          alias: "channel",
-          leftJoinAndSelect: {
-            owner: "channel.owner",
-          },
-        },
-        where: {
-          direct: direct,
-        },
-      }
-    );
-    if (channel) {
-      return channel;
-    }
-    throw new HttpException('Channel with this (id, direct) does not exist', HttpStatus.NOT_FOUND);
-  }
-
-  public async findByIdOwnerBoth(id: string) {
+  public async findByIdOwner(id: string) {
     const channel = await this.channelRepo.findOne(id,
       {
         join: {
@@ -171,24 +145,10 @@ export class ChannelService {
     if (channel) {
       return channel;
     }
-    throw new HttpException('Channel with this id does not exist', HttpStatus.NOT_FOUND);
+    throw new HttpException('Channel with this (id, direct) does not exist', HttpStatus.NOT_FOUND);
   }
 
-  public async findByIdLazy(id: string, direct: boolean) {
-    const channel = await this.channelRepo.findOne(id,
-      {
-        where: {
-          direct: direct,
-        },
-      }
-    );
-    if (channel) {
-      return channel;
-    }
-    throw new HttpException('Channel with this (id, direct) does not exist', HttpStatus.NOT_FOUND);
-  } 
-
-  public async findByIdLazyBoth(id: string) {
+  public async findByIdLazy(id: string) {
     const channel = await this.channelRepo.findOne(id);
     if (channel) {
       return channel;
@@ -196,64 +156,37 @@ export class ChannelService {
     throw new HttpException('Channel with this (id, direct) does not exist', HttpStatus.NOT_FOUND);
   } 
 
-  public async findByNameSpecial(name: string, direct: boolean) {
-    const channel = await this.channelRepo.findOne( { name } ,
-      {
-        relations: ['participants'],
-        join: {
-          alias: "channel",
-          leftJoinAndSelect: {
-            owner: "channel.owner",
-          },
-        },
-        where: {
-          direct: direct,
-        },
-      }
-    );
-    if (channel) {
-      return channel;
-    }
-    return;
-  } 
-
-  public async findByNameSpecialLazy(name: string, direct: boolean) {
-    const channel = await this.channelRepo.findOne( { name } ,
-      {
-        where: {
-          direct: direct,
-        },
-      }
-    );
-    if (channel) {
-      return channel;
-    }
-    return;
-  } 
-
-  public async findByNameLazyBoth(name: string) {
+  public async findByName(name: string) {
     const channel = await this.channelRepo.findOne( { name } );
     if (channel) {
       return channel;
     }
-    throw new HttpException('Channel with this (name, direct)  does not exist', HttpStatus.NOT_FOUND);
-  }
+    return;
+  } 
+
+  public async findByNameLazy(name: string) {
+    const channel = await this.channelRepo.findOne( { name } );
+    if (channel) {
+      return channel;
+    }
+    return;
+  } 
 
   public async getById(id: string) {
-    const channel = await this.findById(id, false);
+    const channel = await this.findById(id);
     return await this.channelToDto(channel);
   } 
 
   public async update(id: string, channelUpdateDto: ChannelUpdateDto) {
     const res = await this.channelRepo.update(id, channelUpdateDto);
     if (res) {
-      return this.channelToDtoLazy(await this.findByIdLazyBoth(id));
+      return this.channelToDtoLazy(await this.findByIdLazy(id));
     }
     throw new HttpException('Channel update failed', HttpStatus.NOT_FOUND);
   }
 
   public async changeOwnerActiveUser(userId: string, id: string, newOwnerId: string) {
-    const channel = await this.findByIdOwner(id, false);
+    const channel = await this.findByIdOwner(id);
     if (channel.owner.id !== userId) {
       throw new HttpException('User is not the Channel owner', HttpStatus.NOT_FOUND);
     }
@@ -267,13 +200,13 @@ export class ChannelService {
     await this.participantService.updateAdmin(newOwnerParticipant.id, true);
     await this.participantService.updateAuthorized(newOwnerParticipant.id, true);
     if (res) {
-      return this.channelToDtoLazy(await this.findByIdOwner(id, false));
+      return this.channelToDtoLazy(await this.findByIdOwner(id));
     }
     throw new HttpException('Channel update failed', HttpStatus.NOT_FOUND);
   }
 
   public async changeStatusActiveUser(userId: string, id: string, channelUpdateDto: ChannelUpdateDto) {
-    const channel = await this.findById(id, false);
+    const channel = await this.findById(id);
     if (channel.owner.id !== userId) {
       throw new HttpException('User is not the Channel owner', HttpStatus.NOT_FOUND);
     }
@@ -296,7 +229,7 @@ export class ChannelService {
   }
 
   public async addAdminActiveUser(userId: string, id: string, newAdminId: string) {
-    const channel = await this.findByIdOwner(id, false);
+    const channel = await this.findByIdOwner(id);
     if (channel.owner.id !== userId) {
       throw new HttpException('User is not the Channel owner', HttpStatus.NOT_FOUND);
     }
@@ -329,7 +262,7 @@ export class ChannelService {
   }
 
   public async muteActiveUser(userId: string, muteBanDto: MuteBanDto) {
-    const channel = await this.findByIdLazy(muteBanDto.channelId, false);
+    const channel = await this.findByIdLazy(muteBanDto.channelId);
     if (!await this.participantService.isParticipant(userId, muteBanDto.channelId)) {
       throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
     }
@@ -364,7 +297,7 @@ export class ChannelService {
   }
 
   public async authorizeActiveUser(userId: string, authorizationDto: AuthorizationDto) {
-    const channel = await this.findByIdLazy(authorizationDto.channelId, false);
+    const channel = await this.findByIdLazy(authorizationDto.channelId);
     if (!await this.participantService.isParticipant(userId, authorizationDto.channelId)) {
       throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
     }    
@@ -380,7 +313,7 @@ export class ChannelService {
    }
 
   public async leaveActiveUser(userId: string, id: string) {
-    const channel = await this.findByIdOwner(id, false);
+    const channel = await this.findByIdOwner(id);
     if (!await this.participantService.isParticipant(userId, id)) {
       throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
     }
@@ -393,7 +326,7 @@ export class ChannelService {
 
   public async delete(id: string) {
     try {
-      await this.findByIdLazyBoth(id);
+      await this.findByIdLazy(id);
     }
     catch(error) {
       throw new HttpException('Channel with this id does not exist', HttpStatus.NOT_FOUND);
@@ -434,7 +367,7 @@ export class ChannelService {
     participantCreationDto2.authorized = true;
     await this.participantService.create(participantCreationDto2);
 
-    return await this.findByIdParticipant(direct.id, true);
+    return await this.findByIdParticipant(direct.id);
   }
 
   public async getAllDirectActiveUser(userId: string) {
@@ -454,11 +387,11 @@ export class ChannelService {
     const user2 = await this.userService.findByIdLazy(channelDirectCreationDto.userId2);
     const test1 = user1.name + "DirectTo" + user2.name;
     const test2 = user2.name + "DirectTo" + user1.name;
-    const direct1 = await this.findByNameSpecial(test1, true);
+    const direct1 = await this.findByName(test1);
     if (direct1) {
       return direct1;
     }
-    const direct2 = await this.findByNameSpecial(test2, true);
+    const direct2 = await this.findByName(test2);
     if (direct2) {
       return direct2;
     } 

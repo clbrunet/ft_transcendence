@@ -36,7 +36,7 @@ export class ParticipantService {
     else {
       throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
     }
-    const channel = await this.channelService.findByIdOwnerBoth(participantCreationDto.channelId);
+    const channel = await this.channelService.findByIdOwner(participantCreationDto.channelId);
     if (channel) {
       participant.channel = channel;     
     }
@@ -173,7 +173,7 @@ export class ParticipantService {
 
   public async findByUserAndChannel(userId: string, channelId: string) {
     const user = await this.userService.findByIdLazy(userId);
-    const channel = await this.channelService.findByIdLazyBoth(channelId);
+    const channel = await this.channelService.findByIdLazy(channelId);
     const participant = await this.participantRepo.findOne( { user, channel },
       {
         relations: ['messages'],
@@ -194,7 +194,7 @@ export class ParticipantService {
 
   public async findByUserAndChannelMessage(userId: string, channelId: string) {
     const user = await this.userService.findByIdLazy(userId);
-    const channel = await this.channelService.findByIdLazyBoth(channelId);
+    const channel = await this.channelService.findByIdLazy(channelId);
     const participant = await this.participantRepo.findOne( { user, channel },
       {
         relations: ['messages'],
@@ -208,7 +208,7 @@ export class ParticipantService {
 
   public async findByUserAndChannelLazy(userId: string, channelId: string) {
     const user = await this.userService.findByIdLazy(userId);
-    const channel = await this.channelService.findByIdLazyBoth(channelId);
+    const channel = await this.channelService.findByIdLazy(channelId);
     const participant = await this.participantRepo.findOne( { user, channel } );
     if (participant) {
       return participant;
@@ -271,7 +271,7 @@ export class ParticipantService {
 
   public async isParticipant(userId: string, channelId: string) {
     const user = await this.userService.findByIdLazy(userId);
-    const channel = await this.channelService.findByIdLazyBoth(channelId);
+    const channel = await this.channelService.findByIdLazy(channelId);
     const participant = await this.participantRepo.findOne( { user, channel } );
     if (participant && !participant.left) {
       return true;
