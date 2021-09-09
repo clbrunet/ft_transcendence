@@ -2,6 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../user/user.module';
 import { ParticipantModule } from '../participant/participant.module';
+import { BlockModule } from '../block/block.module';
 
 import User  from '../user/user.entity';
 import Channel from './channel.entity';
@@ -15,9 +16,10 @@ import { DirectController } from './channel.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Channel, User]),
+    TypeOrmModule.forFeature([Channel, User, Participant]),
     UserModule,
-    forwardRef(() => ParticipantModule)
+    forwardRef(() => ParticipantModule),
+    BlockModule,
   ],
   controllers: [ChannelController, DirectController],
   providers: [ChannelService],

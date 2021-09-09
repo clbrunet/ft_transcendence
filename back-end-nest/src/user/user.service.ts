@@ -176,6 +176,14 @@ export class UserService {
     throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
   }
 
+  public async findByNameLazy(name: string) {
+    const user = await this.userRepository.findOne( { name } );
+    if (user) {
+      return user;
+    }
+    return;
+  } 
+
   public async update(id: string, userUpdateDto: UserUpdateDto): Promise<UserDtoLazy> {
     const res = await this.userRepository.update(id, userUpdateDto);
     if (res) {
@@ -193,7 +201,7 @@ export class UserService {
       throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND); 
     }
     await this.userRepository.delete(id);
-    return await this.findAll();
+    return 'Successfull User deletion';
   }
 
   public activeUserToDto(user: User) {

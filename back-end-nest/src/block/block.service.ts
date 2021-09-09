@@ -93,14 +93,54 @@ export class BlockService {
 
   // Return all Block Dtos
   public async getAllActiveUser(userId: string) {
-    const res = await this.userService.findByIdBlockOwner(userId);
+    const blocks = await this.blockRepo.find(
+      {
+        join: {
+          alias: "block",
+          leftJoinAndSelect: {
+            blockOwner: "block.blockOwner",
+            blockUser: "block.block",
+          },
+        },
+        where: {
+          blockOwner: { id: userId }           
+        }
+      } 
+    );
     let dto = [];
-    for (const blockOwner of res.blockOwners) {
-      const block = await this.findById(blockOwner.id);
+    for (const block of blocks) {
       let blockDto: BlockDto = this.blockToDto(block);
       dto.push(blockDto);
     }
     return dto;  
+  }
+
+  // Return array of UserId
+  public async getArrayOfIdActiveUser(userId: string) {
+    const blocks = await this.blockRepo.find(
+      {
+        join: {
+          alias: "block",
+          leftJoinAndSelect: {
+            blockOwner: "block.blockOwner",
+            blockUser: "block.block",
+          },
+        },
+        where: {
+          blockOwner: { id: userId }           
+        }
+      } 
+    );
+    let array = [];
+    for (const block of blocks) {
+      if (block.blockOwner.id == userId) {
+        array.push(block.block.id);
+      }
+      else if (block.block.id == userId) {
+        array.push(block.blockOwner.id);
+      }
+    }
+    return array;  
   }
 
   // Return Block Object with joined tables

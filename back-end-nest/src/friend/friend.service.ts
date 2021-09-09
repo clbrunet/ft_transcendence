@@ -94,11 +94,14 @@ export class FriendService {
 
   // Return all Friend Dtos
   public async getAllActiveUser(userId: string) {
-    const res = await this.userService.findByIdFriendOwner(userId);
+    const res = await this.userRepo.findOne(userId,
+      {
+        relations: ['friendOwners', 'friendOwners.friendOwner', 'friendOwners.friend'],
+      }
+    );
     let dto = [];
     for (const friendOwner of res.friendOwners) {
-      const friendOwnerObject = await this.findById(friendOwner.id);
-      let friendDto: FriendDto = this.friendToDto(friendOwnerObject);
+      let friendDto: FriendDto = this.friendToDto(friendOwner);
       dto.push(friendDto);
     }
     return dto;  
