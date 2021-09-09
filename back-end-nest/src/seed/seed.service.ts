@@ -31,10 +31,12 @@ import { duels } from './data';
 import { games } from './data';
 import { channels } from './data';
 import { participants } from './data';
+import { directs } from './data';
 import { messages } from './data';
 
 import { UserUpdateDto } from '../user/user.dto';
 import { ChannelCreationDto } from '../channel/channel.dto';
+import { ChannelDirectCreationDto } from '../channel/channel.dto';
 import { ParticipantCreationDto } from '../participant/participant.dto';
 import { MessageCreationDto } from '../message/message.dto';
 
@@ -70,9 +72,11 @@ export class SeedService {
   ) {}
 
   async eraseUser() {
-  	const users = await this.userService.findAllLazy();
-    for await (const user of users) {
-	  	await this.userService.delete(user.id);
+    let test = await this.userRepo.findOne();
+    while (test) {
+      await this.userService.delete(test.id);
+      console.log('erased one...');
+      test = await this.userRepo.findOne();
     }
     return true;
   }
@@ -186,6 +190,20 @@ export class SeedService {
       await this.participantService.create(participantCreationDto);
     }
     console.log('Participant seeding complete!');
+    return true;
+  }
+
+  async seedDirect() {
+    console.log('Seeding directs...');
+    for await (const direct of directs) {
+      const user1 = await this.userService.findByNameLazy(direct.name1);
+      const user2 = await this.userService.findByNameLazy(direct.name2);
+      let channelDirectCreationDto = new ChannelDirectCreationDto();
+      channelDirectCreationDto.userId1 = user1.id;
+      channelDirectCreationDto.userId2 = user2.id;
+      await this.channelService.createDirect(channelDirectCreationDto);
+    }
+    console.log('Direct seeding complete!');
     return true;
   }
 

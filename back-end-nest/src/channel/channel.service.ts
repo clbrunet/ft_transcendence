@@ -11,6 +11,7 @@ import { ChannelStatus } from './enum.channelStatus';
 
 import { UserService } from '../user/user.service';
 import { ParticipantService } from '../participant/participant.service';
+import { BlockService } from '../block/block.service';
 
 import { ChannelCreationDto } from './channel.dto';
 import { ChannelDirectCreationDto } from './channel.dto';
@@ -32,12 +33,15 @@ export class ChannelService {
   constructor(
     @InjectRepository(Channel)
     private readonly channelRepo: Repository<Channel>,
+    @InjectRepository(Participant)
+    private readonly participantRepo: Repository<Participant>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
 
     private readonly userService: UserService,
     @Inject(forwardRef(() => ParticipantService))
     private readonly participantService: ParticipantService,
+    private readonly blockService: BlockService,
   ) {}
 
   async create(channelCreationDto: ChannelCreationDto) {
@@ -157,7 +161,11 @@ export class ChannelService {
   } 
 
   public async findByName(name: string) {
-    const channel = await this.channelRepo.findOne( { name } );
+    const channel = await this.channelRepo.findOne( { name },
+      {
+        relations: ['participants', 'participants.user'],
+      }
+    );
     if (channel) {
       return channel;
     }
@@ -367,15 +375,37 @@ export class ChannelService {
     participantCreationDto2.authorized = true;
     await this.participantService.create(participantCreationDto2);
 
-    return await this.findByIdParticipant(direct.id);
+    return await this.channelRepo.findOne(direct.id,
+      {
+        relations: ['participants', 'participants.user'],
+      } 
+    );
+  }
+
+  private getSecondParticipant(userId: string, participants: Participant[]) {
+    for (const participant of participants) {
+      if (participant.user.id !== userId) {
+        return participant;
+      }
+    }
   }
 
   public async getAllDirectActiveUser(userId: string) {
-    const directs = await this.findAll(true);
+    const participants = await this.participantRepo.find(
+      {
+        relations: ['channel', 'channel.participants', 'channel.participants.user', 'user'],
+        where: {
+          channel: { direct: true},
+          user: { id: userId },
+        },
+      }    
+    );
     let dto = [];
-    for (const direct of directs) {
-      if (await this.participantService.isParticipant(userId, direct.id)) {
-        const channelToDtoDirect = await this.channelToDtoDirectActiveUser(userId, direct);
+    const blocks = await this.blockService.getArrayOfIdActiveUser(userId);
+    for (const participant of participants) {
+      const secondParticipant = this.getSecondParticipant(userId, participant.channel.participants);
+      if (!blocks.includes(secondParticipant.user.id)) {
+        const channelToDtoDirect = await this.channelToDtoDirectActiveUser(userId, participant.channel);
         dto.push(channelToDtoDirect);
       }
     }
@@ -383,11 +413,11 @@ export class ChannelService {
   }
 
   async findDirect(channelDirectCreationDto: ChannelDirectCreationDto) {
-    const user1 = await this.userService.findByIdLazy(channelDirectCreationDto.userId1);
-    const user2 = await this.userService.findByIdLazy(channelDirectCreationDto.userId2);
+    const user1 = await this.userRepo.findOne(channelDirectCreationDto.userId1);
+    const user2 = await this.userRepo.findOne(channelDirectCreationDto.userId2);
     const test1 = user1.name + "DirectTo" + user2.name;
     const test2 = user2.name + "DirectTo" + user1.name;
-    const direct1 = await this.findByName(test1);
+    const direct1 = await this.findByName(test1);;
     if (direct1) {
       return direct1;
     }
@@ -399,12 +429,21 @@ export class ChannelService {
   }
 
   async goDirectActiveUser(channelDirectCreationDto: ChannelDirectCreationDto) {
-    let direct = await this.findDirect(channelDirectCreationDto);
-    if (direct) {
-      return await this.channelToDtoDirectActiveUser(channelDirectCreationDto.userId1, direct);
+    if (channelDirectCreationDto.userId1 === channelDirectCreationDto.userId2) {
+      throw new HttpException('User can not create a direct Channel with himself', HttpStatus.BAD_REQUEST);      
     }
-    direct = await this.createDirect(channelDirectCreationDto);
-    return await this.channelToDtoDirectActiveUser(channelDirectCreationDto.userId1, direct);
+    let direct = await this.findDirect(channelDirectCreationDto);
+    const blocks = await this.blockService.getArrayOfIdActiveUser(channelDirectCreationDto.userId1);
+    if (direct && !blocks.includes(channelDirectCreationDto.userId2)) {
+      return this.channelToDtoDirectActiveUser(channelDirectCreationDto.userId1, direct);
+    }
+    else if (!direct && !blocks.includes(channelDirectCreationDto.userId2)) {
+      direct = await this.createDirect(channelDirectCreationDto);
+      return this.channelToDtoDirectActiveUser(channelDirectCreationDto.userId1, direct);
+    }
+    else {
+      throw new HttpException('There is a Block between those two users', HttpStatus.BAD_REQUEST);
+    }
   }
 
   // <------------- FUNCTIONS CHANNEL TO DTO ------------->
@@ -488,17 +527,16 @@ export class ChannelService {
     return dto;
   }
 
-  public async channelToDtoDirectActiveUser(userId, channel: Channel) {
+  public channelToDtoDirectActiveUser(userId, channel: Channel) {
     let dto = new ChannelDtoDirect();
     dto.id = channel.id;
-    dto.name = channel.name;
+    dto.name = this.getSecondParticipant(userId, channel.participants).user.name;
     dto.participants = [];
     for (const participant of channel.participants) {
       let channelDto = new ParticipantForChannelDirectDto();
       channelDto.id = participant.id;
-      const participantObject = await this.participantService.findByIdUser(participant.id);
-      channelDto.userId = participantObject.user.id;
-      channelDto.userName = participantObject.user.name;
+      channelDto.userId = participant.user.id;
+      channelDto.userName = participant.user.name;
       dto.participants.push(channelDto);
     }
     dto.nUnreadMessages = 0;

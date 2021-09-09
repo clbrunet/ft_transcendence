@@ -41,6 +41,11 @@ export class ChannelSeedDto {
   ownerEmail: string;
 }
 
+export class ChannelDirectSeedDto {
+  name1: string;
+  name2: string;
+}
+
 export class ChannelUpdateDto {
   @IsOptional()
   @IsEnum(ChannelStatus)

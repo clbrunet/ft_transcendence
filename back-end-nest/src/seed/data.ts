@@ -5,6 +5,7 @@ import { BlockSeedDto } from '../block/block.dto';
 import { DuelSeedDto } from '../duel/duel.dto';
 import { GameSeedDto } from '../game/game.dto';
 import { ChannelSeedDto } from '../channel/channel.dto';
+import { ChannelDirectSeedDto } from '../channel/channel.dto';
 import { ParticipantSeedDto } from '../participant/participant.dto';
 import { MessageSeedDto } from '../message/message.dto';
 
@@ -139,6 +140,20 @@ export const participants: ParticipantSeedDto[] = [
 
   { channelName: 'Doudou & Cie', userEmail: 'lucille@yopmail.com' },
   { channelName: 'Doudou & Cie', userEmail: 'come@yopmail.com' },
+];
+
+export const directs: ChannelDirectSeedDto[] = [
+  { name1: 'Erwan', name2: 'Nicolas'},
+  { name1: 'Erwan', name2: 'Clement'},
+
+  { name1: 'Nicolas', name2: 'Lucille'},
+  { name1: 'Nicolas', name2: 'Alban'},
+
+  { name1: 'Clement', name2: 'Lucille'},
+  { name1: 'Clement', name2: 'Alban'},
+
+  { name1: 'Come', name2: 'Nicolas'},
+  { name1: 'Come', name2: 'Clement'},
 ];
 
 export const messages: MessageSeedDto[] = [

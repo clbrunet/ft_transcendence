@@ -93,11 +93,14 @@ export class DuelService {
 
   // Return all Duel Dtos
   public async getAllActiveUser(userId: string) {
-    const res = await this.userService.findByIdDuelOwner(userId);
+    const res = await this.userRepo.findOne(userId,
+      {
+        relations: ['duelOwners', 'duelOwners.duelOwner', 'duelOwners.duel'],
+      }
+    );
     let dto = [];
     for (const duelOwner of res.duelOwners) {
-      const duelOwnerObject = await this.findById(duelOwner.id);
-      let duelDto: DuelDto = this.duelToDto(duelOwnerObject);
+      let duelDto: DuelDto = this.duelToDto(duelOwner);
       dto.push(duelDto);
     }
     return dto;  
