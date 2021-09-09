@@ -228,7 +228,7 @@ export class ChannelService {
     }
   }
 
-  public async addAdminActiveUser(userId: string, id: string, newAdminId: string) {
+  public async updateAdminActiveUser(userId: string, id: string, newAdminId: string, toogle: boolean) {
     const channel = await this.findByIdOwner(id);
     if (channel.owner.id !== userId) {
       throw new HttpException('User is not the Channel owner', HttpStatus.NOT_FOUND);
@@ -237,7 +237,7 @@ export class ChannelService {
       throw new HttpException('New admin is not a Participant of this Channel', HttpStatus.NOT_FOUND);
     }
     const newAdmin = await this.participantService.findByUserAndChannelLazy(newAdminId, id);
-    return await this.participantService.updateAdmin(newAdmin.id, true);
+    return await this.participantService.updateAdmin(newAdmin.id, toogle);
   }
 
   public async addParticipantActiveUser(userId: string, participantCreationDto: ParticipantCreationDto) {

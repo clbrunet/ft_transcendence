@@ -59,10 +59,10 @@ export class ChannelController {
   }
 
   @UseGuards(JwtTwoFactorGuard)
-  @Post('/addAdmin')
-  async addAdminActiveUser(@Req() request: RequestWithUser, @Body() participantCreationDto: ParticipantCreationDto) {
+  @Post('/admin/:toogle')
+  async updateAdminActiveUser(@Req() request: RequestWithUser, @Body() participantCreationDto: ParticipantCreationDto, @Param('toogle') toogle) {
     const {user} = request;
-    return await this.channelService.addAdminActiveUser(user.id, participantCreationDto.channelId, participantCreationDto.userId);
+    return await this.channelService.updateAdminActiveUser(user.id, participantCreationDto.channelId, participantCreationDto.userId, toogle);
   }
 
   @UseGuards(JwtTwoFactorGuard)
