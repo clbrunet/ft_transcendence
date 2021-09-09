@@ -1,34 +1,50 @@
 <template>
   <div id="body-chat">
       <div id="list_channels">
+        <button @click="open_popup_create()">+</button> 
         <div class="channel" v-for="(channel, index) in channels" :key="index" @click="select_channel(channel, index)">
           <span>{{ channel.name }} </span> 
           <span>{{ channel.status }} </span>
         </div>
       </div>
+      <template v-for="(channel, index) in channels">
+        <template v-if="channel.status != 'protected' || channel.activeUserAuthorized == true">
+          <Chat v-show="numberSelectedChannel == index" :key="index" :data="channel" />
+        </template>
+        <template v-else>
+          <Chat v-if="numberSelectedChannel == index" :key="index" :data="channel" />
+        </template>
+      </template>
 
+      <!-- popups -->
       <portal-target v-if="popup_password" id="popup-password" name="popup-password">
         <div id="popup-password-content">
           <form action="" @submit.prevent="form_password_submit">
             <input type="password" placeolder="password" v-model="password_input">
             <input type="submit" value="Access">
           </form>
-          <button @click="close_popup()">Close</button>
+          <button @click="close_popup_password()">Close</button>
         </div>
       </portal-target>
 
-      <template v-for="(channel, index) in channels">
-        <template v-if="channel.status != 'protected' || channel.activeUserAuthorized == true">
-          <Chat v-show="numberSelectedChannel != -1 && numberSelectedChannel == index" :key="index" :data="channel" />
-        </template>
-        <template v-else>
-          <Chat v-if="numberSelectedChannel != -1 && numberSelectedChannel == index" :key="index" :data="channel" />
-        </template>
-      </template>
-
-      <!--<div v-else class="nothing-selected">
-        You can now communicate through diverse chats!
-      </div>-->
+      <div v-if="popup_create" id="popup-create">
+        <div id="popup-create-content">
+          <form @submit.prevent="create_channel()" id="form-create-channel">
+            <input type="text" v-model="createName">
+            <select v-model="createStatus">
+              <option disabled value="">select one</option>
+              <option>public</option>
+              <option>private</option>
+              <option>protected</option>
+            </select>
+            <input v-if="createStatus == 'protected'" type="password" v-model="createPassword">
+            <input type="submit">
+          </form>
+          <p class="error">{{errorCreate}}</p>
+          <button @click="close_popup_create()">Close</button>
+        </div>
+      </div>
+      <!--  -->
   </div>
 </template>
 
@@ -48,12 +64,17 @@ export default Vue.extend({
   data() {
     return {
       keyVFor: 0,
+      errorCreate: undefined,
       channels: {},
       selectedChannel: undefined,
       currentSelectedChannel: undefined,
       popup_password: false,
+      popup_create: false,
       password_input: undefined,
-      numberSelectedChannel: -1
+      numberSelectedChannel: 0,
+      createName: undefined,
+      createPassword: undefined,
+      createStatus: undefined
     };
   },
   mounted() {
@@ -91,7 +112,7 @@ export default Vue.extend({
         this.selectedChannel = channel;
       }
     },
-    close_popup() {
+    close_popup_password() {
       this.popup_password = false;
       document.getElementById("nav").style.display = "flex";
     },
@@ -113,6 +134,40 @@ export default Vue.extend({
         this.refresh_channels();
       }).catch(err => {
         this.password_input = undefined;
+      });
+    },
+    open_popup_create() {
+      this.popup_create = true;
+      document.getElementById("nav").style.display = "none";
+    },
+    close_popup_create() {
+      this.popup_create = false;
+      document.getElementById("nav").style.display = "flex";
+    },
+    create_channel() {
+      if (this.createStatus == 'public')
+        this.createStatus = 0;
+      if (this.createStatus == 'private')
+        this.createStatus = 1;
+      if (this.createStatus == 'protected')
+        this.createStatus = 2;
+
+      axios({
+        method: "post",
+        url: `${ process.env.VUE_APP_API_URL }/channel/create`,
+        withCredentials: true,
+        data: {
+          name: this.createName,
+          status: this.createStatus,
+          password: this.createPassword
+        }
+      })
+      .then(res => {
+        this.close_popup_create();
+        this.refresh_channels();
+      }).catch(err => {
+        //console.log(err);
+        this.errorCreate = Array.isArray(err.message) ? [err.message] : err.message;
       });
     }
   }
@@ -140,7 +195,30 @@ export default Vue.extend({
   background-color:blue;
 }
 
+#popup-create {
+  z-index: 1000;
+  width:100vw;
+  height:100vh;
+  background-color:rgba(48, 74, 36, 0.6);
+  position: absolute;
+}
+
+#popup-create-content {
+  position:absolute;
+  width:60vw;
+  height:60vh;
+  left: 20%;
+  top: 20%;
+  background-color:blue;
+}
+
 /**/
+
+#form-create-channel {
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+}
 
 #body-chat {
   display:flex;
@@ -153,6 +231,9 @@ export default Vue.extend({
   width:200px;
   border: 3px solid black;
   background-color :white;
+  max-height: 50%;
+  overflow-y: auto; /* maybe remove */
+  overflow-x: hidden;
 }
 
 .channel {
@@ -170,6 +251,10 @@ export default Vue.extend({
 
 .channel:focus {
   background-color:red;
+}
+
+.error {
+  color: red;
 }
 
 .nothing-selected {
