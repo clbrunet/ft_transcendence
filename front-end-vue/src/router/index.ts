@@ -2,6 +2,10 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import store from '../store';
 import axios from 'axios';
+import PortalVue from 'portal-vue'
+
+Vue.use(PortalVue)
+
 
 Vue.use(VueRouter)
 
