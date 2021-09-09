@@ -81,3 +81,9 @@ export class ParticipantForChannelDto {
   banEndDateTime: Date;
   left: boolean;
 }
+
+export class ParticipantForChannelDirectDto {
+  id: string;
+  userId: string;
+  userName: string;
+}

@@ -5,6 +5,7 @@ import User from '../user/user.entity';
 import { ChannelStatus } from './enum.channelStatus';
 
 import { ParticipantForChannelDto } from '../participant/participant.dto';
+import { ParticipantForChannelDirectDto } from '../participant/participant.dto';
 
 
 export class ChannelCreationDto {
@@ -23,6 +24,14 @@ export class ChannelCreationDto {
   @IsOptional()
   @IsString()
   ownerId: string;
+}
+
+export class ChannelDirectCreationDto {
+  @IsString()
+  userId1: string;
+
+  @IsString()
+  userId2: string;
 }
 
 export class ChannelSeedDto {
@@ -99,4 +108,11 @@ export class ChannelDtoLazy {
   status: string;
   ownerId: string;
   ownerName: string;
+}
+
+export class ChannelDtoDirect {
+  id: string;
+  name: string;
+  nUnreadMessages: number;
+  participants: ParticipantForChannelDirectDto[];
 }
