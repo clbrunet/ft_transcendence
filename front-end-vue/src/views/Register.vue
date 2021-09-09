@@ -10,6 +10,9 @@
         <p class="error" v-for="(message, index) in messages" :key="index"> {{ message }} </p>
         <p class="notLogin"> Already have an account ? <a @click="goToLogin()">login</a> now </p>
       </form>
+      <a v-bind:href="authorize_url_42">
+        <button class="api42">Sign in with 42</button>
+      </a>
       <div class="ball">
       </div>
       <div class="bar1">
@@ -190,6 +193,23 @@ input[type=submit]:hover {
 
 .notLogin {
   color:white;
+}
+
+.api42 {
+  cursor:pointer;
+  background-color: #7583FF;
+  border: 2px solid white;
+  color:white;
+  outline:none;
+  border-radius:8px;
+  padding: 15px;
+  margin:15px;
+  font-weight: 700;
+  font-size:20px;
+}
+
+.api42:hover {
+  background-color: rgb(87, 104, 250);
 }
 
 .error {
