@@ -10,6 +10,7 @@ import { ChannelService } from './channel.service';
 import JwtTwoFactorGuard from '../authentication/twoFactor/jwtTwoFactor.guard';
 
 import { ChannelCreationDto } from './channel.dto';
+import { ChannelDirectCreationDto } from './channel.dto';
 import { ChannelUpdateDto } from './channel.dto';
 import { ParticipantCreationDto } from '../participant/participant.dto';
 import { MuteBanDto } from './channel.dto';
@@ -116,14 +117,30 @@ export class ChannelController {
 @Controller('direct')
 export class DirectController {
   constructor(
-    private readonly channelService: ChannelService
+    private readonly channelService: ChannelService,
   ) {}
 
   @UseGuards(JwtTwoFactorGuard)
   @Get('/index')
-  async getAllActiveUser(@Req() request: RequestWithUser) {
+  async getAllDirectActiveUser(@Req() request: RequestWithUser) {
     const {user} = request;
-    //return await this.channelService.getAllActiveUser(user.id);
-    return 'hello new controller'
+    return await this.channelService.getAllDirectActiveUser(user.id);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/go/:id')
+  async goDirectActiveUser(@Req() request: RequestWithUser, @Param('id') id) {
+    const {user} = request;
+    let channelDirectCreationDto = new ChannelDirectCreationDto();
+    channelDirectCreationDto.userId1 = user.id;
+    channelDirectCreationDto.userId2 = id;
+    return await this.channelService.goDirectActiveUser(channelDirectCreationDto);
+  }
+
+  // ROUTES FOR DEV ONLY TO BE COMMENTED
+  @UseGuards(JwtTwoFactorGuard)
+  @Post('/create')
+  async create(@Body() channelDirectCreationDto: ChannelDirectCreationDto) {
+    return this.channelService.createDirect(channelDirectCreationDto);
   }
 }
