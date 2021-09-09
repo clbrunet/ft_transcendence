@@ -23,8 +23,8 @@ export class UserController {
   // ROUTES FOR DEV ONLY TO BE COMMENTED
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
-  async findAll() {
-    return await this.userService.findAll();
+  async findAllLazy() {
+    return await this.userService.findAllLazy();
   }
 
   // ROUTES NOT FOR DEV
