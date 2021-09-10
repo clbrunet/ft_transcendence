@@ -332,6 +332,14 @@ export class ChannelService {
     return this.participantService.updateLeft(participantActiveUser.id, true);
   }
 
+  public async isPublic(id: string) {
+    const channel = await this.findByIdLazy(id);
+    if (channel.status === 0) {
+      return true;
+    }
+    return false;
+  }
+
   public async delete(id: string) {
     try {
       await this.findByIdLazy(id);

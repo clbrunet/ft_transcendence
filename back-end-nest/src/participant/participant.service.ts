@@ -293,6 +293,16 @@ export class ParticipantService {
     return false;
   }
 
+  public async isAuthorized(userId: string, channelId: string) {
+    const user = await this.userService.findByIdLazy(userId);
+    const channel = await this.channelService.findByIdLazy(channelId);
+    const participant = await this.participantRepo.findOne( { user, channel } );
+    if (participant.authorized) {
+      return true;
+    }
+    return false;
+  }
+
   public async isMute(userId: string, channelId: string) {
     if (!this.isParticipant(userId, channelId)) {
       throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND); 

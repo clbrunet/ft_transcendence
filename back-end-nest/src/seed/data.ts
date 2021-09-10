@@ -119,6 +119,9 @@ export const channels: ChannelSeedDto[] = [
 ];
 
 export const participants: ParticipantSeedDto[] = [
+  { channelName: 'Global Announcement', userEmail: 'nicolas@yopmail.com'},
+  { channelName: 'Global Announcement', userEmail: 'clement@yopmail.com'},
+
   { channelName: 'Karate budokai', userEmail: 'nicolas@yopmail.com'},
   { channelName: 'Karate budokai', userEmail: 'come@yopmail.com'},
 
@@ -157,6 +160,14 @@ export const directs: ChannelDirectSeedDto[] = [
 ];
 
 export const messages: MessageSeedDto[] = [
+  { channelName: 'Global Announcement', userEmail: 'erwan@yopmail.com', content: 'Hello c ici pour les messages de services!'},
+  { channelName: 'Global Announcement', userEmail: 'nicolas@yopmail.com', content: 'Le jeu est live! faites vous plaiz!'},
+  { channelName: 'Global Announcement', userEmail: 'clement@yopmail.com', content: 'Feedbacks welcome!'},
+
+  { channelName: 'Karate budokai', userEmail: 'erwan@yopmail.com', content: 'Hello la team, ca va parler Karate ici!'},
+  { channelName: 'Karate budokai', userEmail: 'nicolas@yopmail.com', content: 'Hate de parler Karate avec vous!'},
+  { channelName: 'Karate budokai', userEmail: 'come@yopmail.com', content: 'J y connais rien au Karate moi!'},
+
   { channelName: 'Karate budokai', userEmail: 'erwan@yopmail.com', content: 'Hello la team, ca va parler Karate ici!'},
   { channelName: 'Karate budokai', userEmail: 'nicolas@yopmail.com', content: 'Hate de parler Karate avec vous!'},
   { channelName: 'Karate budokai', userEmail: 'come@yopmail.com', content: 'J y connais rien au Karate moi!'},

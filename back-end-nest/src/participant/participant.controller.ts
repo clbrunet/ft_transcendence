@@ -22,6 +22,13 @@ export class ParticipantController {
   }
 
   @UseGuards(JwtTwoFactorGuard)
+  @Get('isAuthorized/:channelId')
+  async isAuthorized(@Req() request: RequestWithUser, @Param('channelId') channelId) {
+    const {user} = request;    
+    return await this.participantService.isAuthorized(user.id, channelId);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
   @Get('isMute/:channelId')
   async isMute(@Req() request: RequestWithUser, @Param('channelId') channelId) {
     const {user} = request;    
