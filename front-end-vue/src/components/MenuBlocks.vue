@@ -10,26 +10,6 @@
             <span>{{ block.blockName }}</span>
           </td>
         </tr>
-                <tr v-for="(block, index) in blocks" class="row" :key="index">
-          <td>
-            <span>{{ block.blockName }}</span>
-          </td>
-        </tr>
-                <tr v-for="(block, index) in blocks" class="row" :key="index">
-          <td>
-            <span>{{ block.blockName }}</span>
-          </td>
-        </tr>
-                <tr v-for="(block, index) in blocks" class="row" :key="index">
-          <td>
-            <span>{{ block.blockName }}</span>
-          </td>
-        </tr>
-                <tr v-for="(block, index) in blocks" class="row" :key="index">
-          <td>
-            <span>{{ block.blockName }}</span>
-          </td>
-        </tr>
       </table>
     </div>
   </div>

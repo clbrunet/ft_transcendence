@@ -64,17 +64,17 @@ export default Vue.extend({
   data() {
     return {
       keyVFor: 0,
-      errorCreate: undefined,
-      channels: {},
-      selectedChannel: undefined,
-      currentSelectedChannel: undefined,
-      popup_password: false,
-      popup_create: false,
-      password_input: undefined,
+      errorCreate: undefined as any,
+      channels: {} as any ,
+      selectedChannel: undefined as any,
+      currentSelectedChannel: undefined as any,
+      popup_password: false as any,
+      popup_create: false as any,
+      password_input: undefined as any,
       numberSelectedChannel: 0,
-      createName: undefined,
-      createPassword: undefined,
-      createStatus: undefined
+      createName: undefined as any,
+      createPassword: undefined as any,
+      createStatus: undefined as any
     };
   },
   mounted() {
@@ -104,7 +104,8 @@ export default Vue.extend({
       if (channel.status == 'protected' && channel.activeUserAuthorized == false)
       {
         this.popup_password = true;
-        document.getElementById("nav").style.display = "none";
+        const nav = document.getElementById("nav");
+        nav ? nav.style.display = "none" : 0 ;
       }
       else
       {
@@ -114,19 +115,21 @@ export default Vue.extend({
     },
     close_popup_password() {
       this.popup_password = false;
-      document.getElementById("nav").style.display = "flex";
+      const nav = document.getElementById("nav");
+      nav ? nav.style.display = "flex" : 0 ;
     },
     form_password_submit() {
       axios({
         url: `${ process.env.VUE_APP_API_URL }/channel/authorization`,
         method: "patch",
         data: {
-          channelId: this.currentSelectedChannel.id,
+          channelId: (this.currentSelectedChannel as any).id,
           password: this.password_input
         },
         withCredentials: true
       }).then(res => {
-        document.getElementById("nav").style.display = "flex";
+        const nav = document.getElementById("nav");
+        nav ? nav.style.display = "flex" : 0 ;
         this.password_input = undefined;
         this.selectedChannel = this.currentSelectedChannel;
         this.currentSelectedChannel = undefined;
@@ -138,11 +141,13 @@ export default Vue.extend({
     },
     open_popup_create() {
       this.popup_create = true;
-      document.getElementById("nav").style.display = "none";
+      const nav = document.getElementById("nav");
+      nav ? nav.style.display = "none" : 0 ;
     },
     close_popup_create() {
       this.popup_create = false;
-      document.getElementById("nav").style.display = "flex";
+      const nav = document.getElementById("nav");
+      nav ? nav.style.display = "flex" : 0 ;
     },
     create_channel() {
       if (this.createStatus == 'public')
