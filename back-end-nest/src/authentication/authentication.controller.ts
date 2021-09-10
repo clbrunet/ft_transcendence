@@ -60,7 +60,7 @@ export class AuthenticationController {
     const { user } = request;
     const cookie = this.authenticationService.getCookieWithJwtToken(user.id);
     request.res.setHeader('Set-Cookie', cookie);
-    user.password = undefined;
+    user.password = undefined;  
     if (user.isTwoFactorAuthenticationEnabled) {
       return;
     }
@@ -72,12 +72,12 @@ export class AuthenticationController {
 
   @UseGuards(JwtTwoFactorGuard)
   @Post('log-out')
-  async logOut(@Req() request: RequestWithUser, @Res() response: Response) {
+  async logOut(@Req() request: RequestWithUser) {
     const { user } = request;
-    response.setHeader('Set-Cookie', this.authenticationService.getCookieForLogOut());
+    request.res.setHeader('Set-Cookie', this.authenticationService.getCookieForLogOut());
     let userUpdateDto = new UserUpdateDto();
     userUpdateDto.status = 0;
-    this.userService.update(user.id, userUpdateDto);
+    await this.userService.update(user.id, userUpdateDto);
     return "successfull log-out";
   }
 
