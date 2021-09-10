@@ -28,7 +28,7 @@ export class AuthenticationController {
   async fortyTwoSignIn(@Req() request: RequestWithUser) {
     let user: User;
     try {
-      user = await this.userService.findByEmail(request.user.email);
+      user = await this.userService.findByEmailLazy(request.user.email);
     }
     catch {
       user = await this.authenticationService.register(request.user);

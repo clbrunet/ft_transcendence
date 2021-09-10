@@ -187,7 +187,7 @@ export class UserService {
   public async update(id: string, userUpdateDto: UserUpdateDto): Promise<UserDtoLazy> {
     const res = await this.userRepository.update(id, userUpdateDto);
     if (res) {
-      const user = await this.findById(id);
+      const user = await this.findByIdLazy(id);
       return this.userToDtoLazy(user);
     }
     throw new HttpException('User update failed', HttpStatus.NOT_FOUND);
