@@ -85,7 +85,6 @@ export class ChannelDto {
   ownerId: string;
   ownerName: string;
   nParticipants: number;
-  nUnreadMessages: number;
   participants: ParticipantForChannelDto[];
 }
 
@@ -96,7 +95,6 @@ export class ChannelDtoActiveUser {
   ownerId: string;
   ownerName: string;
   nParticipants: number;
-  nUnreadMessages: number;
   activeUserParticipant: boolean;
   activeUserAuthorized: boolean;
   activeUserAdmin: boolean;
@@ -118,6 +116,5 @@ export class ChannelDtoLazy {
 export class ChannelDtoDirect {
   id: string;
   name: string;
-  nUnreadMessages: number;
   participants: ParticipantForChannelDirectDto[];
 }

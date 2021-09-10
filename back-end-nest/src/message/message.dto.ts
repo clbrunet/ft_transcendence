@@ -16,9 +16,6 @@ export class MessageSeedDto {
 }
 
 export class MessageCreationActiveUserDto {
-  @IsString()
-  channelId: string;
-
   @IsNotEmpty()
   @IsString()
   content: string;

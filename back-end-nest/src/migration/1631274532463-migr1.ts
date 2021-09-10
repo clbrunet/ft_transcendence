@@ -1,10 +1,10 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class migr11631107771067 implements MigrationInterface {
-    name = 'migr11631107771067'
+export class migr11631274532463 implements MigrationInterface {
+    name = 'migr11631274532463'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "message" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createDateTime" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "content" character varying NOT NULL, "status" integer NOT NULL, "authorId" uuid, CONSTRAINT "PK_ba01f0a3e0123651915008bc578" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "message" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createDateTime" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "content" character varying NOT NULL, "authorId" uuid, CONSTRAINT "PK_ba01f0a3e0123651915008bc578" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "participant" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "authorized" boolean NOT NULL DEFAULT false, "admin" boolean NOT NULL DEFAULT false, "mute" boolean NOT NULL DEFAULT false, "muteEndDateTime" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "ban" boolean NOT NULL DEFAULT false, "banEndDateTime" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "left" boolean NOT NULL DEFAULT false, "userId" uuid, "channelId" uuid, CONSTRAINT "UQ_e680caf2e9903f9647eff3c04f6" UNIQUE ("userId", "channelId"), CONSTRAINT "PK_64da4237f502041781ca15d4c41" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "channel" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "direct" boolean NOT NULL DEFAULT false, "status" integer NOT NULL, "password" character varying, "ownerId" uuid, CONSTRAINT "UQ_800e6da7e4c30fbb0653ba7bb6c" UNIQUE ("name"), CONSTRAINT "PK_590f33ee6ee7d76437acf362e39" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "friend" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "status" integer NOT NULL, "friendOwnerId" uuid, "friendId" uuid, CONSTRAINT "UQ_10f4cea527fc5f1b4913e1738c1" UNIQUE ("friendOwnerId", "friendId"), CONSTRAINT "PK_1b301ac8ac5fcee876db96069b6" PRIMARY KEY ("id"))`);

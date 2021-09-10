@@ -192,6 +192,20 @@ export class ParticipantService {
     throw new HttpException('Participant with this (userId, channelId) does not exist', HttpStatus.NOT_FOUND);
   }
 
+  public async findByUserAndChannelUserChannel(userId: string, channelId: string) {
+    const user = await this.userService.findByIdLazy(userId);
+    const channel = await this.channelService.findByIdLazy(channelId);
+    const participant = await this.participantRepo.findOne( { user, channel },
+      {
+        relations: ['user', 'channel'],
+      }
+    );
+    if (participant) {
+      return participant;
+    }
+    throw new HttpException('Participant with this (userId, channelId) does not exist', HttpStatus.NOT_FOUND);
+  }
+
   public async findByUserAndChannelMessage(userId: string, channelId: string) {
     const user = await this.userService.findByIdLazy(userId);
     const channel = await this.channelService.findByIdLazy(channelId);
@@ -277,6 +291,34 @@ export class ParticipantService {
       return true;
     }
     return false;
+  }
+
+  public async isMute(userId: string, channelId: string) {
+    if (!this.isParticipant(userId, channelId)) {
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND); 
+    }
+    const user = await this.userService.findByIdLazy(userId);
+    const channel = await this.channelService.findByIdLazy(channelId);
+    const participant = await this.participantRepo.findOne( { user, channel } );
+    const currentTime = new Date();
+    if (!participant.mute && participant.muteEndDateTime < currentTime) {
+      return false;
+    }
+    return true;
+  }
+
+  public async isBan(userId: string, channelId: string) {
+    if (!this.isParticipant(userId, channelId)) {
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND); 
+    }
+    const user = await this.userService.findByIdLazy(userId);
+    const channel = await this.channelService.findByIdLazy(channelId);
+    const participant = await this.participantRepo.findOne( { user, channel } );
+    const currentTime = new Date();
+    if (!participant.ban && participant.banEndDateTime < currentTime) {
+      return false;
+    }
+    return true;
   }
 
   public participantToDto(participant: Participant) {

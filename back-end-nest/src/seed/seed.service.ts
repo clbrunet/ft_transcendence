@@ -210,9 +210,9 @@ export class SeedService {
   async seedMessage() {
     console.log('Seeding messages...');
     for await (const message of messages) {
-      let user = await this.userService.findByEmail(message.userEmail);
+      let user = await this.userService.findByEmailLazy(message.userEmail);
       let channel = await this.channelService.findByNameLazy(message.channelName);
-      let author = await this.participantService.findByUserAndChannel(user.id, channel.id);
+      let author = await this.participantService.findByUserAndChannelLazy(user.id, channel.id);
       let messageCreationDto = new MessageCreationDto();
       messageCreationDto.authorId = author.id;
       messageCreationDto.content = message.content;

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Body, Req, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Req, Param, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import Participant from '../participant/participant.entity';
@@ -21,27 +21,26 @@ export class MessageController {
   ) {}
 
   @UseGuards(JwtTwoFactorGuard)
-  @Post('/create')
-  async create(@Req() request: RequestWithUser, @Body() data: MessageCreationActiveUserDto) {
+  @Post('/create/:channelId')
+  async create(@Req() request: RequestWithUser, @Param('channelId') channelId, @Body() messageCreationActiveUserDto: MessageCreationActiveUserDto) {
     const {user} = request;
   	let participant = new Participant();
-  	participant = await this.participantService.findByUserAndChannel(user.id, data.channelId);
-  	let messageCreationDto = new MessageCreationDto();
-  	messageCreationDto.authorId = participant.id;
-  	messageCreationDto.content = data.content;  	
-    return await this.messageService.create(messageCreationDto);
+  	participant = await this.participantService.findByUserAndChannelLazy(user.id, channelId);
+    return await this.messageService.createActiveUser(user.id, channelId, messageCreationActiveUserDto.content);
   }
 
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/all/:channelId')
+  async getAllInChannelActiveUser(@Req() request: RequestWithUser, @Param('channelId') channelId) {
+    const {user} = request;
+    return await this.messageService.getAllInChannelActiveUser(user.id, channelId);
+  }
+
+  // ROUTES FOR DEV ONLY TO BE COMMENTED
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
-  async getAll() {
-    return await this.messageService.getAll();
-  }
-
-  @UseGuards(JwtTwoFactorGuard)
-  @Get('/all/:id')
-  async getAllInChannel(@Param('id') id) {
-    return await this.messageService.getAllInChannel(id);
+  async findAll() {
+    return await this.messageService.findAllLazy();
   }
 
   @UseGuards(JwtTwoFactorGuard)
@@ -55,5 +54,4 @@ export class MessageController {
   async delete(@Param('id') id) {
     return await this.messageService.delete(id);
   }
-
 }
