@@ -475,7 +475,6 @@ export class ChannelService {
       channelDto.left = participant.left;
       dto.participants.push(channelDto);
     }
-    dto.nUnreadMessages = 0;
     return dto;
   }
 
@@ -492,7 +491,6 @@ export class ChannelService {
         dto.nParticipants += 1;
       }
     }
-    dto.nUnreadMessages = 0;
     if (await this.participantService.isParticipant(userId, channel.id)) {
       const participantActiveUser = await this.participantService.findByUserAndChannel(userId, channel.id);
       dto.activeUserParticipant = true;
@@ -539,7 +537,6 @@ export class ChannelService {
       channelDto.userName = participant.user.name;
       dto.participants.push(channelDto);
     }
-    dto.nUnreadMessages = 0;
     return dto;
   }
 }

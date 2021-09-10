@@ -2,8 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } f
 
 import Participant from '../participant/participant.entity';
 
-import { MessageStatus } from './enum.messageStatus';
-
 
 @Entity()
 class Message {
@@ -15,9 +13,6 @@ class Message {
 
     @Column()
     public content: string;
-
-    @Column()
-    public status: MessageStatus;
 
     @ManyToOne(() => Participant, participant => participant.messages, { eager: false, onDelete: "CASCADE" })
     author: Participant;

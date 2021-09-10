@@ -21,59 +21,66 @@ export class MessageService {
     private readonly participantService: ParticipantService,
   ) {}
 
-  async create(data: MessageCreationDto) {
+  public async create(data: MessageCreationDto) {
     let message = new Message();
-    const author = await this.participantService.findById(data.authorId);
+    const author = await this.participantRepo.findOne(data.authorId);
     if (author) {
       message.author = author;
       message.content = data.content;
+      return await this.messageRepo.save(message);
+    }
+    throw new HttpException('Author with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  public async createActiveUser(userId: string, channelId: string, content: string) {
+    if (!(await this.participantService.isParticipant(userId, channelId))) {
+      throw new HttpException('User is not a Participant to this Channel', HttpStatus.NOT_FOUND);
+    }
+    if (await this.participantService.isBan(userId, channelId)) {
+      throw new HttpException('User is banned for this Channel', HttpStatus.NOT_FOUND);
+    }
+    if (await this.participantService.isMute(userId, channelId)) {
+      throw new HttpException('User is muted for this Channel', HttpStatus.NOT_FOUND);
+    }
+    let message = new Message();
+    const author = await this.participantService.findByUserAndChannelUserChannel(userId, channelId);
+    if (author) {
+      message.author = author;
+      message.content = content;
       const res = await this.messageRepo.save(message);
       return this.messageToDto(res);
     }
     throw new HttpException('Author with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  public async getAll() {
-    let res: Message[] = [];
-    res = await this.messageRepo.find();
-    let dto: MessageDto[] = [];
-    res.forEach( message => {
-      let messageDto: MessageDto = this.messageToDto(message);
-      dto.push(messageDto);
-    })
-    return dto;    
+  public async findAllLazy() {
+    return await this.messageRepo.find();
   }
 
-  // Hacky but could not apply .WHERE on 3-level joined tables
-  public async getAllInChannel(channelId: string) {
-    const rawMessages = await getRepository(Message)
-    .createQueryBuilder("message")
-    .leftJoinAndSelect("message.author", "participant")
-    .leftJoinAndSelect("participant.channel", "channel")
-    //.where("message.author.channel.id = :channelId", { channelId })
-    .getRawMany();
-    let dto: MessageDto[] = [];
-    for await (const rawMessage of rawMessages) {
-      if (rawMessage.channel_id == channelId) {
-        let message = await this.findById(rawMessage.message_id);
-        let messageDto: MessageDto = this.messageToDto(message);
-        dto.push(messageDto);
+  public async getAllInChannelActiveUser(userId: string, channelId: string) {
+    if (!(await this.participantService.isParticipant(userId, channelId))) {
+      throw new HttpException('User is not a Participant to this Channel', HttpStatus.NOT_FOUND);
+    }
+    if (await this.participantService.isBan(userId, channelId)) {
+      throw new HttpException('User is banned for this Channel', HttpStatus.NOT_FOUND);
+    }
+    const messages = await this.messageRepo.find (
+      {
+        relations: ['author', 'author.user', 'author.channel'],
+        where: {
+          author: { channel: {id: channelId } },
+        },   
       }
+    );
+    let dto = [];
+    for (const message of messages) {
+      let messageDto: MessageDto = this.messageToDto(message);
+      dto.push(messageDto);
     }
     return dto;
   }
 
-  // Return Message Dto 
-  public async getById(id: string) {
-    const message = await this.messageRepo.findOne(id);
-    if (message) {
-      return this.messageToDto(message);
-    }
-    throw new HttpException('Message with this id does not exist', HttpStatus.NOT_FOUND);
-  }
-
-  // Return Message Object
-  public async findById(id: string) {
+  public async findByIdLazy(id: string) {
     const message = await this.messageRepo.findOne(id);
     if (message) {
       return message;
@@ -81,15 +88,27 @@ export class MessageService {
     throw new HttpException('Message with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
+  public async getById(id: string) {
+    const message = await this.messageRepo.findOne(id,
+      {
+        relations: ['author', 'author.user', 'author.channel']
+      }
+    );
+    if (message) {
+      return this.messageToDto(message);
+    }
+    throw new HttpException('Message with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
   public async delete(id: string) {
     try {
-      await this.findById(id);
+      await this.findByIdLazy(id);
     }
     catch(error) {
       throw new HttpException('Message with this id does not exist', HttpStatus.NOT_FOUND);
     }
     await this.messageRepo.delete(id);
-    return await this.getAll();
+    return 'Successful Message deletion';
   }
 
   public messageToDto(message: Message) {

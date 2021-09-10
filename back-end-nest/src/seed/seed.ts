@@ -42,10 +42,10 @@ async function bootstrap() {
           let resDirect = seedService.seedDirect();
           return resDirect;
         })
-        /*.then((resDirect) => {
+        .then((resDirect) => {
           let resMessage = seedService.seedMessage();
           return resMessage;
-        })*/
+        })
         .catch(error => {
           console.log('Seeding failed!');
           throw error;

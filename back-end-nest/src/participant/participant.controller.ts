@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Delete, Body, Req, Param, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
+import RequestWithUser from '../authentication/requestWithUser.interface';
+
 import { ParticipantService } from './participant.service';
 
 import JwtTwoFactorGuard from '../authentication/twoFactor/jwtTwoFactor.guard';
@@ -11,6 +13,27 @@ import { ParticipantCreationDto } from './participant.dto';
 @Controller('participant')
 export class ParticipantController {
   constructor( private readonly participantService: ParticipantService ) {}
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('isParticipant/:channelId')
+  async isParticipant(@Req() request: RequestWithUser, @Param('channelId') channelId) {
+    const {user} = request;    
+    return await this.participantService.isParticipant(user.id, channelId);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('isMute/:channelId')
+  async isMute(@Req() request: RequestWithUser, @Param('channelId') channelId) {
+    const {user} = request;    
+    return await this.participantService.isMute(user.id, channelId);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('isBan/:channelId')
+  async isBan(@Req() request: RequestWithUser, @Param('channelId') channelId) {
+    const {user} = request;    
+    return await this.participantService.isBan(user.id, channelId);
+  }
 
   // ROUTES FOR DEV ONLY TO BE COMMENTED
   @UseGuards(JwtTwoFactorGuard)
