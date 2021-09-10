@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import User from '../user/user.entity';
@@ -26,6 +26,7 @@ import { ParticipantForChannelDirectDto } from '../participant/participant.dto';
 import { ChannelDtoActiveUser } from './channel.dto';
 import { ChannelDtoLazy } from './channel.dto';
 import { ChannelDtoDirect } from './channel.dto';
+import { CandidateDto } from './channel.dto';
 
 
 @Injectable()
@@ -193,6 +194,28 @@ export class ChannelService {
     throw new HttpException('Channel update failed', HttpStatus.NOT_FOUND);
   }
 
+  public async getOwnerCandidateActiveUser(userId: string, id: string) {
+    const channel = await this.findByIdOwner(id);
+    if (channel.owner.id !== userId) {
+      throw new HttpException('User is not the Channel owner', HttpStatus.NOT_FOUND);
+    }
+    const candidates = await this.participantRepo.find(
+      {
+        relations: ['user', 'channel', 'channel.owner'],
+        where: {
+          channel: { id: id},
+          user: { id: Not(channel.owner.id) },
+        }
+      }   
+    );
+    let dto = [];
+    for (const candidate of candidates) {
+      const candidateDto: CandidateDto = this.candidateToDto(candidate);
+      dto.push(candidateDto)
+    }
+    return dto;
+  }
+
   public async changeOwnerActiveUser(userId: string, id: string, newOwnerId: string) {
     const channel = await this.findByIdOwner(id);
     if (channel.owner.id !== userId) {
@@ -246,6 +269,30 @@ export class ChannelService {
     }
     const newAdmin = await this.participantService.findByUserAndChannelLazy(newAdminId, id);
     return await this.participantService.updateAdmin(newAdmin.id, toogle);
+  }
+
+  public async getParticipantCandidateActiveUser(userId: string, id: string) {
+    const channel = await this.findByIdOwner(id);
+    if (!await this.participantService.isParticipant(userId, id)) {
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
+    }
+    const participantActiveUser = await this.participantService.findByUserAndChannelLazy(userId, id);
+    if (!participantActiveUser.admin) {
+      throw new HttpException('User is not an admin of this Channel', HttpStatus.NOT_FOUND);
+    }
+    const users = await this.userRepo.find();
+    let candidates = [];
+    for (const user of users) {
+      if (!(await this.participantService.isParticipant(user.id, id))) {
+        candidates.push(user);
+      }
+    }
+    let dto = [];
+    for (const candidate of candidates) {
+      const candidateDto: CandidateDto = this.candidateToDto2(candidate);
+      dto.push(candidateDto)
+    }
+    return dto;
   }
 
   public async addParticipantActiveUser(userId: string, participantCreationDto: ParticipantCreationDto) {
@@ -332,14 +379,6 @@ export class ChannelService {
     return this.participantService.updateLeft(participantActiveUser.id, true);
   }
 
-  public async isPublic(id: string) {
-    const channel = await this.findByIdLazy(id);
-    if (channel.status === 0) {
-      return true;
-    }
-    return false;
-  }
-
   public async delete(id: string) {
     try {
       await this.findByIdLazy(id);
@@ -350,6 +389,15 @@ export class ChannelService {
     await this.channelRepo.delete(id);
     return "Successful Channel deletion";
   }
+
+  public async isPublic(id: string) {
+    const channel = await this.findByIdLazy(id);
+    if (channel.status === 0) {
+      return true;
+    }
+    return false;
+  }
+
 
   // <------------- FUNCTIONS DIRECT CHANNELS ------------->
 
@@ -545,6 +593,29 @@ export class ChannelService {
       channelDto.userName = participant.user.name;
       dto.participants.push(channelDto);
     }
+    return dto;
+  }
+
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+
+  public candidateToDto(participant: Participant) {
+    let dto = new CandidateDto();
+    dto.id = participant.user.id;
+    dto.name = participant.user.name;
+    dto.email = participant.user.email;
+    dto.avatar = participant.user.avatar;
+    return dto;
+  }
+
+  public candidateToDto2(user: User) {
+    let dto = new CandidateDto();
+    dto.id = user.id;
+    dto.name = user.name;
+    dto.email = user.email;
+    dto.avatar = user.avatar;
     return dto;
   }
 }

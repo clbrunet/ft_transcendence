@@ -45,6 +45,13 @@ export class ChannelController {
   }
 
   @UseGuards(JwtTwoFactorGuard)
+  @Get('/ownerCandidate/:id')
+  async getOwnerCandidateActiveUser(@Req() request: RequestWithUser, @Param('id') id) {
+    const {user} = request;
+    return await this.channelService.getOwnerCandidateActiveUser(user.id, id);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
   @Patch('/changeOwner/:id')
   async changeOwnerActiveUser(@Req() request: RequestWithUser, @Param('id') id, @Body() channelUpdateDto: ChannelUpdateDto) {
     const {user} = request;
@@ -63,6 +70,13 @@ export class ChannelController {
   async updateAdminActiveUser(@Req() request: RequestWithUser, @Body() participantCreationDto: ParticipantCreationDto, @Param('toogle') toogle) {
     const {user} = request;
     return await this.channelService.updateAdminActiveUser(user.id, participantCreationDto.channelId, participantCreationDto.userId, toogle);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/participantCandidate/:id')
+  async getParticipantCandidateActiveUser(@Req() request: RequestWithUser, @Param('id') id) {
+    const {user} = request;
+    return await this.channelService.getParticipantCandidateActiveUser(user.id, id);
   }
 
   @UseGuards(JwtTwoFactorGuard)

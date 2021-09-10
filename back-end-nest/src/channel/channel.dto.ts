@@ -118,3 +118,10 @@ export class ChannelDtoDirect {
   name: string;
   participants: ParticipantForChannelDirectDto[];
 }
+
+export class CandidateDto {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+}
