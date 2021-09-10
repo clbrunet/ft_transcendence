@@ -5,7 +5,7 @@
         <router-link to="/profile">Profile</router-link>
         <router-link to="/users">Users</router-link>
         <router-link to="/chats">Chats</router-link>
-        <button id="btn-disconnect" @click="logout">Disconnect</button>
+        <button v-bind:disabled="is_disconnecting" id="btn-disconnect" @click="logout">Disconnect</button>
       </template>
       <template v-else>
         <router-link to="/login">Login</router-link>
@@ -31,10 +31,12 @@ export default Vue.extend({
   data() {
     return {
       mounted: false,
+      is_disconnecting: false,
     };
   },
   methods: {
     logout() {
+      this.is_disconnecting = true;
       axios({
         method: "post",
         url: `${ process.env.VUE_APP_API_URL }/authentication/log-out`,
@@ -47,6 +49,7 @@ export default Vue.extend({
         this.$store.dispatch("unauthenticate");
         router.push({ name: "App" });
       })
+      this.is_disconnecting = false;
     }
   },
   computed: {

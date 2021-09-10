@@ -6,7 +6,7 @@
         <input type="text" placeholder="your name" v-model="name" />
         <input type="password" placeholder="your password" v-model="password" />
         <input type="password" placeholder="confirm your password" v-model="confirmPassword" />
-        <input type="submit" value="Register"/>
+        <input v-bind:disabled="is_registering" type="submit" value="Register"/>
         <p class="error" v-for="(message, index) in messages" :key="index"> {{ message }} </p>
         <p class="notLogin"> Already have an account ? <a @click="goToLogin()">login</a> now </p>
       </form>
@@ -49,6 +49,7 @@ export default Vue.extend({
       confirmPassword: "",
       messages: [],
       authorize_url_42: process.env.VUE_APP_AUTHORIZE_URL_42,
+      is_registering: false,
     };
   },
   computed: {
@@ -63,6 +64,7 @@ export default Vue.extend({
         return;
       }
       try {
+        this.is_registering = true;
         await axios.post(`${ process.env.VUE_APP_API_URL }/authentication/register`, {
           email: this.email,
           name: this.name,
@@ -71,6 +73,7 @@ export default Vue.extend({
       }
       catch (error) {
         this.messages = Array.isArray(error.response.data.message) ? error.response.data.message : [error.response.data.message];
+        this.is_registering = false;
         return;
       }
       try {

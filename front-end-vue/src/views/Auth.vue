@@ -1,17 +1,17 @@
 <template >
   <div id="body">
-      <template v-if="!$store.state.expired">
-        <button @click="generate">Generate</button>
-        <span v-if="loading != '' && QRCodeSRC == ''">{{ loading }}</span>
-        <img v-if="QRCodeSRC != ''" :src="QRCodeSRC" alt="qr" />
-      </template>
-      <template v-else>
-          <h1> {{ $store.state.expired }} </h1>
-      </template>
+    <template v-if="!$store.state.expired">
+      <button v-bind:disabled="is_generating" @click="generate">Generate</button>
+      <span v-if="loading != '' && QRCodeSRC == ''">{{ loading }}</span>
+      <img v-if="QRCodeSRC != ''" :src="QRCodeSRC" alt="qr" />
+    </template>
+    <template v-else>
+      <h1> {{ $store.state.expired }} </h1>
+    </template>
 
     <form v-if="$store.state.expired || QRCodeSRC != ''" @submit.prevent="login">
-        <input type="text" v-model="loginCode" placeholder="Enter you google code here">
-        <input type="submit" value="Log-in">
+      <input type="text" v-model="loginCode" placeholder="Enter you double authentication code here">
+      <input v-bind:disabled="is_logging_in" type="submit" value="Log-in">
     </form>
     <span class="error" v-if="errorCode"> {{ errorCode }} </span>
   </div>
@@ -30,11 +30,14 @@ export default Vue.extend({
       loading: "",
       QRCodeSRC: "",
       loginCode: "",
-      errorCode: ""
+      errorCode: "",
+      is_generating: false,
+      is_logging_in: false,
     };
   },
   methods: {
     async generate() {
+      this.is_generating = true;
       this.loading = "Loading...";
       const response = await fetch(
         `${process.env.VUE_APP_API_URL}/2fa/generate`,
@@ -44,26 +47,29 @@ export default Vue.extend({
         }
       );
       this.QRCodeSRC = URL.createObjectURL(await response.blob());
+      this.is_generating = false;
     },
     login() {
-        this.errorCode = "";
-        axios({
-          url: `${ process.env.VUE_APP_API_URL }/2fa/authenticate/`,
-          method: "post",
-          data: {
-            twoFactorAuthenticationCode: this.loginCode
-          },
-          withCredentials: true
-        }).then(res => {
-            if (this.$store.state.is_auth == false)
-            {
-                this.$store.state.user = res.data;
-                this.$store.dispatch('authenticate');
-            }
-            router.push({name: 'Profile'});
-        }).catch(err => {
-            this.errorCode = "Wrong code.";
-        })
+      this.errorCode = "";
+      this.is_logging_in = true;
+      axios({
+        url: `${ process.env.VUE_APP_API_URL }/2fa/authenticate/`,
+        method: "post",
+        data: {
+          twoFactorAuthenticationCode: this.loginCode
+        },
+        withCredentials: true
+      }).then(res => {
+        if (this.$store.state.is_auth == false)
+        {
+          this.$store.state.user = res.data;
+          this.$store.dispatch('authenticate');
+        }
+        router.push({name: 'Profile'});
+      }).catch(() => {
+        this.is_logging_in = false;
+        this.errorCode = "Wrong code.";
+      })
     }
   }
 });
@@ -72,14 +78,14 @@ export default Vue.extend({
 <style scoped>
 
 .error {
-    color:red;
+  color:red;
 }
 
 #body {
-    display:flex;
-    flex-direction: column;
-    align-items:center;
-    width: 50%;
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  width: 50%;
 }
 
 </style>

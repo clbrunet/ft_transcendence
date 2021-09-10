@@ -9,18 +9,18 @@
         <div class="modal" v-if="showModal">
 
           <template v-if="$store.state.user.isTwoFactorAuthenticationEnabled == false">
-            <button @click="generate" class="btn">Generate</button>
+            <button v-bind:disabled="is_generating" @click="generate" class="btn">Generate</button>
             <span v-if="loading != '' && QRCodeSRC == ''">{{ loading }}</span>
             <img v-if="QRCodeSRC != ''" :src="QRCodeSRC" alt="qr" />
           </template>
 
           <template v-if="$store.state.user.isTwoFactorAuthenticationEnabled == false">
-              <input v-if="QRCodeSRC != ''" type="text" v-model="turnOnCode" placeholder="??????" />
-              <button v-if="QRCodeSRC != ''" class="btn" @click="turnOn">Enable</button>
+            <input v-if="QRCodeSRC != ''" type="text" v-model="turnOnCode" placeholder="??????" />
+            <button v-if="QRCodeSRC != ''" v-bind:disabled="is_turning_on" class="btn" @click="turnOn">Enable</button>
           </template>
           <template v-else>
-              <span> Your double factor authentication is enabled. </span>
-              <button class="btn" @click="turnOff">Disable</button>
+            <span> Your double factor authentication is enabled. </span>
+            <button class="btn" v-bind:disabled="is_turning_off" @click="turnOff">Disable</button>
           </template>
           <span v-if="errorQRCode != ''" class="error">{{ errorQRCode }}</span>
         </div>
@@ -56,7 +56,6 @@ import MenuFriends from "../components/MenuFriends.vue";
 import MenuBlocks from "../components/MenuBlocks.vue";
 import MenuMatchesHistory from "../components/MenuMatchesHistory.vue";
 import MenuDuels from "../components/MenuDuels.vue";
-import DoubleFactorAuthentication from "../components/DoubleFactorAuthentication.vue";
 
 export default Vue.extend({
   name: "Profile",
@@ -78,15 +77,19 @@ export default Vue.extend({
       QRCodeSRC: "",
       errorQRCode: "",
       showModal: false,
+      is_generating: false,
       turnOnCode: "",
-      turnOffCode: ""
+      is_turning_on: false,
+      turnOffCode: "",
+      is_turning_off: false,
     };
   },
   mounted() {
     if (this.$route.params.id) {
       this.checkAuth(this.$route.params.id);
-      if (this.$route.params.id == this.$store.state.user.id)
+      if (this.$route.params.id == this.$store.state.user.id) {
         this.is_auth = true;
+      }
     } else {
       this.user = this.$store.state.user;
       this.is_auth = true;
@@ -100,16 +103,17 @@ export default Vue.extend({
         method: "get",
         withCredentials: true
       })
-        .then(res => {
-          this.user = res.data;
-        })
-        .catch(() => {
-          router.push({ path: "/profile" });
-        });
+      .then(res => {
+        this.user = res.data;
+      })
+      .catch(() => {
+        router.push({ path: "/profile" });
+      });
     },
     async generate() {
       this.QRCodeSRC = "";
       this.loading = "Loading...";
+      this.is_generating = true;
       let response;
       try {
         response = await fetch(
@@ -124,14 +128,17 @@ export default Vue.extend({
         console.log("err while generate qrcode");
       }
       try {
-        if (response)
+        if (response) {
           this.QRCodeSRC = URL.createObjectURL(await response.blob());
+        }
       }
       catch {
         console.log("err while blobing qr code");
       }
+      this.is_generating = false;
     },
     turnOn() {
+      this.is_turning_on = true;
       this.errorQRCode = "";
       axios({
         url: `${process.env.VUE_APP_API_URL}/2fa/turn-on/`,
@@ -141,53 +148,56 @@ export default Vue.extend({
         },
         withCredentials: true
       })
+      .then(() => {
+        this.$store.state.user.isTwoFactorAuthenticationEnabled = true;
+        axios({
+          url: `${process.env.VUE_APP_API_URL}/2fa/authenticate/`,
+          method: "post",
+          data: {
+            twoFactorAuthenticationCode: this.turnOnCode
+          },
+          withCredentials: true
+        })
         .then(() => {
-          this.$store.state.user.isTwoFactorAuthenticationEnabled = true;
-          axios({
-            url: `${process.env.VUE_APP_API_URL}/2fa/authenticate/`,
-            method: "post",
-            data: {
-              twoFactorAuthenticationCode: this.turnOnCode
-            },
-            withCredentials: true
-          })
-            .then(() => {
-              this.turnOnCode = "";
-              this.showModal = false;
-            })
-            .catch(() => {
-              this.$store.state.expired =
-                "You turned it on, but your code has expired when trying to authenticate";
-              router.push({ name: "Auth" });
-            });
+          this.turnOnCode = "";
+          this.showModal = false;
         })
         .catch(() => {
-          this.errorQRCode = "Wrong code entered";
+          this.$store.state.expired =
+            "You turned it on, but your code has expired when trying to authenticate";
+          router.push({ name: "Auth" });
         });
+      })
+      .catch(() => {
+        this.errorQRCode = "Wrong code entered";
+      });
+      this.is_turning_on = false;
     },
     turnOff() {
+      this.is_turning_off = true;
       this.errorQRCode = "";
       axios({
         url: `${process.env.VUE_APP_API_URL}/2fa/turn-off/`,
         method: "post",
         withCredentials: true
       })
-        .then(() => {
-          console.log("spotify");
-          this.showModal = false;
-          this.$store.state.user.isTwoFactorAuthenticationEnabled = false;
-        }).catch(err => {
-          console.log(err);
-        })
+      .then(() => {
+        console.log("spotify");
+        this.showModal = false;
+        this.$store.state.user.isTwoFactorAuthenticationEnabled = false;
+      }).catch(err => {
+        console.log(err);
+      })
+      this.is_turning_off = false;
     }
     /*,
-    fileSelected(event) {
+      fileSelected(event) {
       this.selectedFile = event.target.files[0];
       const fd = new FormData();
       fd.append('image', this.selectedFile, this.selectedFile.name);
       console.log(fd);
       console.log(this.selectedFile);
-    }*/
+      }*/
   }
 });
 </script>

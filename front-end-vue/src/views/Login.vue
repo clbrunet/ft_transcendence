@@ -4,7 +4,7 @@
       <form @submit.prevent="submit_login">
         <input type="email" placeholder="your email" v-model="email">
         <input type="password" placeholder="your password" v-model="password">
-        <input type="submit" value="Log-in">
+        <input v-bind:disabled="is_logging_in" type="submit" value="Log-in">
         <p class="error" v-for="(message, index) in messages" :key="index"> {{ message }} </p>
         <p class="notRegistered"> Not <a @click="goToRegister()">registered</a> yet ?</p>
       </form>
@@ -42,6 +42,7 @@ export default Vue.extend({
       password: "",
       messages: [""],
       authorize_url_42: process.env.VUE_APP_AUTHORIZE_URL_42,
+      is_logging_in: false,
     }
   },
   methods: {
@@ -58,6 +59,7 @@ export default Vue.extend({
       }
 
       try {
+        this.is_logging_in = true;
         const res = await axios.post(`${ process.env.VUE_APP_API_URL }/authentication/log-in`, {
           email: this.email,
           password: this.password
@@ -78,6 +80,7 @@ export default Vue.extend({
           this.messages = Array.isArray(error.response?.data.message) ? error.response?.data.message : [error.response?.data.message];
         }
       }
+      this.is_logging_in = false;
     },
     goToRegister() {
       router.push({name: 'Register'});
