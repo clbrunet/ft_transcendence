@@ -56,22 +56,36 @@ export class GameService {
     let game = await this.create(pointToVictory);
     const player1 = await this.playerService.create(userId1, game.id);
     const player2 = await this.playerService.create(userId2, game.id);
+
+    let userUpdateDto = new UserUpdateDto();
+    userUpdateDto.status = 2;
+    await this.userService.update(userId1, userUpdateDto);
+    await this.userService.update(userId2, userUpdateDto);
+
     game = await this.gameRepo.findOne(game.id,
       {
         relations: ['players', 'players.user'],
       }
     );
+
     return this.gameToDto(game);
   }
 
   public async findAll() {
     return await this.gameRepo.find(
-      { relations: ['players', 'players.user'] }
+      { 
+        relations: ['players', 'players.user'],
+        order: { startTime: "DESC", },
+      }
     );
   }
 
   public async findAllLazy() {
-    return await this.gameRepo.find();
+    return await this.gameRepo.find(
+      { 
+        order: { startTime: "DESC", },
+      }    
+    );
   }
 
   public async getHistory(userId: string) {
@@ -188,7 +202,7 @@ export class GameService {
     );
     for (const player of game.players) {
       if (player.user.id === userId) {
-        return false;
+        return true;
       }
     }
     return false;
@@ -238,9 +252,6 @@ export class GameService {
     await this.setPointToVictory(userId, id, pointToVictory);
     await this.introductionMessage(game);
     await this.setAsOngoing(id);
-    let userUpdateDto = new UserUpdateDto();
-    userUpdateDto.status = 2;
-    await this.userService.update(userId, userUpdateDto);
     return await this.getById(id);
   }
 
@@ -252,9 +263,6 @@ export class GameService {
     while (game.status === 0) {
       game = await this.findByIdLazy(id);
     }
-    let userUpdateDto = new UserUpdateDto();
-    userUpdateDto.status = 2;
-    await this.userService.update(userId, userUpdateDto);
     return await this.getById(id); 
   }
 
@@ -271,12 +279,12 @@ export class GameService {
     let scoreDto = new ScoreDto();
     if (player.point == game.pointToVictory) {
       scoreDto.outcome = "finished";
+      scoreDto.gameDto = await this.setAsFinished(id);
       for (const player of game.players) {
         let userUpdateDto = new UserUpdateDto();
         userUpdateDto.status = 1;
         await this.userService.update(player.user.id, userUpdateDto);
       }
-      scoreDto.gameDto = await this.setAsFinished(id);
       await this.victoryMessage(game);
     }
     else {

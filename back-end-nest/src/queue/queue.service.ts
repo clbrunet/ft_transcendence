@@ -46,29 +46,24 @@ export class QueueService {
   public async findAll() {
     return await this.queueRepo.find(
       {
-        join: {
-          alias: "queue",
-          leftJoinAndSelect: {
-            queuer: "queue.queuer",
-          },
-        },
+        relations: ['queuer'],
+        order: { queueTime: "ASC", },
       }
     );
   }
 
   public async findAllLazy() {
-    return await this.queueRepo.find();
+    return await this.queueRepo.find(
+      {
+        order: { queueTime: "ASC", },
+      }
+    );
   }
 
   public async findById(id: string) {
     const queue = await this.queueRepo.findOne(id,
       {
-        join: {
-          alias: "queue",
-          leftJoinAndSelect: {
-            queuer: "queue.queuer",
-          },
-        },
+        relations: ['queuer'],
       }
     );
     if (queue) {
@@ -149,17 +144,23 @@ export class QueueService {
     if (await this.inQueue(userId)) {
       throw new HttpException('User is already in queue', HttpStatus.BAD_REQUEST);
     }
+    const user = await this.userService.findByIdLazy(userId);
+    if (user.status == 2) {
+      throw new HttpException('User is already in-game', HttpStatus.BAD_REQUEST);
+    }
     if (await this.isThereAnotherQueuer(userId)) {
-      const queuer = await this.popQueue();
-      return await this.gameService.matchById(userId, queuer.id, 5);
+      const res = await this.findAll();
+      const queuer = await this.userService.findByIdLazy(res[0].queuer.id);
+      const gameDto = await this.gameService.matchById(userId, queuer.id, 5);
+      await this.delete(res[0].id);
+      return gameDto;
     }
     else {
-      const queueDto = await this.create(userId);
+      await this.create(userId);
       let inQueue = await this.inQueue(userId);
       while (inQueue) {
         inQueue = await this.inQueue(userId);
       }
-      await new Promise(f => setTimeout(f, 1000));
       const players = await this.playerService.findByUserAmongPreparedGame(userId);
       if (players.length === 0) {
         return "Successfull unqueue";
@@ -168,6 +169,7 @@ export class QueueService {
         return this.gameService.gameToDto(players[0].game);
       }
       else {
+        // Impossible route
         throw new HttpException('More than one game in preparation for this user', HttpStatus.NOT_FOUND);
       }
     }
