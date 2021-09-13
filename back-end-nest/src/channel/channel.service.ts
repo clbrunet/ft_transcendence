@@ -189,7 +189,7 @@ export class ChannelService {
   public async update(id: string, channelUpdateDto: ChannelUpdateDto) {
     const res = await this.channelRepo.update(id, channelUpdateDto);
     if (res) {
-      return this.channelToDtoLazy(await this.findByIdLazy(id));
+      return this.channelToDtoLazy(await this.findByIdOwner(id));
     }
     throw new HttpException('Channel update failed', HttpStatus.NOT_FOUND);
   }

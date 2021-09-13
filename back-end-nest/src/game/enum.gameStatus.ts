@@ -1,4 +1,5 @@
 export enum GameStatus {
-  ongoing = 0,
-  finished = 1,
+  prepared = 0,
+  ongoing = 1,
+  finished = 2,
 }

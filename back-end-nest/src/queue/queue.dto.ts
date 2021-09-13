@@ -1,3 +1,7 @@
+import { IsOptional } from 'class-validator';
+
+import { GameDto } from '../game/game.dto';
+
 export class QueueDto {
   id: string;
   queuerId: string;

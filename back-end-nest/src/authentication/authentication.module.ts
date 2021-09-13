@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { UserModule } from '../user/user.module';
+import { QueueModule } from '../queue/queue.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
@@ -23,6 +24,7 @@ import { TwoFactorAuthenticationController } from './twoFactor/twoFactorAuthenti
   imports: [
     TypeOrmModule.forFeature([User]),
     UserModule,
+    QueueModule,
     PassportModule,
     ConfigModule,
     JwtModule.registerAsync({

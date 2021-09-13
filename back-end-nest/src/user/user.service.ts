@@ -20,21 +20,21 @@ export class UserService {
     private userRepository: Repository<User> ) {}
 
   public async create(registerData: RegisterDto) {
-    const newUser = this.userRepository.create(registerData);
+    const newUser = await this.userRepository.create(registerData);
     await this.userRepository.save(newUser);
     return newUser;
   }
 
   public async setTwoFactorAuthenticationSecret(secret: string, userId: string) {
-    return this.userRepository.update(userId, { twoFactorAuthenticationSecret: secret });
+    return await this.userRepository.update(userId, { twoFactorAuthenticationSecret: secret });
   }
 
   public async turnOffTwoFactorAuthentication(userId: string) {
-    return this.userRepository.update(userId, { isTwoFactorAuthenticationEnabled: false });
+    return await this.userRepository.update(userId, { isTwoFactorAuthenticationEnabled: false });
   }
 
   public async turnOnTwoFactorAuthentication(userId: string) {
-    return this.userRepository.update(userId, { isTwoFactorAuthenticationEnabled: true });
+    return await this.userRepository.update(userId, { isTwoFactorAuthenticationEnabled: true });
   }
 
   // return all User objects with all relations
@@ -184,7 +184,7 @@ export class UserService {
     return;
   } 
 
-  public async update(id: string, userUpdateDto: UserUpdateDto): Promise<UserDtoLazy> {
+  public async update(id: string, userUpdateDto: UserUpdateDto) {
     const res = await this.userRepository.update(id, userUpdateDto);
     if (res) {
       const user = await this.findByIdLazy(id);
