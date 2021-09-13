@@ -6,9 +6,7 @@
         <button v-if="isOwner == true" @click="open_popup_settings()">settings</button>
       </div>
 
-      <template
-        v-if="data.status == 'public' || (isParticipant == true && data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false)"
-      >
+      <template v-if="data.status == 'public' || (isParticipant == true && data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false)">
         <div class="messages">
           <p
             v-for="(message, index) in messages"
@@ -71,7 +69,7 @@
     </div>
 
     <!-- participants -->
-    <div class="partipants" v-if="data.activeUserBan == false">
+    <div class="partipants" v-if="data.status == 'public' || (data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false)">
       <template v-for="(participant, index) in participants">
         <template v-if="participant.userName == $store.state.user.name">
           <span :key="index" class="you">You</span>
@@ -80,18 +78,21 @@
           <div class="row-participant" :key="index">
             <span>{{participant.userName}}</span>
 
-            <template
-              v-if="participant.ban == false && isCurrentlyBanMute(participant.banEndDateTime) == false"
-            >
+            <template v-if="participant.ban == false && isCurrentlyBanMute(participant.banEndDateTime) == false">
+              <!--Ni ban ni mute-->
               <button v-if="isOwner == true" @click="changeOwner(participant)">change owner</button>
-              <button
-                v-if="isOwner == true && participant.admin == false"
-                @click="addAdmin(participant)"
-              >+ admin</button>
+              
+              <button v-if="isOwner == true && participant.admin == false" @click="addAdmin(participant)">+ admin</button>
               <button v-else-if="isOwner == true" @click="removeAdmin(participant)">- admin</button>
-              <button v-if="isAdmin && participant.admin == false" @click="open_popup_ban(participant)">Ban</button>
+             
+              <button v-if="isAdmin && participant.admin == false && data.status != 'public'" @click="open_popup_ban(participant)">Ban</button>
             </template>
-            <button v-else-if="isAdmin && participant.admin == false" @click="unbanParticipant(participant)">unban</button>
+            <button v-else @click="unbanParticipant(participant)">unban</button>
+
+            <template v-if="isAdmin && participant.admin == false && data.status != 'public'">
+              <button v-if="participant.mute == false && isCurrentlyBanMute(participant.muteEndDateTime) == false" @click="open_popup_mute(participant)">Mute</button>
+              <button v-else @click="unmuteParticipant(participant)">unmute</button>
+            </template>
           </div>
         </template>
       </template>
@@ -99,7 +100,24 @@
     <div class="partipants" v-else>
       <span>You were banned from this channel</span>
     </div>
+
     <!-- absolute -->
+
+    <div v-if="popup_mute" class="popup-mute">
+      <div class="popup-mute-content">
+        <h3>mute :</h3>
+        <form @submit.prevent="muteParticipant()" class="form-popup-mute">
+          <select v-model="selectMuteTime">
+            <option selected>15min</option>
+            <option>30min</option>
+            <option>1hour</option>
+            <option>always</option>
+          </select>
+          <input type="submit" />
+        </form>
+        <button @click="close_popup_mute()" id="popup-mute-btn">Close</button>
+      </div>
+    </div>
 
     <div v-if="popup_ban" class="popup-ban">
       <div class="popup-ban-content">
@@ -138,8 +156,7 @@
             <h3>Change status :</h3>
             <form @submit.prevent="change_status()" id="form-create-channel">
               <select v-model="changeStatus">
-                <option disabled value>select one</option>
-                <option>public</option>
+                <option selected>public</option>
                 <option>private</option>
                 <option>protected</option>
               </select>
@@ -165,6 +182,7 @@ export default Vue.extend({
   data() {
     return {
       popup_settings: false as any,
+      popup_mute: false as any,
       popup_ban: false as any,
       channel: undefined as any,
       participants: undefined as any,
@@ -178,6 +196,7 @@ export default Vue.extend({
       changePassword: undefined as any,
       idData: undefined as any,
       selectBanTime: undefined as any,
+      selectMuteTime: undefined as any,
       currentParticipantSelected: undefined as any
     };
   },
@@ -190,6 +209,9 @@ export default Vue.extend({
     },
     users: function() {
       this.refresh_candidateParticipants();
+    },
+    idData: function() {
+      this.refresh_participants();
     }
   },
   mounted() {
@@ -227,7 +249,22 @@ export default Vue.extend({
         url: `${process.env.VUE_APP_API_URL}/channel/` + this.data.id,
         withCredentials: true
       }).then(res => {
+        const url = `${process.env.VUE_APP_API_URL}/participant/isParticipant/` + this.data.id;
+        axios({
+          method: "get",
+          url: url,
+          withCredentials: true
+        }).then(() => {
+          this.isParticipant = true;
+        }).catch(() => {
+          this.isParticipant = false;
+        });
         this.idData = res.data;
+        if (this.idData.activeUserAdmin == true) this.isAdmin = true;
+        else this.isAdmin = false;
+
+        if (this.idData.ownerId == this.$store.state.user.id) this.isOwner = true;
+        else this.isOwner = false;
       });
     },
     refresh_users() {
@@ -262,6 +299,7 @@ export default Vue.extend({
         }
       }).then(() => {
         this.refresh_channel();
+        this.refresh_participants();
       });
     },
     addAdmin(participant: any) {
@@ -318,7 +356,6 @@ export default Vue.extend({
       const url =
         `${process.env.VUE_APP_API_URL}/channel/changeStatus/` + this.data.id;
 
-      console.log("DATA = ", statusEnum, this.changePassword, this.data);
       axios({
         method: "patch",
         url: url,
@@ -351,6 +388,13 @@ export default Vue.extend({
       list_channels ? (list_channels.style.display = "block") : 0;
       this.popup_ban = false;
     },
+    close_popup_mute() {
+      const nav = document.getElementById("nav");
+      nav ? (nav.style.display = "flex") : 0;
+      const list_channels = document.getElementById("list_channels");
+      list_channels ? (list_channels.style.display = "block") : 0;
+      this.popup_mute = false;
+    },
     open_popup_settings() {
       const nav = document.getElementById("nav");
       nav ? (nav.style.display = "none") : 0;
@@ -360,12 +404,19 @@ export default Vue.extend({
     },
     open_popup_ban(participant: any) {
       this.currentParticipantSelected = participant;
-      console.log("current mes bb = "  , this.currentParticipantSelected);
       const nav = document.getElementById("nav");
       nav ? (nav.style.display = "none") : 0;
       const list_channels = document.getElementById("list_channels");
       list_channels ? (list_channels.style.display = "none") : 0;
       this.popup_ban = true;
+    },
+    open_popup_mute(participant: any) {
+      this.currentParticipantSelected = participant;
+      const nav = document.getElementById("nav");
+      nav ? (nav.style.display = "none") : 0;
+      const list_channels = document.getElementById("list_channels");
+      list_channels ? (list_channels.style.display = "none") : 0;
+      this.popup_mute = true;
     },
     refresh_candidateParticipants() {
       const url =
@@ -380,7 +431,7 @@ export default Vue.extend({
           this.candidateParticipants = res.data;
         })
         .catch(() => {
-          console.log("Data loading...");
+          console.log("");
         });
     },
     isCurrentlyBanMute(timestamp: any) {
@@ -432,6 +483,49 @@ export default Vue.extend({
         this.refresh_participants();
         this.refresh_channel();
       });
+    },
+    muteParticipant(participant: any) {
+      let muteTime;
+
+      if (this.selectMuteTime == '15min')
+        muteTime = 15;
+      else if (this.selectMuteTime == '30min')
+        muteTime = 30;
+      else if (this.selectMuteTime == '1hour')
+        muteTime = 60;
+      axios({
+        method: "post",
+        url: `${process.env.VUE_APP_API_URL}/channel/mute`,
+        withCredentials: true,
+        data: {
+          userId: this.currentParticipantSelected.userId,
+          channelId: this.data.id,
+          always: this.selectMuteTime == 'always' ? true : false,
+          minutes: muteTime
+        }
+      }).then(() => {
+        this.close_popup_mute();
+        this.currentParticipantSelected = undefined;
+        this.selectMuteTime = undefined;
+        this.refresh_participants();
+        this.refresh_channel();
+      });
+    },
+    unmuteParticipant(participant: any) {
+      axios({
+        method: "post",
+        url: `${process.env.VUE_APP_API_URL}/channel/mute`,
+        withCredentials: true,
+        data: {
+          userId: participant.userId,
+          channelId: this.data.id,
+          always: false,
+          minutes: 0
+        }
+      }).then(() => {
+        this.refresh_participants();
+        this.refresh_channel();
+      });
     }
   }
 });
@@ -477,6 +571,47 @@ export default Vue.extend({
   bottom: 0;
   width: 100%;
   height: 10%;
+}
+
+.popup-mute {
+  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(48, 74, 36, 0.6);
+  position: absolute;
+  margin: 0;
+}
+
+.form-popup-mute {
+  display:flex;
+  width:80%;
+  background-color:yellow;
+  flex-direction: column;
+  align-items:center;
+  justify-content: space-around;
+}
+
+.form-popup-mute input {
+  width:40%;
+}
+
+.popup-mute-content {
+  position: absolute;
+  width: 40vw;
+  height: 60vh;
+  left: 20%;
+  top: 20%;
+  background-color: blue;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#popup-mute-btn {
+  width: 25%;
+  cursor: pointer;
+  padding: 2%;
 }
 
 .popup-ban {

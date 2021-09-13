@@ -32,8 +32,7 @@
           <form @submit.prevent="create_channel()" id="form-create-channel">
             <input type="text" v-model="createName">
             <select v-model="createStatus">
-              <option disabled value="">select one</option>
-              <option>public</option>
+              <option selected>public</option>
               <option>private</option>
               <option>protected</option>
             </select>
@@ -137,6 +136,7 @@ export default Vue.extend({
         this.refresh_channels();
       }).catch(err => {
         this.password_input = undefined;
+        alert('wrong password');
       });
     },
     open_popup_create() {
@@ -171,8 +171,7 @@ export default Vue.extend({
         this.close_popup_create();
         this.refresh_channels();
       }).catch(err => {
-        //console.log(err);
-        this.errorCreate = Array.isArray(err.message) ? [err.message] : err.message;
+        this.errorCreate = Array.isArray(err.response.data.message) ? [err.response.data.message] : err.response.data.message;
       });
     }
   }
