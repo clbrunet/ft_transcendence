@@ -26,7 +26,7 @@
         </div>
       </transition>
     </template>
-    <Banner :id="user.id" />
+    <Banner v-if="user" :id="user.id" />
     <div id="bottom">
       <div id="left">
         <MenuFriends :id="user.id" />
@@ -70,7 +70,7 @@ export default Vue.extend({
   data() {
     return {
       selectedFile: null,
-      user: null,
+      user: undefined,
       data: {},
       is_auth: false,
       loading: "",

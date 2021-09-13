@@ -81,7 +81,7 @@ export default Vue.extend({
 
       this.refresh_channels();
       /* socket io */
-      this.$store.state.socket.emit("join_chats", this.$store.state.user);
+      //this.$store.state.socket.emit("join_chats", this.$store.state.user);
 
       /* */ 
   },
