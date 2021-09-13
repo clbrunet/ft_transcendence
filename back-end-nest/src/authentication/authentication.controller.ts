@@ -5,6 +5,7 @@ import RequestWithUser from './requestWithUser.interface';
 
 import { AuthenticationService } from './authentication.service';
 import { UserService } from '../user/user.service';
+import { QueueService } from '../queue/queue.service';
 
 import { LocalAuthenticationGuard } from './localAuthentication.guard';
 import JwtTwoFactorGuard from './twoFactor/jwtTwoFactor.guard';
@@ -19,7 +20,8 @@ import User from 'src/user/user.entity';
 export class AuthenticationController {
   constructor(
     private readonly authenticationService: AuthenticationService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly queueService: QueueService
   ) {}
 
   @HttpCode(200)
@@ -78,6 +80,10 @@ export class AuthenticationController {
     let userUpdateDto = new UserUpdateDto();
     userUpdateDto.status = 0;
     await this.userService.update(user.id, userUpdateDto);
+    const user2 = await this.userService.findByIdQueuer(user.id);
+    if (user2.queuers.length !== 0) {
+      await this.queueService.delete(user2.queuers[0].id);
+    }
     return "successfull log-out";
   }
 

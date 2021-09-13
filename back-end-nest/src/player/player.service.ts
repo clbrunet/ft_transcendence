@@ -155,6 +155,19 @@ export class PlayerService {
     throw new HttpException('Player with this (gameId, userId) does not exist', HttpStatus.NOT_FOUND);
   }
 
+  public async findByUserAmongPreparedGame(userId: string) {
+    const players = await this.playerRepo.find(
+      {
+        relations: ['game', 'game.players', 'game.players.user', 'user'],
+        where: {
+          game: { status: 0 }, 
+          user: { id: userId }, 
+        },
+      }
+    );
+    return players;
+  }
+
   public async update(id: string, playerUpdateDto: PlayerUpdateDto) {
     const res = await this.playerRepo.update(id, playerUpdateDto);
     if (res) {
@@ -171,7 +184,7 @@ export class PlayerService {
     }
     let playerUpdateDto = new PlayerUpdateDto();
     playerUpdateDto.point = player.point + addedPoint;
-    return this.update(player.id, playerUpdateDto);
+    return await this.update(player.id, playerUpdateDto);
   }
 
   public async delete(id: string) {

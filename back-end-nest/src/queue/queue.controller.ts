@@ -14,6 +14,27 @@ export class QueueController {
   	private readonly queueService: QueueService
   ) {}
 
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/isThereAnotherQueuer')
+  async isThereQueuer(@Req() request: RequestWithUser) {
+    const {user} = request;
+    return await this.queueService.isThereAnotherQueuer(user.id);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Post('/go')
+  async go(@Req() request: RequestWithUser) {
+    const {user} = request;
+    return await this.queueService.go(user.id);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Delete('/unqueue')
+  async unqueueActiveUser(@Req() request: RequestWithUser) {
+    const {user} = request;
+    return await this.queueService.unqueueActiveUser(user.id);
+  }
+
   // ROUTES FOR DEV ONLY TO BE COMMENTED
 
   @UseGuards(JwtTwoFactorGuard)
@@ -35,5 +56,4 @@ export class QueueController {
     const {user} = request;
     return await this.queueService.popQueue();
   }
-
 }

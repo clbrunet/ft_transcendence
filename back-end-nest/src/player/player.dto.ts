@@ -7,12 +7,6 @@ export class PlayerUpdateDto {
   point: number;
 }
 
-export class PlayerScoreDto {
-  userId: string;
-  gameId: string;
-  addedPoint: number;
-}
-
 export class PlayerDto {
   id: string;
   userId: string;

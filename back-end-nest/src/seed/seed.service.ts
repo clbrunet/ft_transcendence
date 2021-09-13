@@ -152,7 +152,7 @@ export class SeedService {
     console.log('Seeding games...');
     for await (const game of games) {
       const match = await this.gameService.create(game.pointToVictory);
-      await this.gameService.finish(match.id);
+      await this.gameService.setAsFinished(match.id);
       const user1 = await this.userService.findByEmailLazy(game.userEmail1);
       const user2 = await this.userService.findByEmailLazy(game.userEmail2);
       const player1 = await this.playerService.create(user1.id, match.id);

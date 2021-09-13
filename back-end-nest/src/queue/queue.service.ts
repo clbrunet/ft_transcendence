@@ -6,8 +6,11 @@ import Queue from './queue.entity';
 import User from '../user/user.entity';
 
 import { UserService } from '../user/user.service';
+import { GameService } from '../game/game.service';
+import { PlayerService } from '../player/player.service';
 
 import { QueueDto } from './queue.dto';
+import { GameDto } from '../game/game.dto';
 
 
 @Injectable()
@@ -19,17 +22,9 @@ export class QueueService {
     private readonly userRepo: Repository<User>,
 
     private readonly userService: UserService,
+    private readonly gameService: GameService,
+    private readonly playerService: PlayerService,
   ) {}
-
-  private async inQueue(queuerId: string) {
-    const queues = await this.findAll();
-    for (const queue of queues) {
-      if (queue.queuer.id === queuerId) {
-        return true;
-      }
-    }
-    return false;
-  }
 
   public async create(queuerId: string) {
     const queuer = await this.userService.findByIdLazy(queuerId);
@@ -39,13 +34,15 @@ export class QueueService {
     if (await this.inQueue(queuer.id)) {
       throw new HttpException('User is already in queue', HttpStatus.BAD_REQUEST);
     }
+    if (queuer.status === 2) {
+      throw new HttpException('User is in-game and cannot queue at the same time', HttpStatus.BAD_REQUEST);
+    }
     let queue = new Queue();
     queue.queuer = queuer;
     const res = await this.queueRepo.save(queue);
     return this.queueToDto(res);
   }
 
-  // Return all Queue Objects without any joined table
   public async findAll() {
     return await this.queueRepo.find(
       {
@@ -59,12 +56,10 @@ export class QueueService {
     );
   }
 
-  // Return all Queue Objects with all joined tables
   public async findAllLazy() {
     return await this.queueRepo.find();
   }
 
-  // Return Queue Object with all joined tables
   public async findById(id: string) {
     const queue = await this.queueRepo.findOne(id,
       {
@@ -82,7 +77,6 @@ export class QueueService {
     throw new HttpException('Queue with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Queue Object without any joined table
   public async findByIdLazy(id: string) {
     const queue = await this.queueRepo.findOne(id);
     if (queue) {
@@ -102,7 +96,22 @@ export class QueueService {
     return "Successfull Queue deletion";
   }
 
-  // Return User object
+  public async unqueueActiveUser(userId: string) {
+    if (!(await this.inQueue(userId))) {
+      throw new HttpException('User is not in queue', HttpStatus.NOT_FOUND);
+    }
+    const user = await this.userRepo.findOne(userId,
+      {
+        relations: ['queuers'],
+      }
+    );
+    if (!user) {
+      throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+    }
+    await this.delete(user.queuers[0].id);
+    return "Successfull unqueue";
+  }
+
   public async popQueue() {
     const res = await this.findAll();
     if (res.length == 0) {
@@ -111,6 +120,57 @@ export class QueueService {
     await this.delete(res[0].id);
     const queuer = await this.userService.findByIdLazy(res[0].queuer.id);
     return queuer;
+  }
+
+  public async inQueue(queuerId: string) {
+    const user = await this.userRepo.findOne(queuerId,
+      {
+        relations: ['queuers'],
+      }
+    );
+    if (user.queuers.length === 0) {
+      return false;
+    }
+    return true;
+  }
+
+  public async isThereAnotherQueuer(queuerId: string) {
+    const res = await this.findAllLazy();
+    if (res.length == 0) {
+      return false;
+    }
+    if (res.length == 1 && (await this.inQueue(queuerId))) {
+      return false;
+    }
+    return true;
+  }
+
+  public async go(userId: string) {
+    if (await this.inQueue(userId)) {
+      throw new HttpException('User is already in queue', HttpStatus.BAD_REQUEST);
+    }
+    if (await this.isThereAnotherQueuer(userId)) {
+      const queuer = await this.popQueue();
+      return await this.gameService.matchById(userId, queuer.id, 5);
+    }
+    else {
+      const queueDto = await this.create(userId);
+      let inQueue = await this.inQueue(userId);
+      while (inQueue) {
+        inQueue = await this.inQueue(userId);
+      }
+      await new Promise(f => setTimeout(f, 1000));
+      const players = await this.playerService.findByUserAmongPreparedGame(userId);
+      if (players.length === 0) {
+        return "Successfull unqueue";
+      }
+      else if (players.length === 1) {
+        return this.gameService.gameToDto(players[0].game);
+      }
+      else {
+        throw new HttpException('More than one game in preparation for this user', HttpStatus.NOT_FOUND);
+      }
+    }
   }
 
   public queueToDto(queue: Queue) {

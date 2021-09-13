@@ -1,3 +1,5 @@
+import { IsOptional } from 'class-validator';
+
 import { GameStatus } from './enum.gameStatus';
 
 import { PlayerForGameDto } from '../player/player.dto';
@@ -11,12 +13,16 @@ export class GameSeedDto {
 }
 
 export class GameMatchDto {
-  userEmail1: string;
-  userEmail2: string;
+  userId1: string;
+  userId2: string;
   pointToVictory: number;
 }
 
 export class GameUpdateDto {
+  @IsOptional()
+  pointToVictory: number;
+
+  @IsOptional()
   status: GameStatus;
 }
 
@@ -33,4 +39,9 @@ export class GameDtoLazy {
   startTime: Date;
   status: string;
   pointToVictory: number;
+}
+
+export class ScoreDto {
+  outcome: string;
+  gameDto: GameDto;
 }

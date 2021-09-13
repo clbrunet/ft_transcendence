@@ -241,13 +241,17 @@ export class ParticipantService {
   public async updateAuthorized(id: string, authorized: boolean) {
     let participantUpdateDto = new ParticipantUpdateDto();
     participantUpdateDto.authorized = authorized;
-    return this.update(id, participantUpdateDto);
+    return await this.update(id, participantUpdateDto);
   }
 
   public async updateAdmin(id: string, admin: boolean) {
     let participantUpdateDto = new ParticipantUpdateDto();
     participantUpdateDto.admin = admin;
-    return this.update(id, participantUpdateDto);
+    if (admin) {
+      await this.updateMute(id, false, 0);
+      await this.updateBan(id, false, 0);
+    }
+    return await this.update(id, participantUpdateDto);
   }
 
   public async updateMute(id: string, mute: boolean, minutes: number) {
@@ -255,7 +259,7 @@ export class ParticipantService {
     participantUpdateDto.mute = mute;
     const currentTime = new Date();
     participantUpdateDto.muteEndDateTime = new Date(currentTime.getTime() + minutes * 60000);
-    return this.update(id, participantUpdateDto);
+    return await this.update(id, participantUpdateDto);
   }
 
   public async updateBan(id: string, ban: boolean, minutes: number) {
@@ -263,13 +267,13 @@ export class ParticipantService {
     participantUpdateDto.ban = ban;
     const currentTime = new Date();
     participantUpdateDto.banEndDateTime = new Date(currentTime.getTime() + minutes * 60000);
-    return this.update(id, participantUpdateDto);
+    return await this.update(id, participantUpdateDto);
   }
 
   public async updateLeft(id: string, left: boolean) {
     let participantUpdateDto = new ParticipantUpdateDto();
     participantUpdateDto.left = left;
-    return this.update(id, participantUpdateDto);
+    return await this.update(id, participantUpdateDto);
   }
 
   public async delete(id: string) {
@@ -304,7 +308,7 @@ export class ParticipantService {
   }
 
   public async isMute(userId: string, channelId: string) {
-    if (!this.isParticipant(userId, channelId)) {
+    if (!(await this.isParticipant(userId, channelId))) {
       throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND); 
     }
     const user = await this.userService.findByIdLazy(userId);

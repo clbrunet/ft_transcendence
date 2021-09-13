@@ -8,7 +8,6 @@ import { PlayerService } from './player.service';
 import JwtTwoFactorGuard from '../authentication/twoFactor/jwtTwoFactor.guard';
 
 import { PlayerCreationDto } from './player.dto';
-import { PlayerScoreDto } from './player.dto';
 
 
 @Controller('player')
@@ -28,12 +27,6 @@ export class PlayerController {
   @Get('/all')
   async findAll() {
     return await this.playerService.findAll();
-  }
-
-  @UseGuards(JwtTwoFactorGuard)
-  @Patch('/score')
-  async scoreGoal(@Body() playerScoreDto: PlayerScoreDto) {
-    return await this.playerService.score(playerScoreDto.gameId, playerScoreDto.userId, playerScoreDto.addedPoint);
   }
 
   @UseGuards(JwtTwoFactorGuard)
