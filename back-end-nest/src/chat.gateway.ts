@@ -11,6 +11,11 @@ export class ChatGateway {
         this.server.to(message.room).emit('chatToClient', message);
     }
 
+    @SubscribeMessage('dmToServer')
+    handleDM(client:Socket, message: {sender: string, room: string, message: string}) {
+        this.server.to(message.room).emit('chatToDm', message);
+    }
+
     @SubscribeMessage('joinRoom')
     handleJoinRoom(client: Socket, room: string) {
         client.join(room);
