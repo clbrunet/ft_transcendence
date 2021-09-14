@@ -290,7 +290,9 @@ export default Vue.extend({
         url: url,
         withCredentials: true
       }).then(res => {
-        this.messages = res.data;
+        this.messages = res.data.reverse();
+      }).catch(() => {
+        console.log("No permission so see some of messages");
       });
     },
     changeOwner(participant: any) {
@@ -516,6 +518,14 @@ export default Vue.extend({
   position: relative;
 }
 
+.messages {
+  overflow-y: auto;
+  display:flex;
+  flex-direction:column-reverse;
+  height:80%;
+
+}
+
 #form-create-channel {
   display: flex;
   flex-direction: column;
@@ -696,4 +706,6 @@ export default Vue.extend({
   flex-direction: column;
   align-items: flex-start;
 }
+
+
 </style>

@@ -2,20 +2,28 @@
   <div id="body-chat">
       <div id="list_channels">
         <button @click="open_popup_create()">+</button>
+        <span>channels general</span>
         <div class="channel" v-for="(channel, index) in channels" :key="index" @click="select_channel(channel, index)">
           <span>{{ channel.name }} </span> 
           <span>{{ channel.status }} </span>
           <button v-if="channel.ownerId == $store.state.user.id" @click="open_params()">params</button>
           <button v-if="channel.activeUserParticipant == true && channel.activeUserAuthorized == true" @click="leave_channel(channel)">leave</button>
         </div>
+        <span>direct messages</span>
+        <div class="channel" v-for="(conv, indexdm) in dm" :key="(indexdm + 12) * 12" @click="select_dm(conv, indexdm)">
+          <span>{{ conv.name }} </span> 
+        </div>
       </div>
       <template v-for="(channel, index) in channels">
-        <template v-if="channel.status != 'protected' || channel.activeUserAuthorized == true">
+        <template v-if="(channel.status != 'protected' || channel.activeUserAuthorized == true) && showDm == false">
           <Chat v-show="numberSelectedChannel == index" :key="index" :data="channel" />
         </template>
-        <template v-else>
+        <template v-else-if="showDm == false">
           <Chat v-if="numberSelectedChannel == index" :key="index" :data="channel" />
         </template>
+      </template>
+      <template v-for="(conv, indexdm) in dm">
+        <DirectMessage v-if="showDm == true && numberSelectedDm == indexdm" :key="indexdm" :data="conv" />
       </template>
 
       <!-- popups -->
@@ -72,19 +80,25 @@ import Vue from "vue";
 import axios from "axios";
 import router from "../router";
 import Chat from "../components/Chat.vue"
+import DirectMessage from "../components/DirectMessage.vue"
 import PortalVue from 'portal-vue'
+import store from "../store"
+
 export default Vue.extend({
   name: "Chats",
   components: {
-      Chat: Chat
+      Chat: Chat,
+      DirectMessage: DirectMessage
   },
   data() {
     return {
       keyVFor: 0,
       errorCreate: undefined as any,
-      channels: {} as any ,
+      channels: {} as any,
+      dm: undefined as any,
       selectedChannel: undefined as any,
       currentSelectedChannel: undefined as any,
+      numberSelectedDm: 0 as any,
       popup_password: false as any,
       popup_create: false as any,
       password_input: undefined as any,
@@ -94,7 +108,8 @@ export default Vue.extend({
       createStatus: undefined as any,
       changeStatus: undefined as any,
       changePassword: undefined as any,
-      params: false as any
+      params: false as any,
+      showDm: false as any
     };
   },
   watch: {
@@ -102,8 +117,10 @@ export default Vue.extend({
     }
   },
   mounted() {
+    this.refresh_channels();
+    this.refresh_dm();
 
-      this.refresh_channels();
+
   },
   methods: {
     refresh_channels() {
@@ -119,6 +136,34 @@ export default Vue.extend({
           router.push({name: 'App'});
         });
     },
+    refresh_dm() {
+      axios({
+        method: "get",
+        url: `${ process.env.VUE_APP_API_URL }/direct/index`,
+        withCredentials: true
+      })
+        .then(res => {
+          this.dm = res.data;
+          if (this.$store.state.goDM != undefined)
+          {
+            console.log("test ? = ", this.$store.state.goDM);
+            this.showDm = true;
+            for (let i = 0; i < this.dm.length ; i++)
+            {
+              console.log("this.dm == ", this.dm[i]);
+              if (this.dm[i].id == this.$store.state.goDM.id)
+              {
+                this.select_dm(this.dm[i], i);
+              }
+            }
+            this.$store.state.goDM = undefined;
+          }
+        })
+        .catch(err => {
+          console.log("ERREUR ? = ", err);
+          router.push({name: 'App'});
+        });
+    },
     select_channel(channel: any, index: number) {
       this.currentSelectedChannel = channel;
       if (channel.status == 'protected' && channel.activeUserAuthorized == false)
@@ -129,10 +174,18 @@ export default Vue.extend({
       }
       else
       {
+        this.showDm = false;
         this.numberSelectedChannel = index;
         this.selectedChannel = channel;
         this.$store.state.socket.emit('joinRoom', this.selectedChannel.name);
       }
+      this.refresh_channels();
+    },
+    select_dm(channel: any, index: number) {
+      this.showDm = true;
+      this.numberSelectedDm = index;
+      this.selectedChannel = channel;
+      this.$store.state.socket.emit('joinRoom', this.selectedChannel.id);
       this.refresh_channels();
     },
     open_params() {
@@ -305,7 +358,7 @@ export default Vue.extend({
   width:200px;
   border: 3px solid black;
   background-color :white;
-  max-height: 50%;
+  max-height: 100%;
   overflow-y: auto; /* maybe remove */
   overflow-x: hidden;
 }

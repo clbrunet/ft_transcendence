@@ -46,6 +46,7 @@ export default Vue.extend({
       .then(() => {
         this.$store.state.expired = undefined;
         this.$store.state.user = undefined;
+        this.$store.state.goDM = undefined;
         this.$store.dispatch("unauthenticate");
         router.push({ name: "App" });
       })
@@ -59,7 +60,6 @@ export default Vue.extend({
   },
   mounted() {
     this.$store.state.socket = io("http://localhost:3000");
-    console.log(this.$store.state.socket, "well created");
   }
 });
 </script>

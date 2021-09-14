@@ -19,11 +19,11 @@
             <td class="field">{{user.level}}</td>
             <td class="field">{{user.xp}} xp</td>
             <td class="field">{{user.nWins}}W / {{user.nLosses}}L</td>
-            <template v-if="is_blocked(user)">
+            <template v-if="tabBlocks[index] == 'blocker' || tabBlocks[index] == 'blocked'">
               <td class="field">Blocked</td>
               <td class="field">Blocked</td>
               <td class="field">Blocked</td>
-              <td class="field btnBox">
+              <td v-if="tabBlocks[index] == 'blocker'" class="field btnBox">
                 <img
                     src="/assets/unblock.svg"
                     alt="unblock"
@@ -31,6 +31,7 @@
                     @click="unblock(user)"
                 />
               </td>
+              <td v-else class="field">Blocked</td>
             </template>
             <template v-else-if="friends">
               <td class="field btnBox">
@@ -112,7 +113,8 @@ export default Vue.extend({
       blocks: {} as any,
       friends: {} as any,
       tab: [] as any,
-      socket: {} as any
+      socket: {} as any,
+      tabBlocks: [] as any
     };
   },
   mounted() {
@@ -143,6 +145,21 @@ export default Vue.extend({
         withCredentials: true
       }).then(res => {
         this.blocks = res.data;
+        this.tabBlocks.length = 0;
+        for (let i = 0; i < this.users.length; i++) {
+          if (this.users[i].id != this.$store.state.user.id)
+          {
+            var flag = false;
+            for (let j = 0; j < this.blocks.length; j++) {
+              if (this.users[i].id == this.blocks[j].blockId) {
+                this.tabBlocks.push(this.blocks[j].status);
+                flag = true;
+              }
+            }
+            if (flag == false) this.tabBlocks.push("none");
+          }
+        }
+        console.log("tabBlocks = ", this.tabBlocks);
       });
     },
     get_friends() {
@@ -164,14 +181,6 @@ export default Vue.extend({
           if (flag == false) this.tab.push("none");
         }
       });
-    },
-    is_blocked(user: any) {
-      if (this.blocks) {
-        for (let i = 0; i < this.blocks.length; i++) {
-          if (user.id == this.blocks[i].blockId) return true;
-        }
-      }
-      return false;
     },
     duel(user: any) {
       alert(
@@ -219,15 +228,37 @@ export default Vue.extend({
       });
     },
     block(user: any) {
-      alert(this.$store.state.user.name + " wants to block " + user.name);
+      const url = `${process.env.VUE_APP_API_URL}/block/` + user.id;
+      axios({
+        url: url,
+        method: "post",
+        withCredentials: true
+      }).then(() => {
+        this.get_users();
+        this.get_blocks();
+      });
     },
     unblock(user: any) {
-      alert(this.$store.state.user.name + " wants to unblock " + user.name);
+      const url = `${process.env.VUE_APP_API_URL}/block/unblock/` + user.id;
+      axios({
+        url: url,
+        method: "delete",
+        withCredentials: true
+      }).then(() => {
+        this.get_users();
+        this.get_blocks();
+      });
     },
     send_message(user: any) {
-      alert(
-        this.$store.state.user.name + " wants to send a message to " + user.name
-      );
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/direct/go/` + user.id,
+        method: "get",
+        withCredentials: true
+      }).then(res => {
+        this.$store.state.goDM = res.data;
+        router.push({name: "Chats"});
+        console.log(res.data);
+      });
     },
     goToProfile(user: any) {
       const path = "/profile/" + user.id;
