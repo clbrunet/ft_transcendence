@@ -9,6 +9,7 @@ import { ParticipantService } from '../participant/participant.service';
 import { ChannelService } from '../channel/channel.service';
 
 import { MessageCreationDto } from './message.dto';
+import { MessageUpdateDto } from './message.dto';
 import { MessageDto } from './message.dto';
 
 @Injectable()
@@ -29,6 +30,12 @@ export class MessageService {
     if (author) {
       message.author = author;
       message.content = data.content;
+      if (data.button) {
+        message.button = data.button;
+      }
+      if (data.duelId) {
+        message.duelId = data.duelId;
+      }
       return await this.messageRepo.save(message);
     }
     throw new HttpException('Author with this id does not exist', HttpStatus.NOT_FOUND);
@@ -98,6 +105,17 @@ export class MessageService {
     throw new HttpException('Message with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
+  public async findByDuelIdLazy(duelId: string) {
+    const messages = await this.messageRepo.find(
+      {
+        where: {
+          duelId: duelId, 
+        },
+      }
+    );
+    return messages;
+  }
+
   public async getById(id: string) {
     const message = await this.messageRepo.findOne(id,
       {
@@ -108,6 +126,19 @@ export class MessageService {
       return this.messageToDto(message);
     }
     throw new HttpException('Message with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  public async update(id: string, messageUpdateDto: MessageUpdateDto) {
+    const res = await this.messageRepo.update(id, messageUpdateDto);
+    if (res) {
+      const message = await this.messageRepo.findOne(
+        {
+          relations: ['author', 'author.user', 'author.channel'],
+        }
+      );
+      return this.messageToDto(message);
+    }
+    throw new HttpException('Message update failed', HttpStatus.NOT_FOUND);
   }
 
   public async delete(id: string) {
@@ -130,6 +161,8 @@ export class MessageService {
     dto.channelName = message.author.channel.name;
     dto.createDateTime = message.createDateTime;
     dto.content = message.content;
+    dto.button = message.button;
+    dto.duelId = message.duelId;
     return dto;
   }
 }

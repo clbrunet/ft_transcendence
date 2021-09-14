@@ -217,7 +217,7 @@ export class GameService {
     const author = await this.participantService.findByUserAndChannelLazy(game.players[0].user.id, direct.id);
     let messageCreationDto = new MessageCreationDto();
     messageCreationDto.authorId = author.id;
-    messageCreationDto.content = "We started a game together! Good luck!";
+    messageCreationDto.content = "Le match va commencer. Bonne chance!";
     return await this.messageService.create(messageCreationDto);
   }
 
@@ -235,7 +235,7 @@ export class GameService {
     }
     let messageCreationDto = new MessageCreationDto();
     messageCreationDto.authorId = author.id;
-    messageCreationDto.content = "I won! Hahahahahahah";
+    messageCreationDto.content = "Je gagne! Hahahahahahah";
     return await this.messageService.create(messageCreationDto);
   }
 

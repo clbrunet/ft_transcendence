@@ -356,6 +356,8 @@ export class ParticipantService {
         messageForParticipantDto.id = message.id;
         messageForParticipantDto.createDateTime = message.createDateTime;
         messageForParticipantDto.content = message.content;
+        messageForParticipantDto.button = message.button;
+        messageForParticipantDto.duelId = message.duelId;
         dto.messages.push(messageForParticipantDto);
         })
     }
