@@ -112,15 +112,9 @@ export default Vue.extend({
       showDm: false as any
     };
   },
-  watch: {
-    channels: function () {
-    }
-  },
   mounted() {
     this.refresh_channels();
     this.refresh_dm();
-
-
   },
   methods: {
     refresh_channels() {
@@ -247,7 +241,6 @@ export default Vue.extend({
       })
       .then(() => {
         this.close_popup_create();
-        console.log("will refresh all");
         this.refresh_channels();
       }).catch(err => {
         this.errorCreate = Array.isArray(err.response.data.message) ? [err.response.data.message] : err.response.data.message;
@@ -291,7 +284,9 @@ export default Vue.extend({
         withCredentials: true
       }).then(res => {
         this.refresh_channels();
-      });
+      }).catch(() => {
+        alert('you can\'t leave owner');
+      })
     }
   }
 });

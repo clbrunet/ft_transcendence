@@ -147,6 +147,7 @@ export default Vue.extend({
         this.blocks = res.data;
         this.tabBlocks.length = 0;
         for (let i = 0; i < this.users.length; i++) {
+          var flag = false;
           if (this.users[i].id != this.$store.state.user.id)
           {
             var flag = false;
@@ -156,9 +157,10 @@ export default Vue.extend({
                 flag = true;
               }
             }
-            if (flag == false) this.tabBlocks.push("none");
           }
+          if (flag == false) this.tabBlocks.push("none");
         }
+        console.log(this.tabBlocks);
       });
     },
     get_friends() {

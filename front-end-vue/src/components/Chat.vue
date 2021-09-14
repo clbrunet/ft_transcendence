@@ -6,7 +6,7 @@
         <button v-if="isOwner == true" @click="open_popup_settings()">add</button>
       </div>
 
-      <template v-if="data.status == 'public' || (isParticipant == true && data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false)">
+      <template v-if="data.status == 'public' || (data.activeUserParticipant == true && data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false)">
         <div class="messages">
           <p
             v-for="(message, index) in messages"
@@ -16,7 +16,7 @@
       </template>
       <template v-else>
         <div class="messages">
-          <p v-if="isParticipant == false">you are not a participant of this channel</p>
+          <p v-if="data.activeUserParticipant == false">you are not a participant of this channel</p>
           <p v-else-if="data.activeUserBan == true || isCurrentlyBanMute(data.activeUserBanEndDateTime) == true">you were banned from this channel</p>
         </div>
       </template>
@@ -24,8 +24,8 @@
       <form
         @submit.prevent="send_message()"
         class="buttons"
-        v-if="(data.status == 'public' && isParticipant == true) ||  
-              (isParticipant == true && data.activeUserBan == false
+        v-if="(data.status == 'public' && data.activeUserParticipant == true) ||  
+              (data.activeUserParticipant == true && data.activeUserBan == false
               && data.activeUserMute == false
               && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false
               && isCurrentlyBanMute(data.activeUserMuteEndDateTime) == false)">
@@ -33,7 +33,7 @@
         <input class="send" type="submit" value="send" />
       </form>
       <div class="buttons" v-else>
-        <template v-if="isParticipant == false">
+        <template v-if="data.activeUserParticipant == false">
           <input
             class="message"
             type="text"
