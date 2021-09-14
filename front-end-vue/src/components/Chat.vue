@@ -75,10 +75,9 @@
         </template>
         <template v-else-if="participant.left != true">
           <div class="row-participant" :key="index">
-            <span>{{participant.userName}}</span>
+            <span class="clickable" @click="goToProfile(participant)">{{participant.userName}}</span>
 
             <template v-if="participant.ban == false && isCurrentlyBanMute(participant.banEndDateTime) == false">
-              <!--Ni ban ni mute-->
               <button v-if="isOwner == true" @click="changeOwner(participant)">change owner</button>
               
               <button v-if="isOwner == true && participant.admin == false" @click="addAdmin(participant)">+ admin</button>
@@ -160,6 +159,8 @@
 /* eslint-disable */
 import Vue from "vue";
 import axios from "axios";
+import router from "../router";
+
 export default Vue.extend({
   name: "Chat",
   props: ["data"],
@@ -504,6 +505,10 @@ export default Vue.extend({
         this.refresh_participants();
         this.refresh_channel();
       });
+    },
+    goToProfile(user: any) {
+      const path = "/profile/" + user.userId;
+      router.push({ path: path });
     }
   }
 });
@@ -517,6 +522,15 @@ export default Vue.extend({
   height: 91vh;
   position: relative;
 }
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  text-decoration: underline;
+}
+
 
 .messages {
   overflow-y: auto;

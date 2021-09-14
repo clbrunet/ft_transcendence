@@ -33,7 +33,7 @@
         <MenuBlocks v-if="is_auth" />
       </div>
       <div id="middle">
-        <button id="play">PLAY</button>
+        <button id="play" v-if="is_auth">PLAY</button>
       </div>
       <div id="right">
         <MenuMatchesHistory />

@@ -159,7 +159,6 @@ export default Vue.extend({
             if (flag == false) this.tabBlocks.push("none");
           }
         }
-        console.log("tabBlocks = ", this.tabBlocks);
       });
     },
     get_friends() {

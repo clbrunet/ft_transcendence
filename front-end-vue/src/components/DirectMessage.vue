@@ -25,7 +25,7 @@
     <div class="partipants">
         <span> You</span>
           <div class="row-participant">
-            <span> {{data.name}}</span>
+            <span class="clickable" @click="goToProfile(data)"> {{data.name}}</span>
             <button @click="duelFriend()">Duel (wip) </button>
           </div>
     </div>
@@ -37,6 +37,7 @@
 import Vue from "vue";
 import axios from "axios";
 import store from "../store";
+import router from "../router";
 
 export default Vue.extend({
   name: "DirectMessage",
@@ -88,16 +89,7 @@ export default Vue.extend({
         url: `${process.env.VUE_APP_API_URL}/channel/` + this.data.id,
         withCredentials: true
       }).then(res => {
-        const url = `${process.env.VUE_APP_API_URL}/participant/isParticipant/` + this.data.id;
-        axios({
-          method: "get",
-          url: url,
-          withCredentials: true
-        }).then(() => {
-          this.isParticipant = true;
-        }).catch(() => {
-          this.isParticipant = false;
-        });
+        this.channel = res.data;
       });
     },
     refresh_messages() {
@@ -114,6 +106,13 @@ export default Vue.extend({
     },
     duelFriend() {
         alert('you sent a duel');
+    },
+    goToProfile(user: any) {
+      if (user.participants[0].userId != this.$store.state.user.id)
+        var path = "/profile/" + user.participants[0].userId;
+      else
+        var path = "/profile/" + user.participants[1].userId;
+      router.push({ path: path });
     }
   }
 });
@@ -140,6 +139,15 @@ export default Vue.extend({
   flex-direction: column;
   align-items: flex-start;
 }
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  text-decoration: underline;
+}
+
 
 .chat {
   display: flex;
