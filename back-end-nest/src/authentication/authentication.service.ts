@@ -91,14 +91,14 @@ export class AuthenticationService {
     if ("IS_HEROKU" in process.env) {
       return `Authentication=${token}; HttpOnly; Path=/; Max-Age='1d'; SameSite=None; Secure`;
     }
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age='1d'`;
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age='1d'; SameSite=Lax`;
   }
 
   public getCookieForLogOut() {
     if ("IS_HEROKU" in process.env) {
       return `Authentication=; HttpOnly; Path=/; Max-Age=0; SameSite=None; Secure`;
     }
-    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
+    return `Authentication=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax`;
   }
 
   public getCookieWithJwtAccessToken(userId: string, isSecondFactorAuthenticated = false) {
@@ -110,6 +110,6 @@ export class AuthenticationService {
     if ("IS_HEROKU" in process.env) {
       return `Authentication=${token}; HttpOnly; Path=/; Max-Age='1d'; SameSite=None; Secure`;
     }
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age='1d'`;
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age='1d'; SameSite=Lax`;
   }
 }
