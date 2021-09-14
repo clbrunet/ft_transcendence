@@ -14,6 +14,12 @@ class Message {
     @Column()
     public content: string;
 
+    @Column({ type: 'boolean', default: false })
+    button: boolean;
+
+    @Column({ nullable: true, default: null })
+    duelId: string;
+
     @ManyToOne(() => Participant, participant => participant.messages, { eager: false, onDelete: "CASCADE" })
     author: Participant;
 }

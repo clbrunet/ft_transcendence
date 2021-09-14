@@ -11,10 +11,16 @@ import { UserService } from '../user/user.service';
 import { QueueService } from '../queue/queue.service';
 import { GameService } from '../game/game.service';
 import { PlayerService } from '../player/player.service';
+import { ChannelService } from '../channel/channel.service';
+import { ParticipantService } from '../participant/participant.service';
+import { MessageService } from '../message/message.service';
 
 import { DuelDto } from './duel.dto';
 import { DuelUpdateDto } from './duel.dto';
 import { UserUpdateDto } from '../user/user.dto';
+import { ChannelDirectCreationDto } from '../channel/channel.dto';
+import { MessageCreationDto } from '../message/message.dto';
+import { MessageUpdateDto } from '../message/message.dto';
 
 
 @Injectable()
@@ -29,6 +35,9 @@ export class DuelService {
     private readonly queueService: QueueService,
     private readonly gameService: GameService,
     private readonly playerService: PlayerService,
+    private readonly channelService: ChannelService,
+    private readonly participantService: ParticipantService,
+    private readonly messageService: MessageService,
   ) {}
 
   public async create(duelOwnerId: string, duelId: string) {
@@ -75,6 +84,7 @@ export class DuelService {
       throw new HttpException('Something went wrong while creating a duel', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     ret.push(this.duelToDto(res));
+    await this.introductionMessage(duelOwnerId, duelId, duelObject.id);
     return ret;
   }
 
@@ -236,10 +246,10 @@ export class DuelService {
       throw new HttpException('User can not accept a Duel he has sent', HttpStatus.NOT_FOUND);      
     }
     if (duel1.status == 2) {
-      throw new HttpException('Duel has alreday been accepted', HttpStatus.NOT_FOUND);      
+      throw new HttpException('Duel has already been accepted', HttpStatus.NOT_FOUND);      
     }
     if (duel1.status == 3) {
-      throw new HttpException('Duel has alreday been rejected', HttpStatus.NOT_FOUND);      
+      throw new HttpException('Duel has already been rejected', HttpStatus.NOT_FOUND);      
     }
     const duel2 = await this.findByOwnerAndDuel(duelId, userId);
 
@@ -257,6 +267,13 @@ export class DuelService {
 
     await this.delete(duel1.id);
     await this.delete(duel2.id);
+    const messages = await this.messageService.findByDuelIdLazy(duel2.id);
+    if (messages.length != 1) {
+      throw new HttpException('No or more than one Message with this duelId attribute', HttpStatus.NOT_FOUND);   
+    }
+    let messageUpdateDto = new MessageUpdateDto();
+    messageUpdateDto.button = false;
+    await this.messageService.update(messages[0].id, messageUpdateDto);
 
     if (duel.status === 0) {
       return "Duel cancelled since at least one of the User is offline";   
@@ -292,19 +309,49 @@ export class DuelService {
 
     await this.delete(duel1.id);
     await this.delete(duel2.id);
+    const messages = await this.messageService.findByDuelIdLazy(duel2.id);
+    if (messages.length != 1) {
+      throw new HttpException('No or more than one Message with this duelId attribute', HttpStatus.NOT_FOUND);   
+    }
+    let messageUpdateDto = new MessageUpdateDto();
+    messageUpdateDto.button = false;
+    await this.messageService.update(messages[0].id, messageUpdateDto);
 
     return "Duel has been rejected";
   }
 
   public async unduel(userId: string, duelId: string) {
-    const duel = await this.findByOwnerAndDuelLazy(userId, duelId);
-    if (duel.status == 1) {
+    const duel1 = await this.findByOwnerAndDuelLazy(userId, duelId);
+    if (duel1.status == 1) {
       throw new HttpException('User can not unduel before accepting', HttpStatus.NOT_FOUND);      
     }
     const duel2 = await this.findByOwnerAndDuelLazy(duelId, userId);
-    await this.delete(duel.id);
+
+    await this.delete(duel1.id);
     await this.delete(duel2.id);
+    const messages = await this.messageService.findByDuelIdLazy(duel1.id);
+    if (messages.length != 1) {
+      throw new HttpException('No or more than one Message with this duelId attribute', HttpStatus.NOT_FOUND);   
+    }
+    let messageUpdateDto = new MessageUpdateDto();
+    messageUpdateDto.button = false;
+    await this.messageService.update(messages[0].id, messageUpdateDto);
+
     return "Successfull unduel";
+  }
+
+  public async introductionMessage(duelOwnerId: string, duelId: string, duelObjectId: string) {
+    let channelDirectCreationDto = new ChannelDirectCreationDto();
+    channelDirectCreationDto.userId1 = duelOwnerId;
+    channelDirectCreationDto.userId2 = duelId;    
+    const direct = await this.channelService.goDirectActiveUser(channelDirectCreationDto);
+    const author = await this.participantService.findByUserAndChannelLazy(duelOwnerId, direct.id);
+    let messageCreationDto = new MessageCreationDto();
+    messageCreationDto.authorId = author.id;
+    messageCreationDto.content = "Je t'ai invite a un game. Releveras tu le defi?";
+    messageCreationDto.button = true;
+    messageCreationDto.duelId = duelObjectId;
+    return await this.messageService.create(messageCreationDto);
   }
 
   public duelToDto(duel: Duel) {
