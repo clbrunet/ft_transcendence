@@ -64,12 +64,7 @@ export default Vue.extend({
     },
   },
   mounted() {
-    if (this.$route.params.id == this.$store.state.user.id) {
-      this.is_auth = true;
-      this.user = this.$store.state.user;
-      this.avatar_src = this.user.avatar + "?" + new Date().valueOf();
-    }
-    else {
+    if (this.$route.params.id && this.$route.params.id !== this.$store.state.user.id) {
       axios({
         url: `${ process.env.VUE_APP_API_URL }/user/` + this.$route.params.id,
         method: "get",
@@ -78,6 +73,11 @@ export default Vue.extend({
         this.user = res.data;
         this.avatar_src = this.user.avatar + "?" + new Date().valueOf();
       });
+    }
+    else {
+      this.is_auth = true;
+      this.user = this.$store.state.user;
+      this.avatar_src = this.user.avatar + "?" + new Date().valueOf();
     }
   }
 });
