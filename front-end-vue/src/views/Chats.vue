@@ -146,21 +146,17 @@ export default Vue.extend({
           this.dm = res.data;
           if (this.$store.state.goDM != undefined)
           {
-            console.log("test ? = ", this.$store.state.goDM);
             this.showDm = true;
             for (let i = 0; i < this.dm.length ; i++)
             {
-              console.log("this.dm == ", this.dm[i]);
               if (this.dm[i].id == this.$store.state.goDM.id)
-              {
                 this.select_dm(this.dm[i], i);
-              }
             }
             this.$store.state.goDM = undefined;
           }
         })
-        .catch(err => {
-          console.log("ERREUR ? = ", err);
+        .catch(() => {
+          console.log("");
           router.push({name: 'App'});
         });
     },
