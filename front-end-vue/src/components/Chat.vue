@@ -3,7 +3,7 @@
     <div class="chat">
       <div class="title">
         <span>{{data.name}} by {{data.ownerName}}</span>
-        <button v-if="isOwner == true" @click="open_popup_settings()">settings</button>
+        <button v-if="isOwner == true" @click="open_popup_settings()">add</button>
       </div>
 
       <template v-if="data.status == 'public' || (isParticipant == true && data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false)">
@@ -17,9 +17,7 @@
       <template v-else>
         <div class="messages">
           <p v-if="isParticipant == false">you are not a participant of this channel</p>
-          <p
-            v-else-if="data.activeUserBan == true || isCurrentlyBanMute(data.activeUserBanEndDateTime) == true"
-          >you were banned from this channel</p>
+          <p v-else-if="data.activeUserBan == true || isCurrentlyBanMute(data.activeUserBanEndDateTime) == true">you were banned from this channel</p>
         </div>
       </template>
 
@@ -85,11 +83,10 @@
               <button v-if="isOwner == true && participant.admin == false" @click="addAdmin(participant)">+ admin</button>
               <button v-else-if="isOwner == true" @click="removeAdmin(participant)">- admin</button>
              
-              <button v-if="isAdmin && participant.admin == false && data.status != 'public'" @click="open_popup_ban(participant)">Ban</button>
+              <button v-if="data.activeUserAdmin == true  && participant.admin == false && data.status != 'public'" @click="open_popup_ban(participant)">Ban</button>
             </template>
             <button v-else @click="unbanParticipant(participant)">unban</button>
-
-            <template v-if="isAdmin && participant.admin == false && data.status != 'public'">
+            <template v-if="data.activeUserAdmin == true&& participant.admin == false && data.status != 'public'">
               <button v-if="participant.mute == false && isCurrentlyBanMute(participant.muteEndDateTime) == false" @click="open_popup_mute(participant)">Mute</button>
               <button v-else @click="unmuteParticipant(participant)">unmute</button>
             </template>
@@ -137,7 +134,6 @@
 
     <div v-if="popup_settings" class="popup-settings">
       <div class="popup-settings-content">
-        <div class="popup-settings-content-rows">
           <div class="popup-settings-add-participant">
             <h3>Add participants :</h3>
             <div
@@ -151,19 +147,6 @@
                 </div>
               </template>
             </div>
-          </div>
-          <div class="popup-settings-change-status">
-            <h3>Change status :</h3>
-            <form @submit.prevent="change_status()" id="form-create-channel">
-              <select v-model="changeStatus">
-                <option selected>public</option>
-                <option>private</option>
-                <option>protected</option>
-              </select>
-              <input v-if="changeStatus == 'protected'" type="password" v-model="changePassword" />
-              <input type="submit" />
-            </form>
-          </div>
         </div>
         <button @click="close_popup_settings()" id="popup-settings-btn">Close</button>
       </div>
@@ -192,8 +175,6 @@ export default Vue.extend({
       isAdmin: false as any,
       isParticipant: false as any,
       candidateParticipants: undefined as any,
-      changeStatus: undefined as any,
-      changePassword: undefined as any,
       idData: undefined as any,
       selectBanTime: undefined as any,
       selectMuteTime: undefined as any,
@@ -205,10 +186,12 @@ export default Vue.extend({
       this.mounted_like();
     },
     participants: function() {
-      this.refresh_candidateParticipants();
+      if (this.data.ownerId == this.$store.state.user.id)
+        this.refresh_candidateParticipants();
     },
     users: function() {
-      this.refresh_candidateParticipants();
+      if (this.data.ownerId == this.$store.state.user.id)
+        this.refresh_candidateParticipants();
     },
     idData: function() {
       this.refresh_participants();
@@ -343,36 +326,6 @@ export default Vue.extend({
       }).then(() => {
         this.refresh_participants();
       });
-    },
-    change_status() {
-      let statusEnum;
-
-      if (this.changeStatus == "public") statusEnum = 0;
-      else if (this.changeStatus == "private") statusEnum = 1;
-      else if (this.changeStatus == "protected") statusEnum = 2;
-
-      if (this.changePassword == undefined)
-        this.changePassword = "passwordRandom";
-      const url =
-        `${process.env.VUE_APP_API_URL}/channel/changeStatus/` + this.data.id;
-
-      axios({
-        method: "patch",
-        url: url,
-        withCredentials: true,
-        data: {
-          status: this.changeStatus,
-          password: this.changePassword
-        }
-      })
-        .then(() => {
-          this.changeStatus = undefined;
-          this.changePassword = undefined;
-          this.refresh_channel();
-        })
-        .catch(err => {
-          console.log(err);
-        });
     },
     close_popup_settings() {
       const nav = document.getElementById("nav");
@@ -664,13 +617,6 @@ export default Vue.extend({
   margin: 0;
 }
 
-.popup-settings-content-rows {
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
-  height: 75%;
-}
-
 .popup-settings-content {
   position: absolute;
   width: 40vw;
@@ -690,11 +636,10 @@ export default Vue.extend({
   padding: 2%;
 }
 
-.popup-settings-add-participant,
-.popup-settings-change-status {
+.popup-settings-add-participant {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 80%;
   background-color: aqua;
 }
 

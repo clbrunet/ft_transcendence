@@ -5,6 +5,7 @@
         <div class="channel" v-for="(channel, index) in channels" :key="index" @click="select_channel(channel, index)">
           <span>{{ channel.name }} </span> 
           <span>{{ channel.status }} </span>
+          <button v-if="channel.ownerId == $store.state.user.id" @click="open_params()">params</button>
         </div>
       </div>
       <template v-for="(channel, index) in channels">
@@ -43,6 +44,22 @@
           <button @click="close_popup_create()">Close</button>
         </div>
       </div>
+
+      <div class="popup-params" v-if="params">
+        <div class="popup-params-content">
+          <h3>Change status :</h3>
+          <form @submit.prevent="change_status()" id="form-create-channel">
+            <select v-model="changeStatus">
+              <option>public</option>
+              <option>private</option>
+              <option>protected</option>
+            </select>
+            <input v-if="changeStatus == 'protected'" type="password" v-model="changePassword" />
+            <input type="submit" />
+          </form>
+          <button @click="close_params()">Close</button>
+        </div>
+      </div>
       <!--  -->
   </div>
 </template>
@@ -73,8 +90,15 @@ export default Vue.extend({
       numberSelectedChannel: 0,
       createName: undefined as any,
       createPassword: undefined as any,
-      createStatus: undefined as any
+      createStatus: undefined as any,
+      changeStatus: undefined as any,
+      changePassword: undefined as any,
+      params: false as any
     };
+  },
+  watch: {
+    channels: function () {
+    }
   },
   mounted() {
 
@@ -111,6 +135,13 @@ export default Vue.extend({
         this.numberSelectedChannel = index;
         this.selectedChannel = channel;
       }
+      this.refresh_channels();
+    },
+    open_params() {
+      this.params = true;
+    },
+    close_params() {
+      this.params = false;
     },
     close_popup_password() {
       this.popup_password = false;
@@ -169,10 +200,42 @@ export default Vue.extend({
       })
       .then(res => {
         this.close_popup_create();
+        console.log("will refresh all");
         this.refresh_channels();
       }).catch(err => {
         this.errorCreate = Array.isArray(err.response.data.message) ? [err.response.data.message] : err.response.data.message;
       });
+    },
+    change_status() {
+      let statusEnum;
+
+      if (this.changeStatus == "public") statusEnum = 0;
+      else if (this.changeStatus == "private") statusEnum = 1;
+      else if (this.changeStatus == "protected") statusEnum = 2;
+
+      if (this.changePassword == undefined)
+        this.changePassword = "passwordRandom";
+      const url =
+        `${process.env.VUE_APP_API_URL}/channel/changeStatus/` + this.selectedChannel.id;
+
+      axios({
+        method: "patch",
+        url: url,
+        withCredentials: true,
+        data: {
+          status: statusEnum,
+          password: this.changePassword
+        }
+      })
+        .then(() => {
+          this.changeStatus = undefined;
+          this.changePassword = undefined;
+          this.refresh_channels();
+          this.close_params();
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   }
 });
@@ -255,6 +318,28 @@ export default Vue.extend({
 
 .channel:focus {
   background-color:red;
+}
+
+.popup-params {
+  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(48, 74, 36, 0.6);
+  position: absolute;
+  margin: 0;
+}
+
+.popup-params-content {
+  position: absolute;
+  width: 40vw;
+  height: 60vh;
+  left: 20%;
+  top: 20%;
+  background-color: blue;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .error {
