@@ -11,6 +11,7 @@ import JwtTwoFactorGuard from '../authentication/twoFactor/jwtTwoFactor.guard';
 import { DuelCreationActiveUserDto } from './duel.dto';
 import { DuelUpdateDto } from './duel.dto';
 import { DuelUpdateActiveUserDto } from './duel.dto';
+import { DuelDto } from './duel.dto';
 
 
 @Controller('duel')
@@ -27,6 +28,13 @@ export class DuelController {
   }
 
   @UseGuards(JwtTwoFactorGuard)
+  @Post('/go/:duelId')
+  async go(@Req() request: RequestWithUser, @Param('duelId') duelId) {
+    const {user} = request;
+    return await this.duelService.go(user.id, duelId);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
   @Post('/:duelId')
   async create(@Req() request: RequestWithUser, @Param('duelId') duelId) {
     const {user} = request;
@@ -37,7 +45,7 @@ export class DuelController {
   @Patch('/accept/:duelId')
   async accept(@Req() request: RequestWithUser, @Param('duelId') duelId) {
     const {user} = request;
-    return await this.duelService.updateStatus(user.id, duelId, 2);
+    return await this.duelService.accept(user.id, duelId);
   }
 
   @UseGuards(JwtTwoFactorGuard)
@@ -61,5 +69,4 @@ export class DuelController {
   async findAll() {
     return await this.duelService.findAll();
   }
-
 }

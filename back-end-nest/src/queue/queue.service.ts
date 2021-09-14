@@ -11,6 +11,7 @@ import { PlayerService } from '../player/player.service';
 
 import { QueueDto } from './queue.dto';
 import { GameDto } from '../game/game.dto';
+import { UserUpdateDto } from '../user/user.dto';
 
 
 @Injectable()
@@ -152,6 +153,10 @@ export class QueueService {
       const res = await this.findAll();
       const queuer = await this.userService.findByIdLazy(res[0].queuer.id);
       const gameDto = await this.gameService.matchById(userId, queuer.id, 5);
+      let userUpdateDto = new UserUpdateDto();
+      userUpdateDto.status = 2;
+      await this.userService.update(userId, userUpdateDto);
+      await this.userService.update(queuer.id, userUpdateDto);
       await this.delete(res[0].id);
       return gameDto;
     }
