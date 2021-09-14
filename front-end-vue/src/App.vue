@@ -23,7 +23,7 @@ import Vue from "vue";
 import Store from "./store/index";
 import axios from "axios";
 import router from "./router";
-import io from "socket.io-client";
+import io from "socket.io-client"
 
 export default Vue.extend({
   name: "App",
@@ -32,6 +32,7 @@ export default Vue.extend({
     return {
       mounted: false,
       is_disconnecting: false,
+      socket: undefined as any
     };
   },
   methods: {
@@ -45,7 +46,6 @@ export default Vue.extend({
       .then(() => {
         this.$store.state.expired = undefined;
         this.$store.state.user = undefined;
-        this.$store.state.socket = undefined;
         this.$store.dispatch("unauthenticate");
         router.push({ name: "App" });
       })
@@ -58,7 +58,8 @@ export default Vue.extend({
     }
   },
   mounted() {
-    this.$store.state.socket = io(`${ process.env.VUE_APP_SOCKET_URL }`);
+    this.$store.state.socket = io("http://localhost:3000");
+    console.log(this.$store.state.socket, "well created");
   }
 });
 </script>

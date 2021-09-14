@@ -1,11 +1,12 @@
 <template>
   <div id="body-chat">
       <div id="list_channels">
-        <button @click="open_popup_create()">+</button> 
+        <button @click="open_popup_create()">+</button>
         <div class="channel" v-for="(channel, index) in channels" :key="index" @click="select_channel(channel, index)">
           <span>{{ channel.name }} </span> 
           <span>{{ channel.status }} </span>
           <button v-if="channel.ownerId == $store.state.user.id" @click="open_params()">params</button>
+          <button v-if="channel.activeUserParticipant == true && channel.activeUserAuthorized == true" @click="leave_channel(channel)">leave</button>
         </div>
       </div>
       <template v-for="(channel, index) in channels">
@@ -103,10 +104,6 @@ export default Vue.extend({
   mounted() {
 
       this.refresh_channels();
-      /* socket io */
-      //this.$store.state.socket.emit("join_chats", this.$store.state.user);
-
-      /* */ 
   },
   methods: {
     refresh_channels() {
@@ -134,6 +131,7 @@ export default Vue.extend({
       {
         this.numberSelectedChannel = index;
         this.selectedChannel = channel;
+        this.$store.state.socket.emit('joinRoom', this.selectedChannel.name);
       }
       this.refresh_channels();
     },
@@ -236,6 +234,15 @@ export default Vue.extend({
         .catch(err => {
           console.log(err);
         });
+    },
+    leave_channel(channel: any) {
+      axios({
+        url: `${ process.env.VUE_APP_API_URL }/channel/leave/` + channel.id,
+        method: "patch",
+        withCredentials: true
+      }).then(res => {
+        this.refresh_channels();
+      });
     }
   }
 });

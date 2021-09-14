@@ -21,16 +21,17 @@
         </div>
       </template>
 
-      <div
+      <form
+        @submit.prevent="send_message()"
         class="buttons"
         v-if="(data.status == 'public' && isParticipant == true) ||  
               (isParticipant == true && data.activeUserBan == false
               && data.activeUserMute == false
               && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false
               && isCurrentlyBanMute(data.activeUserMuteEndDateTime) == false)">
-        <input class="message" type="text" placeholder="type your message here" />
+        <input class="message" type="text" placeholder="type your message here" v-model="messageTyping" />
         <input class="send" type="submit" value="send" />
-      </div>
+      </form>
       <div class="buttons" v-else>
         <template v-if="isParticipant == false">
           <input
@@ -72,7 +73,7 @@
         <template v-if="participant.userName == $store.state.user.name">
           <span :key="index" class="you">You</span>
         </template>
-        <template v-else>
+        <template v-else-if="participant.left != true">
           <div class="row-participant" :key="index">
             <span>{{participant.userName}}</span>
 
@@ -178,7 +179,8 @@ export default Vue.extend({
       idData: undefined as any,
       selectBanTime: undefined as any,
       selectMuteTime: undefined as any,
-      currentParticipantSelected: undefined as any
+      currentParticipantSelected: undefined as any,
+      messageTyping: undefined as any
     };
   },
   watch: {
@@ -199,6 +201,10 @@ export default Vue.extend({
   },
   mounted() {
     this.mounted_like();
+
+    this.$store.state.socket.on('chatToClient', (message: any) => {
+      this.refresh_messages();
+    });
   },
   methods: {
     mounted_like() {
@@ -215,6 +221,23 @@ export default Vue.extend({
 
       if (this.data.ownerId == this.$store.state.user.id) this.isOwner = true;
       else this.isOwner = false;
+    },
+    send_message() {
+      if (this.messageTyping != "")
+      {
+        const url = `${process.env.VUE_APP_API_URL}/message/create/` + this.data.id;
+        axios({
+          method: "post",
+          url: url,
+          withCredentials: true,
+          data: {
+            content: this.messageTyping
+          }
+        }).then(() => {
+          this.$store.state.socket.emit('chatToServer', {sender: this.$store.state.user.name, room:this.data.name, message: this.messageTyping});
+          this.messageTyping = "";
+        });
+        }
     },
     refresh_participants() {
       const url = `${process.env.VUE_APP_API_URL}/channel/` + this.data.id;

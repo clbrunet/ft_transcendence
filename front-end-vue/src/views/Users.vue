@@ -101,7 +101,9 @@
 /* eslint-disable */
 import Vue from "vue";
 import axios from "axios";
+import io from "socket.io-client"
 import router from "../router";
+
 export default Vue.extend({
   name: "Users",
   data() {
@@ -109,10 +111,17 @@ export default Vue.extend({
       users: {} as any,
       blocks: {} as any,
       friends: {} as any,
-      tab: [] as any
+      tab: [] as any,
+      socket: {} as any
     };
   },
   mounted() {
+    this.socket = io("http://localhost:3000");
+    this.socket.emit('message', {data: 'hello'});
+    this.socket.on('message', (data: any) => {
+      alert(data);
+    });
+
     this.get_users();
     this.get_blocks();
   },
