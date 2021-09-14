@@ -4,6 +4,10 @@ import { UserModule } from '../user/user.module';
 import { QueueModule } from '../queue/queue.module';
 import { GameModule } from '../game/game.module';
 import { PlayerModule } from '../player/player.module';
+import { ChannelModule } from '../channel/channel.module';
+import { ParticipantModule } from '../participant/participant.module';
+import { MessageModule } from '../message/message.module';
+
 
 import Duel from './duel.entity';
 import User from '../user/user.entity';
@@ -18,8 +22,11 @@ import { DuelController } from './duel.controller';
     TypeOrmModule.forFeature([Duel, User]),
     UserModule,
     QueueModule,
-	GameModule,
-	PlayerModule,
+  	GameModule,
+  	PlayerModule,
+    ChannelModule,
+    ParticipantModule,
+    MessageModule,
   ],
   controllers: [DuelController],
   providers: [DuelService],
