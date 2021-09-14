@@ -57,11 +57,6 @@ export class GameService {
     const player1 = await this.playerService.create(userId1, game.id);
     const player2 = await this.playerService.create(userId2, game.id);
 
-    let userUpdateDto = new UserUpdateDto();
-    userUpdateDto.status = 2;
-    await this.userService.update(userId1, userUpdateDto);
-    await this.userService.update(userId2, userUpdateDto);
-
     game = await this.gameRepo.findOne(game.id,
       {
         relations: ['players', 'players.user'],

@@ -8,9 +8,13 @@ import User from '../user/user.entity';
 import { DuelStatus } from './enum.duelStatus';
 
 import { UserService } from '../user/user.service';
+import { QueueService } from '../queue/queue.service';
+import { GameService } from '../game/game.service';
+import { PlayerService } from '../player/player.service';
 
 import { DuelDto } from './duel.dto';
 import { DuelUpdateDto } from './duel.dto';
+import { UserUpdateDto } from '../user/user.dto';
 
 
 @Injectable()
@@ -22,6 +26,9 @@ export class DuelService {
     private readonly userRepo: Repository<User>,
 
     private readonly userService: UserService,
+    private readonly queueService: QueueService,
+    private readonly gameService: GameService,
+    private readonly playerService: PlayerService,
   ) {}
 
   public async create(duelOwnerId: string, duelId: string) {
@@ -51,7 +58,7 @@ export class DuelService {
       }
       throw new HttpException('Something went wrong while creating a duel', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    let ret = [];
+    let ret: DuelDto[] = [];
     ret.push(this.duelToDto(res));
 
     let duelObject2 = new Duel();
@@ -71,7 +78,50 @@ export class DuelService {
     return ret;
   }
 
-  // Return all Duel Objects with all joined tables
+  public async go(userId: string, duelId: string) {
+    let duel1 = await this.findByOwnerAndDuel(userId, duelId);
+    let duel2 = await this.findByOwnerAndDuel(duelId, userId);
+    while (duel2 && duel2.status == 1) { 
+      duel2 = await this.duelRepo.findOne(duel2.id);
+    }
+    if (!duel2) {
+      return "Successfull unduel";
+    }
+    if (duel2.status == 3) {
+      return "Duel has been rejected";
+    }
+    if (duel2.status == 2) {
+      const duelOwner = await this.userService.findByIdLazy(userId);
+      const duel = await this.userService.findByIdLazy(duelId);
+      if (duelOwner.status == 0 || duel.status == 0) {
+        return "Duel cancelled since at least one of the User is offline";         
+      }
+      if (duelOwner.status == 2 || duel.status == 2) {
+        return "Duel cancelled since at least one of the User is already in-game";         
+      }
+      if (await this.queueService.inQueue(userId)) {
+        const duelOwner = await this.userService.findByIdQueuer(userId);
+        await this.queueService.delete(duelOwner.queuers[0].id);
+      }
+      if (await this.queueService.inQueue(duelId)) {
+        const duel = await this.userService.findByIdQueuer(duelId);
+        await this.queueService.delete(duel.queuers[0].id);
+      }
+      await this.gameService.matchById(userId, duelId, 5);
+      let players = await this.playerService.findByUserAmongPreparedGame(userId);
+      if (players.length === 1) {
+        let userUpdateDto = new UserUpdateDto();
+        userUpdateDto.status = 2;
+        await this.userService.update(userId, userUpdateDto);
+        await this.userService.update(duelId, userUpdateDto);
+        return this.gameService.gameToDto(players[0].game);
+      }
+      else {
+        throw new HttpException('More than one game in preparation for this user', HttpStatus.NOT_FOUND);
+      }
+    }
+  }
+
   public async findAll() {
     return await this.duelRepo.find(
       {
@@ -86,12 +136,10 @@ export class DuelService {
     );
   }
 
-  // Return all Duel Objects without any joined table
   public async findAllLazy() {
     return await this.duelRepo.find();
   }
 
-  // Return all Duel Dtos
   public async getAllActiveUser(userId: string) {
     const res = await this.userRepo.findOne(userId,
       {
@@ -106,7 +154,6 @@ export class DuelService {
     return dto;  
   }
 
-  // Return Duel Object with joined tables
   public async findById(id: string) {
     const duel = await this.duelRepo.findOne(id,
       {
@@ -125,7 +172,6 @@ export class DuelService {
     throw new HttpException('Duel with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Duel Object without any joined table
   public async findByIdLazy(id: string) {
     const duel = await this.duelRepo.findOne(id);
     if (duel) {
@@ -134,7 +180,6 @@ export class DuelService {
     throw new HttpException('Duel with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Duel Object with all joined tables
   public async findByOwnerAndDuel(duelOwnerId: string, duelId: string) {
     const duelOwner = await this.userService.findByIdLazy(duelOwnerId);
     const duel = await this.userService.findByIdLazy(duelId);
@@ -155,7 +200,6 @@ export class DuelService {
     throw new HttpException('Duel with this (duelOwnerId, duelId) does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Duel Object without any joined table
   public async findByOwnerAndDuelLazy(duelOwnerId: string, duelId: string) {
     const duelOwner = await this.userService.findByIdLazy(duelOwnerId);
     const duel = await this.userService.findByIdLazy(duelId);
@@ -166,7 +210,6 @@ export class DuelService {
     throw new HttpException('Duel with this (duelOwnerId, duelId) does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // Return Duel dto
   public async update(id: string, duelUpdateDto: DuelUpdateDto) {
     const res = await this.duelRepo.update(id, duelUpdateDto);
     if (res) {
@@ -174,31 +217,6 @@ export class DuelService {
       return this.duelToDto(duel);
     }
     throw new HttpException('Duel update failed', HttpStatus.NOT_FOUND);
-  }
-
-  public async updateStatus(userId: string, duelId: string, status: number) {
-    let duel = await this.findByOwnerAndDuelLazy(userId, duelId);
-    if (duel.status === 0) {
-      throw new HttpException('You have to wait for Duel to accept', HttpStatus.NOT_FOUND);
-    }
-    if (duel.status === 2) {
-      throw new HttpException('The request has already been accepted', HttpStatus.NOT_FOUND);
-    }
-    let duelUpdateDto = new DuelUpdateDto();
-    duelUpdateDto.status = status;
-    await this.update(duel.id, duelUpdateDto);
-    let res = await this.findById(duel.id);
-    let ret = [];
-    ret.push(this.duelToDto(res));
-
-    let duel2 = await this.findByOwnerAndDuelLazy(duelId, userId);
-    let duelUpdateDto2 = new DuelUpdateDto();
-    duelUpdateDto2.status = status;
-    await this.update(duel2.id, duelUpdateDto2);
-    let res2 = await this.findById(duel2.id);
-    ret.push(this.duelToDto(res2));
-
-    return ret;
   }
 
   public async delete(id: string) {
@@ -212,15 +230,70 @@ export class DuelService {
     return "Successfull Duel deletion";
   }
 
-  public async reject(userId: string, duelId: string) {
-    const duel = await this.findByOwnerAndDuel(userId, duelId);
-    if (duel.status == 0) {
-      throw new HttpException('User can not reject a Duel he has sent', HttpStatus.NOT_FOUND);      
+  public async accept(userId: string, duelId: string) {
+    const duel1 = await this.findByOwnerAndDuel(userId, duelId);
+    if (duel1.status == 0) {
+      throw new HttpException('User can not accept a Duel he has sent', HttpStatus.NOT_FOUND);      
+    }
+    if (duel1.status == 2) {
+      throw new HttpException('Duel has alreday been accepted', HttpStatus.NOT_FOUND);      
+    }
+    if (duel1.status == 3) {
+      throw new HttpException('Duel has alreday been rejected', HttpStatus.NOT_FOUND);      
     }
     const duel2 = await this.findByOwnerAndDuel(duelId, userId);
-    await this.delete(duel.id);
+
+    let duelUpdateDto = new DuelUpdateDto();
+    duelUpdateDto.status = 2;
+    await this.update(duel2.id, duelUpdateDto);
+    await this.update(duel1.id, duelUpdateDto);
+
+    let players = await this.playerService.findByUserAmongPreparedGame(userId);
+    let duel = await this.userService.findByIdLazy(duelId);
+    while (players.length < 1 && duel.status == 1) {
+      players = await this.playerService.findByUserAmongPreparedGame(userId);
+      duel = await this.userService.findByIdLazy(duelId);
+    }
+
+    await this.delete(duel1.id);
     await this.delete(duel2.id);
-    return "Successfull Duel rejection";
+
+    if (duel.status === 0) {
+      return "Duel cancelled since at least one of the User is offline";   
+    }
+    if (duel.status === 2) {
+      return "Duel cancelled since at least one of the User is already in-game"; 
+    }    
+    if (players.length === 1) {
+      return this.gameService.gameToDto(players[0].game);
+    }
+    else {
+      throw new HttpException('More than one game in preparation for this user', HttpStatus.NOT_FOUND);
+    }
+  }
+
+  public async reject(userId: string, duelId: string) {
+    const duel1 = await this.findByOwnerAndDuel(userId, duelId);
+    if (duel1.status == 0) {
+      throw new HttpException('User can not reject a Duel he has sent', HttpStatus.NOT_FOUND);      
+    }
+    if (duel1.status == 2) {
+      throw new HttpException('Duel has already been accepted', HttpStatus.NOT_FOUND);      
+    }
+    if (duel1.status == 3) {
+      throw new HttpException('Duel has already been rejected', HttpStatus.NOT_FOUND);      
+    }
+    const duel2 = await this.findByOwnerAndDuel(duelId, userId);
+
+    let duelUpdateDto = new DuelUpdateDto();
+    duelUpdateDto.status = 3;
+    await this.update(duel2.id, duelUpdateDto);
+    await this.update(duel1.id, duelUpdateDto);
+
+    await this.delete(duel1.id);
+    await this.delete(duel2.id);
+
+    return "Duel has been rejected";
   }
 
   public async unduel(userId: string, duelId: string) {
