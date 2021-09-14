@@ -27,7 +27,6 @@ import { registers } from './data';
 import { users } from './data';
 import { friends } from './data';
 import { blocks } from './data';
-import { duels } from './data';
 import { games } from './data';
 import { channels } from './data';
 import { participants } from './data';
@@ -130,21 +129,6 @@ export class SeedService {
       await this.blockService.create(blockOwner.id, blockAttribute.id);
     }
     console.log('Block seeding complete!');
-    return true;
-  }
-
-  async seedDuel() {
-    console.log('Seeding duels...');
-    for await (const duel of duels) {
-      let duelOwner = await this.userService.findByEmailLazy(duel.duelOwnerEmail);
-      let duelAttribute = await this.userService.findByEmailLazy(duel.duelEmail);
-      await this.duelService.create(duelOwner.id, duelAttribute.id);
-      const duelObject = await this.duelService.findByOwnerAndDuel(duelOwner.id, duelAttribute.id);
-      if (duel.status === 2) {
-        await this.duelService.updateStatus(duelObject.duel.id, duelObject.duelOwner.id, duel.status);
-      }
-    }
-    console.log('Duel seeding complete!');
     return true;
   }
 

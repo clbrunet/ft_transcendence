@@ -11,7 +11,6 @@ import Duel from '../duel/duel.entity';
 import Queue from '../queue/queue.entity';
 import Player from '../player/player.entity';
 
-
 @Entity()
 class User {
   @PrimaryGeneratedColumn('uuid')
@@ -35,7 +34,7 @@ class User {
   @Column({ default: false })
   public isTwoFactorAuthenticationEnabled: boolean;
 
-  @Column({ default: '../assets/default_avatar.png' })
+  @Column({ default: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' })
   public avatar: string;
 
   @Column({ default: 0 })

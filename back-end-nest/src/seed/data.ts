@@ -20,12 +20,12 @@ export const registers: RegisterDto[] = [
 ];
 
 export const users: UserSeedDto[] = [
-  { email: 'erwan@yopmail.com', avatar: '../assets/erwan.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'clement@yopmail.com', avatar: '../assets/clement.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'nicolas@yopmail.com', avatar: '../assets/nicolas.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'lucille@yopmail.com', avatar: '../assets/lucille.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'come@yopmail.com', avatar: '../assets/come.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'alban@yopmail.com', avatar: '../assets/alban.png', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'erwan@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'clement@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'nicolas@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'lucille@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'come@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'alban@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
 ];
 
 // friend.status can't equal to 1, you invert connectorEmail and friendEmail if needed
@@ -54,26 +54,6 @@ export const blocks: BlockSeedDto[] = [
   { blockOwnerEmail: 'nicolas@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
   { blockOwnerEmail: 'alban@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
   { blockOwnerEmail: 'lucille@yopmail.com', blockEmail: 'come@yopmail.com', status: 0},
-];
-
-// duel.status can't equal to 1, you invert connectorEmail and friendEmail if needed
-export const duels: DuelSeedDto[] = [
-  { duelOwnerEmail: 'erwan@yopmail.com', duelEmail: 'nicolas@yopmail.com', status: 2},
-  { duelOwnerEmail: 'erwan@yopmail.com', duelEmail: 'clement@yopmail.com', status: 2},
-  { duelOwnerEmail: 'erwan@yopmail.com', duelEmail: 'lucille@yopmail.com', status: 0},
-  { duelOwnerEmail: 'erwan@yopmail.com', duelEmail: 'alban@yopmail.com', status: 0},
-
-  { duelOwnerEmail: 'clement@yopmail.com', duelEmail: 'nicolas@yopmail.com', status: 2},
-  { duelOwnerEmail: 'clement@yopmail.com', duelEmail: 'lucille@yopmail.com', status: 0},
-  { duelOwnerEmail: 'clement@yopmail.com', duelEmail: 'alban@yopmail.com', status: 0},
-
-  { duelOwnerEmail: 'nicolas@yopmail.com', duelEmail: 'lucille@yopmail.com', status: 2},
-  { duelOwnerEmail: 'nicolas@yopmail.com', duelEmail: 'come@yopmail.com', status: 2},
-  { duelOwnerEmail: 'nicolas@yopmail.com', duelEmail: 'alban@yopmail.com', status: 2},
-
-  { duelOwnerEmail: 'come@yopmail.com', duelEmail: 'alban@yopmail.com', status: 2},
-  { duelOwnerEmail: 'come@yopmail.com', duelEmail: 'lucille@yopmail.com', status: 2},
-  { duelOwnerEmail: 'come@yopmail.com', duelEmail: 'erwan@yopmail.com', status: 0},
 ];
 
 export const games: GameSeedDto[] = [

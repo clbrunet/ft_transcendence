@@ -68,8 +68,7 @@ export class AuthenticationController {
     }
     let userUpdateDto = new UserUpdateDto();
     userUpdateDto.status = 1;
-    await this.userService.update(user.id, userUpdateDto);
-    return "successfull log-in";
+    return await this.userService.update(user.id, userUpdateDto);
   }
 
   @UseGuards(JwtTwoFactorGuard)

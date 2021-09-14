@@ -70,7 +70,7 @@ export default Vue.extend({
   data() {
     return {
       selectedFile: null,
-      user: undefined,
+      user: {},
       data: {},
       is_auth: false,
       loading: "",
@@ -190,14 +190,6 @@ export default Vue.extend({
       })
       this.is_turning_off = false;
     }
-    /*,
-      fileSelected(event) {
-      this.selectedFile = event.target.files[0];
-      const fd = new FormData();
-      fd.append('image', this.selectedFile, this.selectedFile.name);
-      console.log(fd);
-      console.log(this.selectedFile);
-      }*/
   }
 });
 </script>

@@ -23,10 +23,6 @@ async function bootstrap() {
           return resBlock;
         })
         .then((resBlock) => {
-          let resDuel = seedService.seedDuel();
-          return resDuel;
-        })
-        .then((resDuel) => {
           let resGame = seedService.seedGame();
           return resGame;
         })
