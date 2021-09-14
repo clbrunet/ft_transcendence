@@ -19,6 +19,7 @@ import { AppService } from './app.service';
 import { configService } from './config/config.service';
 
 import { AppController } from './app.controller';
+import { MulterModule } from '@nestjs/platform-express';
 
 
 let modified = configService.getTypeOrmConfig();
@@ -32,6 +33,7 @@ modified['port'] = process.env.POSTGRES_PORT;
         JWT_SECRET: Joi.string().required(),
       })
     }),
+    MulterModule.register({ dest: './avatars' }),
     AuthenticationModule,
     ChannelModule,
     ParticipantModule,

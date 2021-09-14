@@ -196,7 +196,7 @@ export default Vue.extend({
           password: this.createPassword
         }
       })
-      .then(res => {
+      .then(() => {
         this.close_popup_create();
         console.log("will refresh all");
         this.refresh_channels();

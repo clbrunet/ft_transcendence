@@ -1,14 +1,14 @@
 <template>
   <div id="body">
     <div id="left">
-      <img id="avatar" :src="getPath(user.avatar)" alt="avatar" />
+      <img id="avatar" :src="avatar_src" alt="avatar" />
       <template v-if="is_auth">
         <input
           type="file"
           accept="image/*"
           value="..."
           style="display:none;"
-          @change="fileSelected"
+          @change="fileSelected($event)"
           ref="fileInput"
         />
         <button id="btn-image" @click="$refs.fileInput.click()">...</button>
@@ -38,27 +38,47 @@ export default Vue.extend({
   props: ['id'],
   data() {
     return {
-      user: null,
-      is_auth: false
+      user: {
+        avatar: "",
+        id: "",
+      },
+      is_auth: false,
+      avatar_src: "",
     };
   },
   methods: {
-    getPath(avatar: any) {
-      avatar = avatar.substring(10);
-      return "/assets/" + avatar;
-    }
+    async fileSelected(event: any) {
+      let selectedFile = event.target.files[0];
+      const formData = new FormData();
+      formData.append('avatar', selectedFile);
+      await axios.post(`${ process.env.VUE_APP_API_URL }/user/avatar`, formData, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+      }).catch(() => {
+        console.log("err while updating avatar");
+        return;
+      });
+      this.avatar_src = process.env.VUE_APP_API_URL + "/user/avatar/" + this.user.id + "?" + new Date().valueOf();
+    },
   },
   mounted() {
-    console.log("this id = ", this.$props.id);
-    if (this.id == this.$store.state.user.id)
+    if (this.$route.params.id == this.$store.state.user.id) {
       this.is_auth = true;
-    axios({
-      url: `${ process.env.VUE_APP_API_URL }/user/` + this.$props.id,
-      method: "get",
-      withCredentials: true,
-    }).then(res => {
-      this.user = res.data;
-    });
+      this.user = this.$store.state.user;
+      this.avatar_src = this.user.avatar + "?" + new Date().valueOf();
+    }
+    else {
+      axios({
+        url: `${ process.env.VUE_APP_API_URL }/user/` + this.$route.params.id,
+        method: "get",
+        withCredentials: true,
+      }).then(res => {
+        this.user = res.data;
+        this.avatar_src = this.user.avatar + "?" + new Date().valueOf();
+      });
+    }
   }
 });
 </script>
