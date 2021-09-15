@@ -7,10 +7,12 @@
 
       <template>
         <div class="messages">
-          <p
-            v-for="(message, index) in messages"
-            :key="index"
-          >{{message.userName}}: {{message.content}}</p>
+          <p v-for="(message, index) in messages" :key="index">
+            {{message.userName}}: {{message.content}}
+          <template v-if="message.button == true">
+            <a @click="acceptDuel(message.userId, message.duelId)">accept</a> <a @click="rejectDuel(message.userId)">reject</a>
+          </template>
+          </p>
         </div>
       </template>
 
@@ -99,6 +101,7 @@ export default Vue.extend({
         url: url,
         withCredentials: true
       }).then(res => {
+        console.log("so tutu j'ia la data = ", res.data);
         this.messages = res.data.reverse();
       }).catch(() => {
         console.log("No permission so see some of messages");
@@ -113,6 +116,43 @@ export default Vue.extend({
       else
         var path = "/profile/" + user.participants[1].userId;
       router.push({ path: path });
+    },
+    acceptDuel(userId: string, duelId: string) {
+      console.log("duel accepteds");
+      axios({
+        url: `${ process.env.VUE_APP_API_URL }/duel/accept/` + userId,
+        method: "patch",
+        withCredentials: true
+      }).then(res => {
+        console.log("socket emit from direct message");
+        this.refresh_channel();
+        this.refresh_messages();
+        let newId;
+        if (this.data.participants[0].userId != this.$store.state.user.id)
+          newId = this.data.participants[0].userId;
+        else
+          newId = this.data.participants[1].userId;
+        this.$store.state.socket.emit('duelAccepted', {idRoom: this.data.id, id: newId, duelId: duelId})
+      }).catch(err => {
+        console.log("error")
+        console.log(err);
+      });
+    },
+    rejectDuel(userId: string) {
+      axios({
+        url: `${ process.env.VUE_APP_API_URL }/duel/reject/` + userId,
+        method: "patch",
+        withCredentials: true
+      }).then(res => {
+        this.refresh_channel();
+        this.refresh_messages();
+        let newId;
+        if (this.data.participants[0].userId != this.$store.state.user.id)
+          newId = this.data.participants[0].userId;
+        else
+          newId = this.data.participants[1].userId;
+        this.$store.state.socket.emit('duelDenied', {idRoom: this.data.id, id: newId})
+      });
     }
   }
 });
@@ -186,6 +226,15 @@ export default Vue.extend({
 
 .send {
   flex: 1;
+}
+
+a {
+  text-decoration:underline;
+  color:blue;
+}
+
+a:hover {
+  cursor:pointer;
 }
 
 </style>

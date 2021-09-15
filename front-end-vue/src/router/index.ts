@@ -77,6 +77,14 @@ const routes: Array<RouteConfig> = [
     meta: {
       requiresAuth: false
     }
+  },
+  {
+    path: '/duel/:id',
+    name: 'Duel',
+    component: () => import('../views/Duel.vue'),
+    meta: {
+      requiresAuth: false
+    }
   }
 ]
 

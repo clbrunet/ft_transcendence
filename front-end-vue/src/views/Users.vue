@@ -36,11 +36,15 @@
             <template v-else-if="friends">
               <td class="field btnBox">
                 <img
-                    src="/assets/duel.svg"
-                    alt="duel"
-                    style="width:30px;cursor:pointer;"
-                    @click="duel(user)"
+                  v-if="tabDuels[index] == 'none'"        
+                  src="/assets/duel.svg"
+                  alt="duel"
+                  style="width:30px;cursor:pointer;"
+                  @click="duel(user)"
                 />
+                <button v-else-if="tabDuels[index] == 'sent'" @click="unduel(user)">Unduel</button>
+                <span v-else-if="tabDuels[index] == 'received'">V X</span>
+                <span v-else>accepted ou jsp quoi</span>
               </td>
               <td class="field btnBox">
                 <img
@@ -114,18 +118,23 @@ export default Vue.extend({
       friends: {} as any,
       tab: [] as any,
       socket: {} as any,
-      tabBlocks: [] as any
+      tabBlocks: [] as any,
+      duels: undefined as any,
+      tabDuels: [] as any
     };
   },
   mounted() {
-    this.socket = io("http://localhost:3000");
-    this.socket.emit('message', {data: 'hello'});
-    this.socket.on('message', (data: any) => {
-      alert(data);
-    });
-
     this.get_users();
     this.get_blocks();
+    this.get_duels();
+
+    this.$store.state.socket.on('refreshDuels', (id: any) => {
+      console.log("arrivee ici");
+      if (this.$store.state.user.id == id)
+      {
+        this.get_duels();
+      }
+    });
   },
   methods: {
     get_users() {
@@ -163,6 +172,26 @@ export default Vue.extend({
         console.log(this.tabBlocks);
       });
     },
+    get_duels() {
+      axios({
+        url: `${process.env.VUE_APP_API_URL}/duel/index`,
+        method: "get",
+        withCredentials: true
+      }).then(res => {
+        this.duels = res.data;
+        this.tabDuels.length = 0;
+        for (let i = 0; i < this.users.length; i++) {
+          var flag = false;
+          for (let j = 0; j < this.duels.length; j++) {
+            if (this.users[i].id == this.duels[j].duelId) {
+              this.tabDuels.push(this.duels[j].status);
+              flag = true;
+            }
+          }
+          if (flag == false) this.tabDuels.push("none");
+        }
+      });
+    },
     get_friends() {
       axios({
         url: `${process.env.VUE_APP_API_URL}/friend/index`,
@@ -184,9 +213,60 @@ export default Vue.extend({
       });
     },
     duel(user: any) {
-      alert(
-        "you sent a duel to " + user.name + " as " + this.$store.state.user.name
-      );
+      const url = `${process.env.VUE_APP_API_URL}/duel/` + user.id;
+      axios({
+        url: url,
+        method: "post",
+        withCredentials: true
+      }).then(res => {
+        this.get_users();
+        this.get_duels();
+        axios({
+          url: `${process.env.VUE_APP_API_URL}/direct/go/` + user.id,
+          method: "get",
+          withCredentials: true
+        }).then(res => {
+          let newId;
+          if (res.data.participants[0].userId != this.$store.state.user.id)
+            newId = res.data.participants[0].userId;
+          else
+            newId = res.data.participants[1].userId;
+          this.$store.state.socket.emit('duelSent', {idRoom: res.data.id, id: newId});
+        
+          axios({
+            url: `${process.env.VUE_APP_API_URL}/duel/go/` + user.id,
+            method: "post",
+            withCredentials: true 
+          }).then(() => {
+            console.log("go of duel is good");
+          });
+        });
+      });
+    },
+    unduel(user: any) {
+      const url = `${process.env.VUE_APP_API_URL}/duel/unduel/` + user.id;
+      axios({
+        url: url,
+        method: "delete",
+        withCredentials: true
+      }).then(res => {
+        this.get_users();
+        this.get_duels();
+
+        axios({
+          url: `${process.env.VUE_APP_API_URL}/direct/go/` + user.id,
+          method: "get",
+          withCredentials: true
+        }).then(res => {
+          let newId;
+          if (res.data.participants[0].userId != this.$store.state.user.id)
+            newId = res.data.participants[0].userId;
+          else
+            newId = res.data.participants[1].userId;
+
+          this.$store.state.socket.emit('duelSent', {idRoom: res.data.id, id: newId})
+        });
+      });
     },
     add_friend(user: any) {
       const url = `${process.env.VUE_APP_API_URL}/friend/` + user.id;
@@ -258,7 +338,6 @@ export default Vue.extend({
       }).then(res => {
         this.$store.state.goDM = res.data;
         router.push({name: "Chats"});
-        console.log(res.data);
       });
     },
     goToProfile(user: any) {

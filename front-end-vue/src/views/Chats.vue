@@ -115,6 +115,13 @@ export default Vue.extend({
   mounted() {
     this.refresh_channels();
     this.refresh_dm();
+
+    this.$store.state.socket.on('refreshChannels', (id: any) => {
+      if (this.$store.state.user.id == id)
+      {
+        this.refresh_dm();
+      }
+    });
   },
   methods: {
     refresh_channels() {
@@ -285,7 +292,7 @@ export default Vue.extend({
       }).then(res => {
         this.refresh_channels();
       }).catch(() => {
-        alert('you can\'t leave owner');
+        alert("you can't leave as owner");
       })
     }
   }
