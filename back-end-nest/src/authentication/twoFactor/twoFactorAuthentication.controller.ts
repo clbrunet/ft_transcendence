@@ -42,6 +42,11 @@ export class TwoFactorAuthenticationController {
       throw new UnauthorizedException('Wrong authentication code');
     }
     await this.userService.turnOnTwoFactorAuthentication(request.user.id);
+    const accessTokenCookie = this.authenticationService.getCookieWithJwtAccessToken(request.user.id, true);
+    request.res.setHeader('Set-Cookie', [accessTokenCookie]);
+    let userUpdateDto = new UserUpdateDto();
+    userUpdateDto.status = 1;
+    return this.userService.update(request.user.id, userUpdateDto);
   }
 
   @Post('turn-off')

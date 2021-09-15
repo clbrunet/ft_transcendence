@@ -150,23 +150,8 @@ export default Vue.extend({
       })
       .then(() => {
         this.$store.state.user.isTwoFactorAuthenticationEnabled = true;
-        axios({
-          url: `${process.env.VUE_APP_API_URL}/2fa/authenticate/`,
-          method: "post",
-          data: {
-            twoFactorAuthenticationCode: this.turnOnCode
-          },
-          withCredentials: true
-        })
-        .then(() => {
           this.turnOnCode = "";
           this.showModal = false;
-        })
-        .catch(() => {
-          this.$store.state.expired =
-            "You turned it on, but your code has expired when trying to authenticate";
-          router.push({ name: "Auth" });
-        });
       })
       .catch(() => {
         this.errorQRCode = "Wrong code entered";

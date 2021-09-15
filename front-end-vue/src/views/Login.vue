@@ -68,11 +68,11 @@ export default Vue.extend({
         {
           this.$store.state.user = res.data;
           this.$store.dispatch('authenticate');
-          router.push({ name: "Profile" });
+          return router.push({ name: "Profile" });
         }
         else
         {
-          router.push({ name: "Auth" });
+          return router.push({ name: "Auth" });
         }
       }
       catch (error: unknown) {

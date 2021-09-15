@@ -78,7 +78,7 @@ const routes: Array<RouteConfig> = [
     name: 'Auth',
     component: () => import('../views/Auth.vue'),
     meta: {
-      requiresAuth: false
+      hideForAuth: true
     }
   },
   {
