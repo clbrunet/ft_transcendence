@@ -15,6 +15,8 @@ import { GameModule } from './game/game.module';
 import * as Joi from 'joi';
 
 import { ChatGateway } from './chat.gateway';
+import { DuelGateway } from './duel.gateway';
+import { PonggameGateway } from './ponggame.gateway';
 import { AppService } from './app.service';
 import { configService } from './config/config.service';
 
@@ -47,6 +49,6 @@ modified['port'] = process.env.POSTGRES_PORT;
     GameModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService, ChatGateway, DuelGateway, PonggameGateway],
 })
 export class AppModule { }
