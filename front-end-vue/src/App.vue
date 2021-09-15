@@ -12,7 +12,7 @@
         <router-link to="/register">Register</router-link>
       </template>
     </div>
-    <router-view />
+    <router-view v-bind:key="$route.fullPath"/>
   </div>
 </template>
 
