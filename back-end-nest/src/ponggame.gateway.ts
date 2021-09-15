@@ -1,9 +1,6 @@
 import { WebSocketGateway, SubscribeMessage, WebSocketServer } from "@nestjs/websockets"
 import { Socket } from "socket.io"
 
-
-
-
 @WebSocketGateway({cors: true})
 export class PonggameGateway {
     public players = [];
@@ -14,9 +11,9 @@ export class PonggameGateway {
     public RECT_HEIGHT = 60;
     
     public canvas = {
-        width: 1280,
-        height: 720
-    };
+        width: 1280 as any,
+        height: 720 as any
+    } as any;
     
     public player_left: any = {
         x: 30 as any,
