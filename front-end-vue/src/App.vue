@@ -49,7 +49,7 @@ export default Vue.extend({
         this.$store.state.goDM = undefined;
         this.$store.dispatch("unauthenticate");
         router.push({ name: "App" });
-      })
+      });
       this.is_disconnecting = false;
     }
   },
@@ -60,6 +60,11 @@ export default Vue.extend({
   },
   mounted() {
     this.$store.state.socket = io("http://localhost:3000");
+
+    this.$store.state.socket.on('duelIsAccepted', (data: any) => {
+      const path = "/duel/" + data.duelId;
+      router.push({path: path});
+    });
   }
 });
 </script>
