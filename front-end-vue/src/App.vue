@@ -59,7 +59,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    this.$store.state.socket = io("http://localhost:3000");
+    this.$store.state.socket = io(process.env.VUE_APP_API_URL);
 
     this.$store.state.socket.on('duelIsAccepted', (data: any) => {
       const path = "/duel/" + data.duelId;
