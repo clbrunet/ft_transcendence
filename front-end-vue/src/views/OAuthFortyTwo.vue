@@ -1,5 +1,6 @@
 <template>
-  <div class="OAuthFortyTwo">
+  <div id="body" class="OAuthFortyTwo">
+    <h1>Signing in...</h1>
   </div>
 </template>
 
@@ -32,3 +33,23 @@ export default Vue.extend({
 });
 
 </script>
+
+<style scoped>
+
+#body {
+  width: 100%;
+  height: 92vh;
+  display:flex;
+  justify-content: center;
+  align-items:center;
+  background-color: rgb(250, 99, 137);
+}
+
+h1 {
+  font-weight: normal;
+  color: #3040F0;
+  transform: translateY(-8vh);
+}
+
+
+</style>
