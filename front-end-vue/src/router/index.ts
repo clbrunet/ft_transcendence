@@ -44,7 +44,10 @@ const routes: Array<RouteConfig> = [
   {
     path: '/oauth-forty-two',
     name: 'OAuthFortyTwo',
-    component: () => import('../views/OAuthFortyTwo.vue')
+    component: () => import('../views/OAuthFortyTwo.vue'),
+    meta: {
+      hideForAuth: true
+    }
   },
   {
     path: '/register',
@@ -75,7 +78,7 @@ const routes: Array<RouteConfig> = [
     name: 'Auth',
     component: () => import('../views/Auth.vue'),
     meta: {
-      requiresAuth: false
+      hideForAuth: true
     }
   },
   {
@@ -97,50 +100,22 @@ const router = new VueRouter({
 /* guards du routeur pour contrôler les routes */
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some((record) => record.meta.requiresAuth))
-  {
-    if (store.state.is_auth == true)
-      next();
-    axios({
-      method: "get",
-      url: `${ process.env.VUE_APP_API_URL }/authentication`,
-      withCredentials: true
-    }).then(res => {
+  axios.get(process.env.VUE_APP_API_URL + "/authentication", { withCredentials: true })
+    .then(res => {
       store.state.is_auth = true;
       store.state.user = res.data;
-      next();
-      return ;
-    }).catch(() => {
-      next('/login');
-    });
-  }
-  else
-  {
-    next();
-  }
-
-  if (store.state.is_auth == true)
-    next();
-
-    axios({
-      method: "get",
-      url: `${ process.env.VUE_APP_API_URL }/authentication`,
-      withCredentials: true
-    }).then(res => {
-      if (to.matched.some((record) => record.meta.hideForAuth))
-      {
-        store.state.is_auth = true;
-        store.state.user = res.data;
-        next('/profile');
-        return ;
+      if (to.matched.some((record) => record.meta.hideForAuth)) {
+        return next('/profile');
       }
-      else
-      {
-        next();
+    })
+    .catch(() => {
+      store.state.is_auth = false;
+      store.state.user = {};
+      if (to.matched.some((record) => record.meta.requiresAuth)) {
+        return next('/login');
       }
-    }).catch(() => {
-      next();
     });
+  return next();
 });
 
 export default router

@@ -1,15 +1,6 @@
 <template >
   <div id="body">
-    <template v-if="!$store.state.expired">
-      <button v-bind:disabled="is_generating" @click="generate">Generate</button>
-      <span v-if="loading != '' && QRCodeSRC == ''">{{ loading }}</span>
-      <img v-if="QRCodeSRC != ''" :src="QRCodeSRC" alt="qr" />
-    </template>
-    <template v-else>
-      <h1> {{ $store.state.expired }} </h1>
-    </template>
-
-    <form v-if="$store.state.expired || QRCodeSRC != ''" @submit.prevent="login">
+    <form @submit.prevent="login">
       <input type="text" v-model="loginCode" placeholder="Enter you double authentication code here">
       <input v-bind:disabled="is_logging_in" type="submit" value="Log-in">
     </form>
@@ -27,31 +18,15 @@ export default Vue.extend({
   name: "Auth",
   data() {
     return {
-      loading: "",
-      QRCodeSRC: "",
       loginCode: "",
       errorCode: "",
-      is_generating: false,
       is_logging_in: false,
     };
   },
   methods: {
-    async generate() {
-      this.is_generating = true;
-      this.loading = "Loading...";
-      const response = await fetch(
-        `${process.env.VUE_APP_API_URL}/2fa/generate`,
-        {
-          method: "POST",
-          credentials: "include"
-        }
-      );
-      this.QRCodeSRC = URL.createObjectURL(await response.blob());
-      this.is_generating = false;
-    },
     login() {
-      this.errorCode = "";
       this.is_logging_in = true;
+      this.errorCode = "";
       axios({
         url: `${ process.env.VUE_APP_API_URL }/2fa/authenticate/`,
         method: "post",
@@ -67,8 +42,8 @@ export default Vue.extend({
         }
         router.push({name: 'Profile'});
       }).catch(() => {
-        this.is_logging_in = false;
         this.errorCode = "Wrong code.";
+        this.is_logging_in = false;
       })
     }
   }

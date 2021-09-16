@@ -44,7 +44,6 @@ export default Vue.extend({
         withCredentials: true
       })
       .then(() => {
-        this.$store.state.expired = undefined;
         this.$store.state.user = undefined;
         this.$store.state.goDM = undefined;
         this.$store.state.duelId = undefined;

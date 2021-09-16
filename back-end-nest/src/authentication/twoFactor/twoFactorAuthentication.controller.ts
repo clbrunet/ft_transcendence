@@ -8,6 +8,7 @@ import { AuthenticationService } from '../authentication.service';
 import { UserService } from '../../user/user.service';
 
 import { JwtAuthenticationGuard } from '../jwtAuthentication.guard';
+import JwtTwoFactorGuard from './jwtTwoFactor.guard';
 
 import { TwoFactorAuthenticationCodeDto } from './twoFactorAuthenticationCode.dto';
 import { UserUpdateDto } from '../../user/user.dto';
@@ -23,7 +24,7 @@ export class TwoFactorAuthenticationController {
   ) {}
 
   @Post('generate')
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async register(@Res() response: Response, @Req() request: RequestWithUser) {
     const { otpauthUrl } = await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(request.user);
 
@@ -42,11 +43,16 @@ export class TwoFactorAuthenticationController {
       throw new UnauthorizedException('Wrong authentication code');
     }
     await this.userService.turnOnTwoFactorAuthentication(request.user.id);
+    const accessTokenCookie = this.authenticationService.getCookieWithJwtAccessToken(request.user.id, true);
+    request.res.setHeader('Set-Cookie', [accessTokenCookie]);
+    let userUpdateDto = new UserUpdateDto();
+    userUpdateDto.status = 1;
+    return this.userService.update(request.user.id, userUpdateDto);
   }
 
   @Post('turn-off')
   @HttpCode(200)
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async turnOffTwoFactorAuthentication(@Req() request: RequestWithUser) {
 
     await this.userService.turnOffTwoFactorAuthentication(request.user.id);
