@@ -47,6 +47,7 @@ export default Vue.extend({
         this.$store.state.expired = undefined;
         this.$store.state.user = undefined;
         this.$store.state.goDM = undefined;
+        this.$store.state.duelId = undefined;
         this.$store.dispatch("unauthenticate");
         router.push({ name: "App" });
       });
@@ -63,6 +64,7 @@ export default Vue.extend({
 
     this.$store.state.socket.on('duelIsAccepted', (data: any) => {
       const path = "/duel/" + data.duelId;
+      this.$store.state.duelId = data.duelId;
       router.push({path: path});
     });
   }

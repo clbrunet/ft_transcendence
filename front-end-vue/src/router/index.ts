@@ -94,7 +94,6 @@ const router = new VueRouter({
   routes
 })
 
-
 /* guards du routeur pour contrôler les routes */
 
 router.beforeEach((to, from, next) => {
