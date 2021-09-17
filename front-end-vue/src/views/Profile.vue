@@ -15,7 +15,7 @@
           </template>
 
           <template v-if="$store.state.user.isTwoFactorAuthenticationEnabled == false">
-            <input v-if="QRCodeSRC != ''" type="text" v-model="turnOnCode" placeholder="??????" />
+            <input v-if="QRCodeSRC != ''" type="text" required v-model="turnOnCode" placeholder="??????" />
             <button v-if="QRCodeSRC != ''" v-bind:disabled="is_turning_on" class="btn" @click="turnOn">Enable</button>
           </template>
           <template v-else>

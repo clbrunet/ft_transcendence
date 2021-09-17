@@ -3,7 +3,7 @@
     <div class="verification">
       <h1>Verify your identity</h1>
       <form @submit.prevent="login">
-        <input type="text" v-model="loginCode" placeholder="Verification code">
+        <input type="text" required v-model="loginCode" placeholder="Verification code">
         <input v-bind:disabled="is_logging_in" type="submit" value="Log-in">
       </form>
       <span class="error" v-if="errorCode"> {{ errorCode }} </span>

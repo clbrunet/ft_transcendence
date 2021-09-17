@@ -2,8 +2,8 @@
   <div id="body">
     <div class="pongGame">
       <form @submit.prevent="submit_login">
-        <input type="email" placeholder="your email" v-model="email">
-        <input type="password" placeholder="your password" v-model="password">
+        <input type="email" required placeholder="your email" v-model="email">
+        <input type="password" required placeholder="your password" v-model="password">
         <input v-bind:disabled="is_logging_in" type="submit" value="Log-in">
         <p class="error" v-for="(message, index) in messages" :key="index"> {{ message }} </p>
         <p class="notRegistered"> Not <a @click="goToRegister()">registered</a> yet ?</p>
@@ -144,8 +144,7 @@ export default Vue.extend({
 form {
   z-index: 200;
   position:absolute;
-  width: 60%;
-  left:20%;
+  width: 80%;
   height:50%;
   top: 15%;
   display:flex;
@@ -161,7 +160,8 @@ input {
   outline:none;
   border-radius:8px;
   padding: 15px;
-  margin:15px;
+  margin:0;
+  margin-top: 25px;
 }
 
 input[type=submit] {
@@ -191,12 +191,14 @@ input[type=submit]:hover {
 
 .notRegistered {
   color:white;
+  margin:0;
+  margin-top: 25px;
 }
 
 .api42 {
   z-index: 200;
   position:absolute;
-  top: 70%;
+  top: 75%;
 }
 
 .api42-button {
@@ -224,6 +226,8 @@ input[type=submit]:hover {
 
 .error {
   color:red;
+  margin:0;
+  margin-top: 25px;
 }
 
 a{
