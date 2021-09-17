@@ -1,6 +1,6 @@
 <template>
     <div>
-      <p>Bienvenue sur le duel {{duelid}}</p>
+      <p>{{duelid}}</p>
       <h1>Vous pouvez jouer avec flèche du haut / bas</h1>
       <canvas
         v-if="!game_won"
@@ -12,8 +12,14 @@
       >
       </canvas>
       <h2 v-if="!game_won">Points : {{ left_point }} : {{ right_point }}</h2>
-      <h2 v-else>The winner is the player on the {{ winner }}</h2>
+      <div v-else>
+        <div>
+          <span v-if="(side == 'left' && winner == 'left') || (side == 'right' && winner == 'right')">Vous avez gagné !</span>
+          <span v-else>Vous avez perdu</span>
+          <button @click="goToProfile()">Retour</button>
+        </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -21,6 +27,7 @@
 import Vue from 'vue'
 import router from '../router'
 import Store from '../store'
+import axios from 'axios'
 
 export default Vue.extend({
     name: 'Duel',
@@ -28,10 +35,12 @@ export default Vue.extend({
     data() {
         return {
             duelid: undefined as any,
+            gameid: undefined as any,
             game_won: false as any,
             left_point: undefined as any,
             right_point: undefined as any,
             winner: undefined as any,
+            side: undefined as any,
             player_size: {
               width: 0 as any,
               height: 0 as any,
@@ -49,17 +58,47 @@ export default Vue.extend({
     },
     created() {
         window.addEventListener("keydown", (e) => {
-        this.$store.state.socket.emit("move", e.key);
+          console.log("event listener");
+        this.$store.state.socket.emit("move", {key:e.key, idDuel:this.duelid});
       });
     },
     mounted() {
-        if (this.$route.params.id) {
+        if (this.$route.params.id && (this.$store.state.gameid || this.$store.state.gameid2)) {
             this.duelid = this.$route.params.id;
         }
         else {
             router.push({name: 'Profile'})
         }
-        this.$store.state.socket.emit('connection', this.duelid);
+
+        this.$store.state.duelId = this.duelid; //a retirer avant de push
+
+        let duelLaunch1 = false;
+        let duelLaunch2 = false;
+
+        if (this.$store.state.gameid)
+          this.gameid = this.$store.state.gameid;
+        else
+          this.gameid = this.$store.state.gameid2;
+        this.$store.state.socket.emit('connection', {idDuel: this.duelid, validate: this.$store.state.duelId == this.duelid});
+
+        if (this.$store.state.gameid)
+        {
+          axios({
+            url: process.env.VUE_APP_API_URL + "/game/launch1/" + this.gameid,
+            method: "post",
+            withCredentials: true,
+            data: {
+              pointToVictory: 20
+            }
+            }).then(res => {
+              duelLaunch1 = true;
+            }).catch(err => {
+              console.log("error gamelaunch1")
+          });
+        }
+
+
+
 
         this.$store.state.socket.on("data", (data: any) => {
             this.canvas.width = data.canvas.width;
@@ -104,22 +143,43 @@ export default Vue.extend({
         this.drawPlayers(this.position[0], this.position[1]);
       });
   
-      this.$store.state.socket.on("update_point", (points: any) => {
-        this.left_point = points.left;
-        this.right_point = points.right;
-        if (this.left_point >= 99999 || this.right_point >= 99999) {
-          this.game_won = true;
-          this.$store.state.socket.emit("game_won");
-          if (this.left_point >= 3) this.winner = "left";
-          else this.winner = "right";
-        }
+      this.$store.state.socket.on("youAre", (side: any) => {
+        this.$store.state.side = side;
+        this.side = side;
       });
-      this.$store.state.socket.on("right_point", () => {
-        this.right_point++;
-        if (this.right_point >= 3) {
+
+      
+
+      this.$store.state.socket.on("update_point", (data: any) => {
+        this.left_point = data.points.left;
+        this.right_point = data.points.right;
+
+
+        if (this.gameid && ((data.id == 'left' && this.side == 'left') || (data.id == 'right' && this.side == 'right')))
+        {
+          const url = `${process.env.VUE_APP_API_URL}/game/score/` + this.gameid; //ID DU USER PLUTOT ?
+          axios({
+            method: "patch",
+            url: url,
+            withCredentials: true,
+            data: {
+              pointToVictory: 20
+            }
+          }).then(() => {
+            console.log("ok score");
+          }).catch(err => {
+            console.log(err);
+          });
+        }
+
+        if (this.left_point >= 20 || this.right_point >= 20) {
           this.game_won = true;
+          this.$store.state.gameid = undefined;
+          this.$store.state.side = undefined;
+          this.$store.state.gameid2 = undefined;
           this.$store.state.socket.emit("game_won");
-          this.winner = "right";
+          if (this.left_point >= 20) this.winner = "left";
+          else this.winner = "right";
         }
       });
     },
@@ -156,6 +216,9 @@ export default Vue.extend({
         this.context.stroke();
         this.context.fillStyle = "#fff";
         this.context.fill();
+      },
+      goToProfile() {
+        router.push({name: 'Profile'});
       }
     }
 })

@@ -29,7 +29,7 @@
     <Banner v-if="user" :id="user.id" />
     <div id="bottom">
       <div id="left">
-        <MenuFriends :id="user.id" />
+        <MenuFriends v-if="render" :id="user.id" />
         <MenuBlocks v-if="is_auth" />
       </div>
       <div id="middle">
@@ -37,7 +37,7 @@
       </div>
       <div id="right">
         <MenuMatchesHistory />
-        <MenuDuels v-if="is_auth" />
+        <!--<MenuDuels v-if="is_auth" />-->
       </div>
     </div>
   </div>
@@ -82,6 +82,7 @@ export default Vue.extend({
       is_turning_on: false,
       turnOffCode: "",
       is_turning_off: false,
+      render: false as any,
     };
   },
   mounted() {
@@ -93,6 +94,7 @@ export default Vue.extend({
     } else {
       this.user = this.$store.state.user;
       this.is_auth = true;
+      this.render = true;
     }
   },
   methods: {

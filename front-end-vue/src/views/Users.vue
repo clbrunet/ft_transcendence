@@ -33,17 +33,30 @@
               </td>
               <td v-else class="field">Blocked</td>
             </template>
-            <template v-else-if="friends">
+            <template v-else-if="friends && tabDuels">
               <td class="field btnBox">
                 <img
-                  v-if="tabDuels[index] == 'none'"        
+                  v-if="tabDuels[index].status == 'none'"        
                   src="/assets/duel.svg"
                   alt="duel"
                   style="width:30px;cursor:pointer;"
                   @click="duel(user)"
                 />
-                <button v-else-if="tabDuels[index] == 'sent'" @click="unduel(user)">Unduel</button>
-                <span v-else-if="tabDuels[index] == 'received'">V X</span>
+                <button v-else-if="tabDuels[index].status == 'sent'" @click="unduel(user)">Unduel</button>
+                <template v-else-if="tabDuels[index].status == 'received'">
+                    <img
+                      src="/assets/accept-button.svg"
+                      alt="accept-button"
+                      style="width:20px;cursor:pointer;margin-right:5px;"
+                      @click="accept_duel(user, tabDuels[index].id)"
+                    />
+                    <img
+                      src="/assets/deny-button.svg"
+                      alt="deny-button"
+                      style="width:20px;cursor:pointer;margin-left:5px;"
+                      @click="deny_duel(user)"
+                    />
+                </template>
                 <span v-else>accepted ou jsp quoi</span>
               </td>
               <td class="field btnBox">
@@ -120,7 +133,7 @@ export default Vue.extend({
       socket: {} as any,
       tabBlocks: [] as any,
       duels: undefined as any,
-      tabDuels: [] as any
+      tabDuels: undefined as any
     };
   },
   mounted() {
@@ -128,8 +141,9 @@ export default Vue.extend({
     this.get_blocks();
     this.get_duels();
 
+
+
     this.$store.state.socket.on('refreshDuels', (id: any) => {
-      console.log("arrivee ici");
       if (this.$store.state.user.id == id)
       {
         this.get_duels();
@@ -169,7 +183,6 @@ export default Vue.extend({
           }
           if (flag == false) this.tabBlocks.push("none");
         }
-        console.log(this.tabBlocks);
       });
     },
     get_duels() {
@@ -179,16 +192,23 @@ export default Vue.extend({
         withCredentials: true
       }).then(res => {
         this.duels = res.data;
-        this.tabDuels.length = 0;
+        if (this.tabDuels != undefined)
+        {
+          this.tabDuels.length = 0;
+        }
+        else
+        {
+          this.tabDuels = [];
+        }
         for (let i = 0; i < this.users.length; i++) {
           var flag = false;
           for (let j = 0; j < this.duels.length; j++) {
             if (this.users[i].id == this.duels[j].duelId) {
-              this.tabDuels.push(this.duels[j].status);
+              this.tabDuels.push({status:this.duels[j].status, id: this.duels[j].id});
               flag = true;
             }
           }
-          if (flag == false) this.tabDuels.push("none");
+          if (flag == false) this.tabDuels.push({status: "none"});
         }
       });
     },
@@ -232,13 +252,15 @@ export default Vue.extend({
           else
             newId = res.data.participants[1].userId;
           this.$store.state.socket.emit('duelSent', {idRoom: res.data.id, id: newId});
+          this.$store.state.socket.emit('duelDenied', {idRoom: "room", id: user.id})
+
         
           axios({
             url: `${process.env.VUE_APP_API_URL}/duel/go/` + user.id,
             method: "post",
             withCredentials: true 
-          }).then(() => {
-            console.log("go of duel is good");
+          }).then((res) => {
+            this.$store.state.gameid = res.data.id;
           });
         });
       });
@@ -264,6 +286,7 @@ export default Vue.extend({
           else
             newId = res.data.participants[1].userId;
 
+          this.$store.state.socket.emit('duelDenied', {idRoom: "room", id: user.id})
           this.$store.state.socket.emit('duelSent', {idRoom: res.data.id, id: newId})
         });
       });
@@ -343,6 +366,41 @@ export default Vue.extend({
     goToProfile(user: any) {
       const path = "/profile/" + user.id;
       router.push({ path: path });
+    },
+    accept_duel(user: any, duelId: any) {
+      axios({
+        url: `${ process.env.VUE_APP_API_URL }/duel/accept/` + user.id,
+        method: "patch",
+        withCredentials: true
+      }).then(res => {
+        if (res.data == 'Duel cancelled since at least one of the User is offline')
+        {
+          this.$store.state.socket.emit('duelDenied', {idRoom: 'room', id: user.id})
+          alert(res.data);
+        }
+        else
+        {
+          this.get_duels();
+          this.$store.state.gameid2 = res.data.id;
+          this.$store.state.socket.emit('duelAccepted', {idRoom: "room", id: user.id, duelId: duelId})
+        }
+        this.get_duels();
+      }).catch(err => {
+        console.log(err);
+      });
+    },
+    deny_duel(user: any) {
+      axios({
+        url: `${ process.env.VUE_APP_API_URL }/duel/reject/` + user.id,
+        method: "patch",
+        withCredentials: true
+      }).then(res => {
+        console.log("***", res.data);
+        this.get_duels();
+        this.$store.state.socket.emit('duelDenied', {idRoom: "room", id: user.id})
+      }).catch(err => {
+        console.log(err);
+      })
     }
   }
 });

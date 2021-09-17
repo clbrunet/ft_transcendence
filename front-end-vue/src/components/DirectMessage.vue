@@ -4,12 +4,11 @@
       <div class="title">
         <span> direct message with {{data.name}}</span>
       </div>
-
       <template>
         <div class="messages">
           <p v-for="(message, index) in messages" :key="index">
             {{message.userName}}: {{message.content}}
-          <template v-if="message.button == true">
+          <template v-if="message.button == true && message.userId != $store.state.user.id">
             <a @click="acceptDuel(message.userId, message.duelId)">accept</a> <a @click="rejectDuel(message.userId)">reject</a>
           </template>
           </p>
@@ -44,6 +43,7 @@ import router from "../router";
 export default Vue.extend({
   name: "DirectMessage",
   props: ["data"],
+  store: store,
   data() {
     return {
       channel: undefined as any,
@@ -101,8 +101,8 @@ export default Vue.extend({
         url: url,
         withCredentials: true
       }).then(res => {
-        console.log("so tutu j'ia la data = ", res.data);
         this.messages = res.data.reverse();
+        console.log("this.messages = ", this.messages);
       }).catch(() => {
         console.log("No permission so see some of messages");
       });
@@ -124,15 +124,28 @@ export default Vue.extend({
         method: "patch",
         withCredentials: true
       }).then(res => {
-        console.log("socket emit from direct message");
-        this.refresh_channel();
-        this.refresh_messages();
-        let newId;
-        if (this.data.participants[0].userId != this.$store.state.user.id)
-          newId = this.data.participants[0].userId;
+        if (res.data == 'Duel cancelled since at least one of the User is offline')
+        {
+          let newId;
+          if (this.data.participants[0].userId != this.$store.state.user.id)
+            newId = this.data.participants[0].userId;
+          else
+            newId = this.data.participants[1].userId;
+          this.$store.state.socket.emit('duelDenied', {idRoom: this.data.id, id: newId})
+          alert(res.data);
+        }
         else
-          newId = this.data.participants[1].userId;
-        this.$store.state.socket.emit('duelAccepted', {idRoom: this.data.id, id: newId, duelId: duelId})
+        {
+          this.refresh_channel();
+          this.refresh_messages();
+          this.$store.state.gameid2 = res.data.id;
+          let newId;
+          if (this.data.participants[0].userId != this.$store.state.user.id)
+            newId = this.data.participants[0].userId;
+          else
+            newId = this.data.participants[1].userId;
+          this.$store.state.socket.emit('duelAccepted', {idRoom: this.data.id, id: newId, duelId: duelId})
+        }
       }).catch(err => {
         console.log("error")
         console.log(err);

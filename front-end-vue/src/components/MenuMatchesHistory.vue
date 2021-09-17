@@ -5,64 +5,15 @@
     </div>
     <div id="table">
       <table>
-        <tr class="row">
-          <!--<tr class="row" v-for="(block, index) in blocks" class="row" :key="index">-->
+        <tr class="row" v-for="(match, index) in matchesHistory" :key="index">
           <td>
-            <span>Match 1</span>
+            <span>WIP</span>
           </td>
           <td>
-            <span>Win</span>
+            <span>WIP</span>
           </td>
           <td>
-            <span>3-0</span>
-          </td>
-        </tr>
-                <tr class="row">
-          <!--<tr v-for="(block, index) in blocks" class="row" :key="index">-->
-          <td>
-            <span>Match 1</span>
-          </td>
-          <td>
-            <span>Win</span>
-          </td>
-          <td>
-            <span>3-0</span>
-          </td>
-        </tr>
-                <tr class="row">
-          <!--<tr v-for="(block, index) in blocks" class="row" :key="index">-->
-          <td>
-            <span>Match 1</span>
-          </td>
-          <td>
-            <span>Win</span>
-          </td>
-          <td>
-            <span>3-0</span>
-          </td>
-        </tr>
-                        <tr class="row">
-          <!--<tr v-for="(block, index) in blocks" class="row" :key="index">-->
-          <td>
-            <span>Match 1</span>
-          </td>
-          <td>
-            <span>Win</span>
-          </td>
-          <td>
-            <span>3-0</span>
-          </td>
-        </tr>
-                        <tr class="row">
-          <!--<tr v-for="(block, index) in blocks" class="row" :key="index">-->
-          <td>
-            <span>Match 1</span>
-          </td>
-          <td>
-            <span>Win</span>
-          </td>
-          <td>
-            <span>3-0</span>
+            <span>{{matchesHistory}}</span>
           </td>
         </tr>
       </table>
@@ -77,10 +28,11 @@ export default Vue.extend({
   name: "MenuMatchesHistory",
   data() {
     return {
-      matchesHistory: null
+      matchesHistory: null,
     };
   },
   mounted() {
+    console.log("mounted matches history");
     axios({
       url: `${ process.env.VUE_APP_API_URL }/block/index`,
       method: "get",
