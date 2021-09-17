@@ -253,8 +253,6 @@ export default Vue.extend({
             newId = res.data.participants[1].userId;
           this.$store.state.socket.emit('duelSent', {idRoom: res.data.id, id: newId});
           this.$store.state.socket.emit('duelDenied', {idRoom: "room", id: user.id})
-
-        
           axios({
             url: `${process.env.VUE_APP_API_URL}/duel/go/` + user.id,
             method: "post",
@@ -377,6 +375,7 @@ export default Vue.extend({
         {
           this.$store.state.socket.emit('duelDenied', {idRoom: 'room', id: user.id})
           alert(res.data);
+          this.get_duels();
         }
         else
         {

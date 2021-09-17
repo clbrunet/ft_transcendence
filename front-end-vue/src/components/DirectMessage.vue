@@ -27,7 +27,7 @@
         <span> You</span>
           <div class="row-participant">
             <span class="clickable" @click="goToProfile(data)"> {{data.name}}</span>
-            <button @click="duelFriend()">Duel (wip) </button>
+            <button v-if="pendingDuel == false" @click="duelFriend()">Duel</button>
           </div>
     </div>
   </div>
@@ -48,7 +48,8 @@ export default Vue.extend({
     return {
       channel: undefined as any,
       messages: undefined as any,
-      messageTyping: undefined as any
+      messageTyping: undefined as any,
+      pendingDuel: false as any
     };
   },
   watch: {
@@ -61,6 +62,12 @@ export default Vue.extend({
 
     this.$store.state.socket.on('chatToDm', (message: any) => {
       this.refresh_messages();
+    });
+
+    this.$store.state.socket.on('refreshDuels', (id: any) => {
+      console.log("get refresh duels");
+      if (this.$store.state.user.id == id)
+        this.refresh_messages();
     });
   },
   methods: {
@@ -101,14 +108,41 @@ export default Vue.extend({
         url: url,
         withCredentials: true
       }).then(res => {
+        this.pendingDuel = false;
         this.messages = res.data.reverse();
+        for (let i = 0; i < this.messages.length; i++) {
+          if (this.messages[i].button == true)
+            this.pendingDuel = true;
+        }
         console.log("this.messages = ", this.messages);
       }).catch(() => {
         console.log("No permission so see some of messages");
       });
     },
     duelFriend() {
-        alert('you sent a duel');
+      let newId: any;
+      if (this.data.participants[0].userId != this.$store.state.user.id)
+        newId = this.data.participants[0].userId;
+      else
+        newId = this.data.participants[1].userId;
+
+      const url = `${process.env.VUE_APP_API_URL}/duel/` + newId;
+      axios({
+        url: url,
+        method: "post",
+        withCredentials: true
+      }).then(res => {
+      this.refresh_messages();
+        this.$store.state.socket.emit('dmToServer', {sender: "sender", room:this.data.id, message: "message"});
+        this.$store.state.socket.emit('duelDenied', {idRoom: "room", id: newId}); //just a refresh
+        axios({
+          url: `${process.env.VUE_APP_API_URL}/duel/go/` + newId,
+          method: "post",
+          withCredentials: true 
+        }).then((res) => {
+          this.$store.state.gameid = res.data.id;
+        });
+      });
     },
     goToProfile(user: any) {
       if (user.participants[0].userId != this.$store.state.user.id)
@@ -133,6 +167,7 @@ export default Vue.extend({
             newId = this.data.participants[1].userId;
           this.$store.state.socket.emit('duelDenied', {idRoom: this.data.id, id: newId})
           alert(res.data);
+          this.refresh_messages();
         }
         else
         {
@@ -157,6 +192,7 @@ export default Vue.extend({
         method: "patch",
         withCredentials: true
       }).then(res => {
+        this.pendingDuel = false;
         this.refresh_channel();
         this.refresh_messages();
         let newId;
