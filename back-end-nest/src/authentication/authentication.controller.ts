@@ -90,6 +90,7 @@ export class AuthenticationController {
   @Get()
   async authenticate(@Req() request: RequestWithUser) {
     const {user} = request;
+    request.res.setHeader('Cache-Control', 'no-store');
     return await this.userService.getActiveUser(user.id);
   }
 
