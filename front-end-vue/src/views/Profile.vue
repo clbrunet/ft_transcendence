@@ -26,18 +26,20 @@
         </div>
       </transition>
     </template>
-    <Banner v-if="user" :id="user.id" />
-    <div id="bottom">
-      <div id="left">
-        <MenuFriends v-if="render" :id="user.id" />
-        <MenuBlocks v-if="is_auth" />
-      </div>
-      <div id="middle">
-        <button id="play" v-if="is_auth">PLAY</button>
-      </div>
-      <div id="right">
-        <MenuMatchesHistory />
-        <!--<MenuDuels v-if="is_auth" />-->
+    <div class="content" v-bind:class="{ 'content-self': is_auth }">
+      <Banner v-if="user" :id="user.id" />
+      <div id="bottom">
+        <div id="left">
+          <MenuFriends v-if="render" :id="user.id" />
+          <MenuBlocks v-if="is_auth" />
+        </div>
+        <div id="middle">
+          <button id="play" v-if="is_auth">PLAY</button>
+        </div>
+        <div id="right">
+          <MenuMatchesHistory />
+          <!--<MenuDuels v-if="is_auth" />-->
+        </div>
       </div>
     </div>
   </div>
@@ -152,8 +154,8 @@ export default Vue.extend({
       })
       .then(() => {
         this.$store.state.user.isTwoFactorAuthenticationEnabled = true;
-          this.turnOnCode = "";
-          this.showModal = false;
+        this.turnOnCode = "";
+        this.showModal = false;
       })
       .catch(() => {
         this.errorQRCode = "Wrong code entered";
@@ -185,8 +187,7 @@ export default Vue.extend({
 /* AUTH */
 
 #settings {
-  margin-bottom: 1%;
-  margin-top: 2%;
+  margin: 20px;
 }
 
 input {
@@ -295,22 +296,28 @@ input {
 
 /* */
 
-
 .profile {
   display: flex;
   align-items: center;
   flex-direction: column;
-  height: 91.5vh;
-  height: 91vh;
+  height: 91.9vh;
   background-color: rgb(250, 99, 137);
-  width: 100%;
-
   position: relative;
-
-  justify-content: center;
+  width: 100%;
   align-items: center;
-
   overflow-x: hidden;
+}
+
+.content {
+  margin: auto;
+  width: 85%;
+  height: 85%;
+  max-width: 1000px;
+}
+
+.content-self {
+  margin: auto;
+  margin-top: 0;
 }
 
 /* new css */
@@ -338,7 +345,7 @@ input {
   border-bottom-left-radius: 25px;
   border-bottom-right-radius: 25px;
   height: 70%;
-  width: 65%;
+  width: 100%;
 }
 
 #left,

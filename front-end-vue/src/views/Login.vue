@@ -93,11 +93,10 @@ export default Vue.extend({
 
 #body {
   width: 100%;
-  height: 91.9vh;
+  height: 91vh;
   display:flex;
   align-items:center;
   justify-content: center;
-  background-color: rgb(250, 99, 137);
 }
 
 .ball {
@@ -131,10 +130,11 @@ export default Vue.extend({
 
 .pongGame {
   background-color:#3040F0;
-  width: 75vw;
-  height: 75vh;
+  width: 75%;
+  height: 75%;
   border: 21px solid white;
   position: relative;
+  margin: auto;
   display: flex;
   align-items:center;
   justify-content: center;

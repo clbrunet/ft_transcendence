@@ -1,6 +1,5 @@
 <template>
   <div id="body">
-    <div class="title"><h1>Users</h1></div>
     <table>
       <tr style="background-color:#aaa;">
         <td style="text-align:center;">Username</td>
@@ -407,16 +406,6 @@ export default Vue.extend({
 
 <style scoped>
 
-.title {
-  background-color:#3040F0;
-  padding: 3%;
-  width: 50vw;
-  color:white;
-  height:20px; 
-  border-top-right-radius: 25px;
-  border-top-left-radius: 25px;
-}
-
 h1 {
     margin:0;
     padding:0;
@@ -435,7 +424,7 @@ h1 {
   align-items: center;
   justify-content: center;
   background-color: rgb(250, 99, 137);
-  height: 91vh;
+  height: 100%;
   width: 100%;
   flex-direction: column;
 }
@@ -443,16 +432,18 @@ h1 {
 table {
   border: 1px solid #3040F0;
   background-color:white;
-  padding: 3%;
-    width: 50vw;
-  border-bottom-right-radius: 25px;
-  border-bottom-left-radius: 25px;
+  padding: 25px;
+  width: 80%;
+  height: 90%;
+  border-radius: 25px;
 }
 
 td {
   text-align: left;
+  max-width: 150px;
   margin: 0px;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 tr:nth-child(even) {
   color: white;

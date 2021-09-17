@@ -87,7 +87,7 @@ export default Vue.extend({
 #body {
   background-color: #3040F0;
   display: flex;
-  width: 65vw;
+  width: 100%;
   height: 30%;
   border-top-left-radius: 25px;
   border-top-right-radius: 25px;
@@ -133,11 +133,17 @@ export default Vue.extend({
 #bottom {
   height: 35%;
   width: 80%;
+  max-width: 800px;
   background-color: rgb(8, 19, 136);
   display: flex;
   justify-content: space-around;
   align-items: center;
   border-radius: 15px;
+}
+
+span {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* */

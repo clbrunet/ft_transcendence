@@ -77,6 +77,7 @@ export default Vue.extend({
   text-align: center;
   color: #2c3e50;
   height:100vh;
+  background-color: rgb(250, 99, 137);
 }
 
 #nav {
