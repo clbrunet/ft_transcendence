@@ -54,41 +54,46 @@ export default Vue.extend({
               { x: 0, y: 0 } as any,
               { x: 0, y: 0 } as any,
             ] as any,
+            nbPoints: undefined as any
         }
     },
     created() {
         window.addEventListener("keydown", (e) => {
-          console.log("event listener");
         this.$store.state.socket.emit("move", {key:e.key, idDuel:this.duelid});
       });
     },
     mounted() {
         if (this.$route.params.id && (this.$store.state.gameid || this.$store.state.gameid2)) {
             this.duelid = this.$route.params.id;
+
         }
         else {
             router.push({name: 'Profile'})
         }
+
+        if (this.$store.state.gameid)
+          this.gameid = this.$store.state.gameid;
+        else
+          this.gameid = this.$store.state.gameid2;
+
+
 
         this.$store.state.duelId = this.duelid; //a retirer avant de push
 
         let duelLaunch1 = false;
         let duelLaunch2 = false;
 
-        if (this.$store.state.gameid)
-          this.gameid = this.$store.state.gameid;
-        else
-          this.gameid = this.$store.state.gameid2;
         this.$store.state.socket.emit('connection', {idDuel: this.duelid, validate: this.$store.state.duelId == this.duelid});
 
         if (this.$store.state.gameid)
         {
+          this.nbPoints = this.$store.state.nbPoints;
           axios({
             url: process.env.VUE_APP_API_URL + "/game/launch1/" + this.gameid,
             method: "post",
             withCredentials: true,
             data: {
-              pointToVictory: 20
+              pointToVictory: this.nbPoints
             }
             }).then(res => {
               duelLaunch1 = true;
@@ -96,7 +101,6 @@ export default Vue.extend({
               console.log("error gamelaunch1")
           });
         }
-
 
 
 
@@ -148,40 +152,64 @@ export default Vue.extend({
         this.side = side;
       });
 
-      
+      var flagpassage = false;
 
       this.$store.state.socket.on("update_point", (data: any) => {
-        this.left_point = data.points.left;
-        this.right_point = data.points.right;
 
-
-        if (this.gameid && ((data.id == 'left' && this.side == 'left') || (data.id == 'right' && this.side == 'right')))
+        if (data.idDuel == this.duelid)
         {
-          const url = `${process.env.VUE_APP_API_URL}/game/score/` + this.gameid; //ID DU USER PLUTOT ?
-          axios({
-            method: "patch",
-            url: url,
-            withCredentials: true,
-            data: {
-              pointToVictory: 20
-            }
-          }).then(() => {
-            console.log("ok score");
-          }).catch(err => {
-            console.log(err);
-          });
-        }
 
-        if (this.left_point >= 20 || this.right_point >= 20) {
-          this.game_won = true;
-          this.$store.state.gameid = undefined;
-          this.$store.state.side = undefined;
-          this.$store.state.gameid2 = undefined;
-          this.$store.state.socket.emit("game_won");
-          if (this.left_point >= 20) this.winner = "left";
-          else this.winner = "right";
+          this.left_point = data.points.left;
+          this.right_point = data.points.right;
+
+          if (this.$store.state.gameid2 && flagpassage == false)
+          {
+            axios({
+              url: process.env.VUE_APP_API_URL + "/game/indexOngoing",
+              withCredentials: true,
+              method: "get"
+            }).then(res => {
+              for (let i = 0; i < res.data.length; i++) {
+                if (res.data[i].id == this.gameid)
+                {
+                  this.nbPoints = res.data[i].pointToVictory;
+                  flagpassage = true;
+                }
+              }
+            });
+          }
+
+          if (this.gameid && ((data.id == 'left' && this.side == 'left') || (data.id == 'right' && this.side == 'right')))
+          {
+            const url = `${process.env.VUE_APP_API_URL}/game/score/` + this.gameid; //ID DU USER PLUTOT ?
+            axios({
+              method: "patch",
+              url: url,
+              withCredentials: true,
+              data: {
+                pointToVictory: this.nbPoints
+              }
+            }).then(res => {
+              console.log("But !");
+            }).catch(err => {
+              console.log(err);
+            });
+          }
+
+          if (this.left_point >= this.nbPoints || this.right_point >= this.nbPoints) {
+            this.game_won = true;
+            this.$store.state.gameid = undefined;
+            this.$store.state.side = undefined;
+            this.$store.state.gameid2 = undefined;
+            
+            this.$store.state.socket.emit("game_won", this.duelid);
+            if (this.left_point >= this.nbPoints) this.winner = "left";
+            else this.winner = "right";
+          }
+
         }
       });
+
     },
     methods: {
       drawPlayers: function (player1: any, player2: any) {

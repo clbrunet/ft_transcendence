@@ -281,7 +281,7 @@ export default Vue.extend({
           this.close_params();
         })
         .catch(err => {
-          console.log(err);
+          console.log("");
         });
     },
     leave_channel(channel: any) {

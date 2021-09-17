@@ -28,6 +28,17 @@
           <div class="row-participant">
             <span class="clickable" @click="goToProfile(data)"> {{data.name}}</span>
             <button v-if="pendingDuel == false" @click="duelFriend()">Duel</button>
+              <form @submit.prevent="">
+              <span>Number of points</span>
+                <select v-model="nbPointsConfig">
+                  <option selected>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+                </select>
+              </form>
           </div>
     </div>
   </div>
@@ -49,7 +60,8 @@ export default Vue.extend({
       channel: undefined as any,
       messages: undefined as any,
       messageTyping: undefined as any,
-      pendingDuel: false as any
+      pendingDuel: false as any,
+      nbPointsConfig: 5 as any
     };
   },
   watch: {
@@ -65,7 +77,6 @@ export default Vue.extend({
     });
 
     this.$store.state.socket.on('refreshDuels', (id: any) => {
-      console.log("get refresh duels");
       if (this.$store.state.user.id == id)
         this.refresh_messages();
     });
@@ -114,7 +125,6 @@ export default Vue.extend({
           if (this.messages[i].button == true)
             this.pendingDuel = true;
         }
-        console.log("this.messages = ", this.messages);
       }).catch(() => {
         console.log("No permission so see some of messages");
       });
@@ -141,6 +151,7 @@ export default Vue.extend({
           withCredentials: true 
         }).then((res) => {
           this.$store.state.gameid = res.data.id;
+          this.$store.state.nbPoints = this.nbPointsConfig;
         });
       });
     },
@@ -152,7 +163,6 @@ export default Vue.extend({
       router.push({ path: path });
     },
     acceptDuel(userId: string, duelId: string) {
-      console.log("duel accepteds");
       axios({
         url: `${ process.env.VUE_APP_API_URL }/duel/accept/` + userId,
         method: "patch",
@@ -182,8 +192,7 @@ export default Vue.extend({
           this.$store.state.socket.emit('duelAccepted', {idRoom: this.data.id, id: newId, duelId: duelId})
         }
       }).catch(err => {
-        console.log("error")
-        console.log(err);
+        console.log("")
       });
     },
     rejectDuel(userId: string) {

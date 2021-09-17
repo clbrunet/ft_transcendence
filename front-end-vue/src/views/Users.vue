@@ -1,5 +1,16 @@
 <template>
   <div id="body">
+    <form @submit.prevent="">
+    <span>Number of points</span>
+      <select v-model="nbPointsConfig">
+        <option selected>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+      </select>
+    </form>
     <table>
       <tr style="background-color:#aaa;">
         <td style="text-align:center;">Username</td>
@@ -132,7 +143,8 @@ export default Vue.extend({
       socket: {} as any,
       tabBlocks: [] as any,
       duels: undefined as any,
-      tabDuels: undefined as any
+      tabDuels: undefined as any,
+      nbPointsConfig: 5 as any
     };
   },
   mounted() {
@@ -258,6 +270,7 @@ export default Vue.extend({
             withCredentials: true 
           }).then((res) => {
             this.$store.state.gameid = res.data.id;
+            this.$store.state.nbPoints = this.nbPointsConfig;
           });
         });
       });
@@ -424,7 +437,7 @@ h1 {
   align-items: center;
   justify-content: center;
   background-color: rgb(250, 99, 137);
-  height: 100%;
+  height: 91vh;
   width: 100%;
   flex-direction: column;
 }
@@ -433,8 +446,8 @@ table {
   border: 1px solid #3040F0;
   background-color:white;
   padding: 25px;
-  width: 80%;
-  height: 90%;
+  width: 70%;
+  height: 60%;
   border-radius: 25px;
 }
 

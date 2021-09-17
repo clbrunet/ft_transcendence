@@ -32,7 +32,6 @@ export default Vue.extend({
     };
   },
   mounted() {
-    console.log("mounted matches history");
     axios({
       url: `${ process.env.VUE_APP_API_URL }/block/index`,
       method: "get",

@@ -47,7 +47,6 @@ export default Vue.extend({
     };
   },
   mounted() {
-    console.log("this id = ", this.id);
     if (this.id == this.$store.state.user.id)
       this.is_auth = true;
     axios({
@@ -57,7 +56,7 @@ export default Vue.extend({
     }).then(res => {
       this.friends = res.data;
     }).catch(() => {
-      console.log("not implemented");
+      console.log("");
     });
   }
 });
