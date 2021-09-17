@@ -33,7 +33,7 @@ export class TwoFactorAuthenticationController {
 
   @Post('turn-on')
   @HttpCode(200)
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async turnOnTwoFactorAuthentication(
     @Req() request: RequestWithUser,
     @Body() { twoFactorAuthenticationCode } : TwoFactorAuthenticationCodeDto) {
