@@ -3,45 +3,20 @@ import { Socket } from "socket.io"
 
 @WebSocketGateway({cors: true})
 export class PonggameGateway {
-    public players = [];
-    public loop = 0 as any;
-    public NB_PLAYERS = 2 as any;
 
-    public RECT_WIDTH = 20;
-    public RECT_HEIGHT = 60;
-    
     public canvas = {
-        width: 1280 as any,
-        height: 720 as any
-    } as any;
-    
-    public player_left: any = {
-        x: 30 as any,
-        y: 200 as any
-    };
-    
-    public player_right: any = {
-        x: this.canvas.width - 30 as any,
-        y: 300 as any
-    };
-    
-    public points = {
-        left: 0,
-        right: 0
-    };
-    
-    public ball = {
-        x: 200,
-        y: 200,
-        radius: 50,
-        vx: 0.7,
-        vy: 0.7
-    };
+        width: 800 as any,
+        height: 400 as any
+    }
+
+    public rooms = [] as any;
+    public alldata = [] as any;
+
 
     @WebSocketServer()
     server;
 
-    edges(ball) {
+    edges(ball: any, idDuel: any) {
         if (ball.y > this.canvas.height - ball.radius) {
             ball.y = this.canvas.height - ball.radius;
             ball.vy *= -1;
@@ -54,30 +29,30 @@ export class PonggameGateway {
             ball.x = this.canvas.width / 2;
             ball.y = this.canvas.height / 2;
             ball.vx *= -1;
-            this.points.left++;
-            this.server.emit("update_point", this.points);
+            this.alldata[this.rooms.indexOf(idDuel)].points.left++;
+            this.server.to(idDuel).emit("update_point", {points:this.alldata[this.rooms.indexOf(idDuel)].points, id:"left"});
         }
         if (ball.x < 0 + ball.radius) {
             ball.x = this.canvas.width / 2;
             ball.y = this.canvas.height / 2;
             ball.vx *= -1;
-            this.points.right++;
-            this.server.emit("update_point", this.points);
+            this.alldata[this.rooms.indexOf(idDuel)].points.right++;
+            this.server.to(idDuel).emit("update_point", {points:this.alldata[this.rooms.indexOf(idDuel)].points, id:"right"});
         }
         let left = ball.x - ball.radius,
             right = ball.x + ball.radius,
             top = ball.y - ball.radius,
             bottom = ball.y + ball.radius;
     
-        let PLleft = this.player_left.x,
-            PLright = this.player_left.x + this.RECT_WIDTH,
-            PLtop = this.player_left.y,
-            PLbottom = this.player_left.y + this.RECT_HEIGHT;
+        let PLleft = this.alldata[this.rooms.indexOf(idDuel)].player_left.x,
+            PLright = this.alldata[this.rooms.indexOf(idDuel)].player_left.x + this.alldata[this.rooms.indexOf(idDuel)].RECT_WIDTH,
+            PLtop = this.alldata[this.rooms.indexOf(idDuel)].player_left.y,
+            PLbottom = this.alldata[this.rooms.indexOf(idDuel)].player_left.y + this.alldata[this.rooms.indexOf(idDuel)].RECT_HEIGHT;
     
-        let PRleft = this.player_right.x,
-            PRright = this.player_right.x + this.RECT_WIDTH,
-            PRtop = this.player_right.y,
-            PRbottom = this.player_right.y + this.RECT_HEIGHT;
+        let PRleft = this.alldata[this.rooms.indexOf(idDuel)].player_right.x,
+            PRright = this.alldata[this.rooms.indexOf(idDuel)].player_right.x + this.alldata[this.rooms.indexOf(idDuel)].RECT_WIDTH,
+            PRtop = this.alldata[this.rooms.indexOf(idDuel)].player_right.y,
+            PRbottom = this.alldata[this.rooms.indexOf(idDuel)].player_right.y + this.alldata[this.rooms.indexOf(idDuel)].RECT_HEIGHT;
     
         if (left < PLright && right > PLleft && top < PLbottom && bottom > PLtop) {
             ball.vx *= -1;
@@ -88,80 +63,134 @@ export class PonggameGateway {
         }
     }
 
-    update(ball) {
+    update(ball:any, idDuel: any) {
         ball.x += ball.vx;
         ball.y += ball.vy;
-        this.edges(ball);
+        this.edges(ball, idDuel);
     }
 
     @SubscribeMessage('connection')
-    connection(client:Socket, data: {idDuel: string}) {
-        this.players.push(client);
+    connection(client:Socket, data: {idDuel: string, validate: boolean}) {
+
+        console.log("connection recue");
+
+        client.join(data.idDuel);
+        if (this.rooms.includes(data.idDuel) == false)
+        {
+            this.rooms.push(data.idDuel);
+            this.alldata.push({
+                players: [],
+                loop: 0 as any,
+                RECT_WIDTH: 20,
+                RECT_HEIGHT: 60,
+                player_left: {
+                    x: 30 as any,
+                    y: 200 as any
+                },
+                player_right: {
+                    x: this.canvas.width - 30 as any,
+                    y: 300 as any
+                },
+                points: {
+                    left: 0,
+                    right: 0
+                },
+                ball: {
+                    x: 200,
+                    y: 200,
+                    radius: 50,
+                    vx: 0.7,
+                    vy: 0.7
+                },
+                NB_PLAYERS: 2,
+                indexInTab: -1
+            });
+        }
+
+        if (data.validate)
+        {
+            this.alldata[this.rooms.indexOf(data.idDuel)].players.push(client);
+            if (this.alldata[this.rooms.indexOf(data.idDuel)].indexInTab == 0)
+            {
+                let tmp = this.alldata[this.rooms.indexOf(data.idDuel)].players[1];
+                this.alldata[this.rooms.indexOf(data.idDuel)].players[1] = this.alldata[this.rooms.indexOf(data.idDuel)].players[0];
+                this.alldata[this.rooms.indexOf(data.idDuel)].players[0] = tmp;
+                this.alldata[this.rooms.indexOf(data.idDuel)].indexInTab = -1;
+            }
+        }
+        
+        //
 
         client.on("game_won", () => {
-            clearInterval(this.loop);
+            clearInterval(this.alldata[this.rooms.indexOf(data.idDuel)].loop);
         });
 
         client.emit("data", {
             canvas: this.canvas,
-            rect_width: this.RECT_WIDTH,
-            rect_height: this.RECT_HEIGHT
+            rect_width: this.alldata[this.rooms.indexOf(data.idDuel)].RECT_WIDTH,
+            rect_height: this.alldata[this.rooms.indexOf(data.idDuel)].RECT_HEIGHT
         });
 
-
-        if (this.players.length <= this.NB_PLAYERS) {
-            client.emit("position", [this.player_left, this.player_right]);
+        if (this.alldata[this.rooms.indexOf(data.idDuel)].players.length <= this.alldata[this.rooms.indexOf(data.idDuel)].NB_PLAYERS) {
+            client.emit("position", [this.alldata[this.rooms.indexOf(data.idDuel)].player_left, this.alldata[this.rooms.indexOf(data.idDuel)].player_right]);
         }
 
-        if (this.players.length == this.NB_PLAYERS) {
-            this.loop = setInterval(() => {
-                this.animate();
-            }, 3);
+        if (this.alldata[this.rooms.indexOf(data.idDuel)].players.length == this.alldata[this.rooms.indexOf(data.idDuel)].NB_PLAYERS) {
+            this.alldata[this.rooms.indexOf(data.idDuel)].players[0].emit('youAre', "left");
+            this.alldata[this.rooms.indexOf(data.idDuel)].players[1].emit('youAre', "right");
+            this.alldata[this.rooms.indexOf(data.idDuel)].loop = setInterval(() => {
+                this.animate(data.idDuel);
+            }, 1);
         }
-    }
 
-    handleDisconnect(client: Socket) {
-        console.log("* DISCONNECT * (game.ts)");
-        const index_player = this.players.indexOf(client);
+        client.on("disconnect", () => {
 
-        if (index_player != -1) {
-            let isplaying = 0;
+            const index_player = this.alldata[this.rooms.indexOf(data.idDuel)].players.indexOf(client);
+            client.leave(data.idDuel);
+            
 
-            if (index_player <= 1)
-                isplaying = 1;
-            this.players.splice(index_player, 1);
-            console.log("Nombre de joueurs = " + this.players.length);
-            if (this.players.length < this.NB_PLAYERS && this.loop != 0)
-                clearInterval(this.loop);
-        }
+            if (index_player != -1) {
+                let isplaying = 0;
+    
+                if (index_player <= 1)
+                    isplaying = 1;
+                this.alldata[this.rooms.indexOf(data.idDuel)].indexInTab = index_player;
+                this.alldata[this.rooms.indexOf(data.idDuel)].players.splice(index_player, 1);
+                }
+                if (this.alldata[this.rooms.indexOf(data.idDuel)].players.length < this.alldata[this.rooms.indexOf(data.idDuel)].NB_PLAYERS && this.alldata[this.rooms.indexOf(data.idDuel)].loop != 0)
+                    clearInterval(this.alldata[this.rooms.indexOf(data.idDuel)].loop);
+            });
     }
 
     @SubscribeMessage('move')
-    move(client:Socket, key: any) {
-        const index_player = this.players.indexOf(client);
-        const obj = [this.player_left, this.player_right];
+    move(client:Socket, data: {key: any, idDuel: any}) {
+        if (this.alldata[this.rooms.indexOf(data.idDuel)].players != undefined)
+        {
+            const index_player = this.alldata[this.rooms.indexOf(data.idDuel)].players.indexOf(client);
+            const obj = [this.alldata[this.rooms.indexOf(data.idDuel)].player_left, this.alldata[this.rooms.indexOf(data.idDuel)].player_right];
 
-        if (index_player != -1) {
-            switch (key) {
-                case "ArrowUp":
-                    obj[index_player].y -= 0.02 * this.canvas.height;
-                    if (obj[index_player].y < 0)
-                        obj[index_player].y = 0;
-                    this.server.emit("position", obj);
-                    break;
-                case "ArrowDown":
-                    obj[index_player].y += 0.02 * this.canvas.height;
-                    if (obj[index_player].y > this.canvas.height - this.RECT_HEIGHT)
-                        obj[index_player].y = this.canvas.height - this.RECT_HEIGHT;
-                        this.server.emit("position", obj);
-                    break;
+            if (index_player != -1) {
+                switch (data.key) {
+                    case "ArrowUp":
+                        obj[index_player].y -= 0.02 * this.canvas.height;
+                        if (obj[index_player].y < 0)
+                            obj[index_player].y = 0;
+                        this.server.to(data.idDuel).emit("position", obj);
+                        break;
+                    case "ArrowDown":
+                        obj[index_player].y += 0.02 * this.canvas.height;
+                        if (obj[index_player].y > this.canvas.height - this.alldata[this.rooms.indexOf(data.idDuel)].RECT_HEIGHT)
+                            obj[index_player].y = this.canvas.height - this.alldata[this.rooms.indexOf(data.idDuel)].RECT_HEIGHT;
+                            this.server.to(data.idDuel).emit("position", obj);
+                        break;
+                }
             }
         }
     }
 
-    animate() {
-        this.server.emit("ball_position", this.ball);
-        this.update(this.ball);
+    animate(idDuel: any) {
+        this.server.to(idDuel).emit("ball_position", this.alldata[this.rooms.indexOf(idDuel)].ball);
+        this.update(this.alldata[this.rooms.indexOf(idDuel)].ball, idDuel);
     }
 
 }
