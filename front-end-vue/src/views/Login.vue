@@ -8,8 +8,8 @@
         <p class="error" v-for="(message, index) in messages" :key="index"> {{ message }} </p>
         <p class="notRegistered"> Not <a @click="goToRegister()">registered</a> yet ?</p>
       </form>
-      <a v-bind:href="authorize_url_42">
-        <button class="api42">Sign in with 42</button>
+      <a class="api42" v-bind:href="authorize_url_42">
+        <button class="api42-button">Sign in with 42</button>
       </a>
       <div class="ball">
       </div>
@@ -93,7 +93,7 @@ export default Vue.extend({
 
 #body {
   width: 100%;
-  height: 91vh;
+  height: 91.9vh;
   display:flex;
   align-items:center;
   justify-content: center;
@@ -135,6 +135,10 @@ export default Vue.extend({
   height: 75vh;
   border: 21px solid white;
   position: relative;
+  display: flex;
+  align-items:center;
+  justify-content: center;
+
 }
 
 form {
@@ -143,7 +147,7 @@ form {
   width: 60%;
   left:20%;
   height:50%;
-  top: 25%;
+  top: 15%;
   display:flex;
   flex-direction: column;
   justify-content: space-around;
@@ -158,7 +162,6 @@ input {
   border-radius:8px;
   padding: 15px;
   margin:15px;
-  width: 40%;
 }
 
 input[type=submit] {
@@ -168,7 +171,6 @@ input[type=submit] {
   color:white;
   font-weight: 700;
   font-size:20px;
-  width: 20%;
 }
 
 input[type=submit]:hover {
@@ -192,6 +194,12 @@ input[type=submit]:hover {
 }
 
 .api42 {
+  z-index: 200;
+  position:absolute;
+  top: 70%;
+}
+
+.api42-button {
   cursor:pointer;
   background-color: #7583FF;
   border: 2px solid white;
@@ -204,7 +212,7 @@ input[type=submit]:hover {
   font-size:20px;
 }
 
-.api42:hover {
+.api42-button:hover {
   background-color: rgb(87, 104, 250);
 }
 
