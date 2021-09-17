@@ -97,7 +97,6 @@ export default Vue.extend({
   display:flex;
   align-items:center;
   justify-content: center;
-  background-color: rgb(250, 99, 137);
 }
 
 .ball {
