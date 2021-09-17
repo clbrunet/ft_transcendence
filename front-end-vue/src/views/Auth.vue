@@ -1,10 +1,13 @@
 <template >
   <div id="body">
-    <form @submit.prevent="login">
-      <input type="text" v-model="loginCode" placeholder="Enter you double authentication code here">
-      <input v-bind:disabled="is_logging_in" type="submit" value="Log-in">
-    </form>
-    <span class="error" v-if="errorCode"> {{ errorCode }} </span>
+    <div class="verification">
+      <h1>Verify your identity</h1>
+      <form @submit.prevent="login">
+        <input type="text" required v-model="loginCode" placeholder="Verification code">
+        <input v-bind:disabled="is_logging_in" type="submit" value="Log-in">
+      </form>
+      <span class="error" v-if="errorCode"> {{ errorCode }} </span>
+    </div>
   </div>
 </template>
 
@@ -52,15 +55,57 @@ export default Vue.extend({
 
 <style scoped>
 
-.error {
-  color:red;
-}
-
 #body {
+  width: 100%;
+  height: 92%;
+  background-color: rgb(250, 99, 137);
   display:flex;
   flex-direction: column;
   align-items:center;
-  width: 50%;
+  justify-content: center;
+}
+
+.verification {
+  transform: translateY(-8vh);
+}
+
+h1 {
+  font-weight: normal;
+  color: #3040F0;
+}
+
+form {
+  display:flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+input {
+  text-align: center;
+  font-size: 20px;
+  border:none;
+  outline:none;
+  border-radius:8px;
+  padding: 15px;
+  margin:15px;
+}
+
+input[type=submit] {
+  cursor:pointer;
+  background-color: #7583FF;
+  border: 2px solid white;
+  color:white;
+  font-weight: 700;
+  font-size:20px;
+}
+
+input[type=submit]:hover {
+  background-color: rgb(87, 104, 250);
+}
+
+.error {
+  color:white;
 }
 
 </style>

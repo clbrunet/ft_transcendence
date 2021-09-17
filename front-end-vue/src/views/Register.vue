@@ -2,16 +2,16 @@
   <div id="body">
     <div class="pongGame">
       <form @submit.prevent="submit_register">
-        <input type="email" placeholder="your email" v-model="email" />
-        <input type="text" placeholder="your name" v-model="name" />
-        <input type="password" placeholder="your password" v-model="password" />
-        <input type="password" placeholder="confirm your password" v-model="confirmPassword" />
+        <input type="email" required placeholder="your email" v-model="email" />
+        <input type="text" required placeholder="your name" v-model="name" />
+        <input type="password" required placeholder="your password" v-model="password" />
+        <input type="password" required placeholder="confirm your password" v-model="confirmPassword" />
         <input v-bind:disabled="is_registering" type="submit" value="Register"/>
-        <p class="error" v-for="(message, index) in messages" :key="index"> {{ message }} </p>
+        <p class="error"> {{ this.message }}</p>
         <p class="notLogin"> Already have an account ? <a @click="goToLogin()">login</a> now </p>
       </form>
-      <a v-bind:href="authorize_url_42">
-        <button class="api42">Sign in with 42</button>
+      <a class="api42" v-bind:href="authorize_url_42">
+        <button class="api42-button">Sign in with 42</button>
       </a>
       <div class="ball">
       </div>
@@ -47,7 +47,7 @@ export default Vue.extend({
       name: "",
       password: "",
       confirmPassword: "",
-      messages: [],
+      message: "",
       authorize_url_42: process.env.VUE_APP_AUTHORIZE_URL_42,
       is_registering: false,
     };
@@ -60,7 +60,7 @@ export default Vue.extend({
   methods: {
     async submit_register() {
       if (this.password != this.confirmPassword) {
-        this.messages = { message: "passwords do not match" };
+        this.message = "passwords do not match";
         return;
       }
       try {
@@ -72,7 +72,11 @@ export default Vue.extend({
         }, { withCrenditals: true });
       }
       catch (error) {
-        this.messages = Array.isArray(error.response.data.message) ? error.response.data.message : [error.response.data.message];
+        let messages = Array.isArray(error.response.data.message) ? error.response.data.message : [error.response.data.message];
+        this.message = "";
+        messages.forEach(message => {
+          this.message += message + "; ";
+        });
         this.is_registering = false;
         return;
       }
@@ -141,15 +145,17 @@ export default Vue.extend({
   height: 75vh;
   border: 21px solid white;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items:center;
 }
 
 form {
   z-index: 200;
   position:absolute;
-  width: 60%;
-  left:20%;
+  width: 90%;
   height:50%;
-  top: 25%;
+  top: 20%;
   display:flex;
   flex-direction: column;
   justify-content: space-around;
@@ -163,9 +169,8 @@ input {
   border:none;
   outline:none;
   border-radius:8px;
-  padding: 15px;
-  margin:15px;
-  width: 40%;
+  padding: 10px;
+  margin-top: 25px;
 }
 
 input[type=submit] {
@@ -175,7 +180,6 @@ input[type=submit] {
   color:white;
   font-weight: 700;
   font-size:20px;
-  width: 20%;
 }
 
 input[type=submit]:hover {
@@ -199,34 +203,37 @@ input[type=submit]:hover {
 }
 
 .api42 {
+  z-index: 200;
+  position:absolute;
+  top: 87%;
+}
+
+.api42-button {
   cursor:pointer;
   background-color: #7583FF;
   border: 2px solid white;
   color:white;
   outline:none;
   border-radius:8px;
-  padding: 15px;
-  margin:15px;
+  padding: 10px;
   font-weight: 700;
   font-size:20px;
 }
 
-.api42:hover {
+.api42-button:hover {
   background-color: rgb(87, 104, 250);
 }
 
 .error {
   color:red;
+  margin: 0;
+  margin-top: 15px;
 }
 
 a{
   text-decoration: underline;
   color:blue;
   cursor:pointer;
-}
-
-.api42:hover {
-  background-color: rgb(87, 104, 250);
 }
 
 .dot {

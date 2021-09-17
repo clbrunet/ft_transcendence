@@ -2,14 +2,14 @@
   <div id="body">
     <div class="pongGame">
       <form @submit.prevent="submit_login">
-        <input type="email" placeholder="your email" v-model="email">
-        <input type="password" placeholder="your password" v-model="password">
+        <input type="email" required placeholder="your email" v-model="email">
+        <input type="password" required placeholder="your password" v-model="password">
         <input v-bind:disabled="is_logging_in" type="submit" value="Log-in">
         <p class="error" v-for="(message, index) in messages" :key="index"> {{ message }} </p>
         <p class="notRegistered"> Not <a @click="goToRegister()">registered</a> yet ?</p>
       </form>
-      <a v-bind:href="authorize_url_42">
-        <button class="api42">Sign in with 42</button>
+      <a class="api42" v-bind:href="authorize_url_42">
+        <button class="api42-button">Sign in with 42</button>
       </a>
       <div class="ball">
       </div>
@@ -93,7 +93,7 @@ export default Vue.extend({
 
 #body {
   width: 100%;
-  height: 91vh;
+  height: 91.9vh;
   display:flex;
   align-items:center;
   justify-content: center;
@@ -135,15 +135,18 @@ export default Vue.extend({
   height: 75vh;
   border: 21px solid white;
   position: relative;
+  display: flex;
+  align-items:center;
+  justify-content: center;
+
 }
 
 form {
   z-index: 200;
   position:absolute;
-  width: 60%;
-  left:20%;
+  width: 80%;
   height:50%;
-  top: 25%;
+  top: 15%;
   display:flex;
   flex-direction: column;
   justify-content: space-around;
@@ -157,8 +160,8 @@ input {
   outline:none;
   border-radius:8px;
   padding: 15px;
-  margin:15px;
-  width: 40%;
+  margin:0;
+  margin-top: 25px;
 }
 
 input[type=submit] {
@@ -168,7 +171,6 @@ input[type=submit] {
   color:white;
   font-weight: 700;
   font-size:20px;
-  width: 20%;
 }
 
 input[type=submit]:hover {
@@ -189,9 +191,17 @@ input[type=submit]:hover {
 
 .notRegistered {
   color:white;
+  margin:0;
+  margin-top: 25px;
 }
 
 .api42 {
+  z-index: 200;
+  position:absolute;
+  top: 75%;
+}
+
+.api42-button {
   cursor:pointer;
   background-color: #7583FF;
   border: 2px solid white;
@@ -204,7 +214,7 @@ input[type=submit]:hover {
   font-size:20px;
 }
 
-.api42:hover {
+.api42-button:hover {
   background-color: rgb(87, 104, 250);
 }
 
@@ -216,6 +226,8 @@ input[type=submit]:hover {
 
 .error {
   color:red;
+  margin:0;
+  margin-top: 25px;
 }
 
 a{
