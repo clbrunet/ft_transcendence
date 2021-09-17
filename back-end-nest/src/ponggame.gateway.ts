@@ -30,14 +30,19 @@ export class PonggameGateway {
             ball.y = this.canvas.height / 2;
             ball.vx *= -1;
             this.alldata[this.rooms.indexOf(idDuel)].points.left++;
-            this.server.to(idDuel).emit("update_point", {points:this.alldata[this.rooms.indexOf(idDuel)].points, id:"left"});
+            this.alldata[this.rooms.indexOf(idDuel)].players[0].emit("update_point", {idDuel: idDuel, points:this.alldata[this.rooms.indexOf(idDuel)].points, id:"left"});
+            this.alldata[this.rooms.indexOf(idDuel)].players[1].emit("update_point", {idDuel: idDuel, points:this.alldata[this.rooms.indexOf(idDuel)].points, id:"left"});
+            //this.server.to(idDuel).emit("update_point", {points:this.alldata[this.rooms.indexOf(idDuel)].points, id:"left"});
         }
         if (ball.x < 0 + ball.radius) {
             ball.x = this.canvas.width / 2;
             ball.y = this.canvas.height / 2;
             ball.vx *= -1;
             this.alldata[this.rooms.indexOf(idDuel)].points.right++;
-            this.server.to(idDuel).emit("update_point", {points:this.alldata[this.rooms.indexOf(idDuel)].points, id:"right"});
+            this.alldata[this.rooms.indexOf(idDuel)].players[0].emit("update_point", {idDuel: idDuel, points:this.alldata[this.rooms.indexOf(idDuel)].points, id:"right"});
+            this.alldata[this.rooms.indexOf(idDuel)].players[1].emit("update_point", {idDuel: idDuel, points:this.alldata[this.rooms.indexOf(idDuel)].points, id:"right"});
+
+           // this.server.to(idDuel).emit("update_point", {points:this.alldata[this.rooms.indexOf(idDuel)].points, id:"right"});
         }
         let left = ball.x - ball.radius,
             right = ball.x + ball.radius,
@@ -72,9 +77,8 @@ export class PonggameGateway {
     @SubscribeMessage('connection')
     connection(client:Socket, data: {idDuel: string, validate: boolean}) {
 
-        console.log("connection recue");
-
         client.join(data.idDuel);
+
         if (this.rooms.includes(data.idDuel) == false)
         {
             this.rooms.push(data.idDuel);
@@ -107,7 +111,7 @@ export class PonggameGateway {
             });
         }
 
-        if (data.validate)
+        if (data.validate && this.alldata[this.rooms.indexOf(data.idDuel)].players.includes(client) == false)
         {
             this.alldata[this.rooms.indexOf(data.idDuel)].players.push(client);
             if (this.alldata[this.rooms.indexOf(data.idDuel)].indexInTab == 0)
@@ -118,11 +122,17 @@ export class PonggameGateway {
                 this.alldata[this.rooms.indexOf(data.idDuel)].indexInTab = -1;
             }
         }
-        
         //
 
-        client.on("game_won", () => {
-            clearInterval(this.alldata[this.rooms.indexOf(data.idDuel)].loop);
+        client.on("game_won", (idDuel: any) => {
+            client.leave(data.idDuel);
+            if (this.alldata[this.rooms.indexOf(data.idDuel)] != undefined)
+            {
+                clearInterval(this.alldata[this.rooms.indexOf(data.idDuel)].loop);
+                const index = this.rooms.indexOf(data.idDuel);
+                this.alldata.splice(index, 1);
+                this.rooms.splice(index, 1);
+            }
         });
 
         client.emit("data", {
@@ -164,7 +174,7 @@ export class PonggameGateway {
 
     @SubscribeMessage('move')
     move(client:Socket, data: {key: any, idDuel: any}) {
-        if (this.alldata[this.rooms.indexOf(data.idDuel)].players != undefined)
+        if (this.alldata[this.rooms.indexOf(data.idDuel)] != undefined)
         {
             const index_player = this.alldata[this.rooms.indexOf(data.idDuel)].players.indexOf(client);
             const obj = [this.alldata[this.rooms.indexOf(data.idDuel)].player_left, this.alldata[this.rooms.indexOf(data.idDuel)].player_right];

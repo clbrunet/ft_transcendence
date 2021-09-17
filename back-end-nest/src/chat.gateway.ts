@@ -18,7 +18,6 @@ export class ChatGateway {
 
     @SubscribeMessage('joinRoom')
     handleJoinRoom(client: Socket, room: string) {
-        console.log("id de la room joined = ", room);
         client.join(room);
         client.emit('joinedRoom', room);
     }

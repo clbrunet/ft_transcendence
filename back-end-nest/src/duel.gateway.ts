@@ -19,8 +19,6 @@ export class DuelGateway {
 
     @SubscribeMessage('duelAccepted')
     duelAccepted(client:Socket, data: {idRoom: string, id: string, duelId: string}) {
-        console.log("duel recu, go server emit");
         this.server.emit('duelIsAccepted', data);
     }
-
 }
