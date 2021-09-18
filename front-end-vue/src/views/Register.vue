@@ -2,10 +2,10 @@
   <div id="body">
     <div class="pongGame">
       <form @submit.prevent="submit_register">
-        <input type="email" required placeholder="your email" v-model="email" />
-        <input type="text" required placeholder="your name" v-model="name" />
-        <input type="password" required placeholder="your password" v-model="password" />
-        <input type="password" required placeholder="confirm your password" v-model="confirmPassword" />
+        <input type="email" required placeholder="Email" v-model="email" />
+        <input type="text" required placeholder="Name" v-model="name" />
+        <input type="password" required placeholder="Password" v-model="password" />
+        <input type="password" required placeholder="Confirm password" v-model="confirmPassword" />
         <input v-bind:disabled="is_registering" type="submit" value="Register"/>
         <p class="error"> {{ this.message }}</p>
         <p class="notLogin"> Already have an account ? <a @click="goToLogin()">login</a> now </p>
@@ -164,6 +164,7 @@ form {
 
 input {
   text-align: center;
+  max-width: 170px;
   background-color :white;
   font-size:20px;
   border:none;

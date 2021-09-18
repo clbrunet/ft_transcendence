@@ -135,4 +135,25 @@ export default Vue.extend({
   color: #3040F0;
 }
 
+@media (max-width: 360px) {
+  #nav a {
+    font-weight: bold;
+    font-size: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    color:white;
+  }
+
+  #nav a.router-link-exact-active {
+    margin:5px;
+    border-radius: 10px;
+  }
+  #btn-disconnect {
+    font-size: 15px;
+    border-radius: 10px;
+    margin: 0;
+  }
+}
+
+
 </style>
