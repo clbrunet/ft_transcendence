@@ -300,7 +300,7 @@ input {
   display: flex;
   align-items: center;
   flex-direction: column;
-  height: 91.9vh;
+  height: 91vh;
   background-color: rgb(250, 99, 137);
   position: relative;
   width: 100%;
@@ -326,8 +326,10 @@ input {
   background-color: red;
   border-radius: 25px;
   border: 3px solid black;
-  width: 42%;
-  height: 27%;
+  width: 100%;
+  max-width: 150px;
+  height: 100%;
+  max-height: 150px;
   font-size: 50px;
   outline: none;
   color: white;
@@ -354,17 +356,48 @@ input {
   flex-direction: column;
   justify-content: space-around;
   height: 100%;
-  width: 30%;
+  width: 35%;
   align-items: center;
 }
 
 #middle {
-  width: 40%;
+  width: 30%;
   height: 100%;
+  margin: auto;
   background-color: #ebebeb;
   display:flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-around;
+  align-content: space-around;
   align-items:center;
+}
+
+@media (max-width: 500px) {
+  #bottom {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 150%;
+  }
+
+  #middle {
+    order: -1;
+    width: 90%;
+    height: 20%;
+  }
+
+  #left, #right {
+    width: 90%;
+    height: 40%;
+    display: flex;
+    justify-content: center;
+  }
+
+  #play {
+    font-size: 40px;
+    height: 70%;
+    width: 70%;
+  }
 }
 
 /* */

@@ -146,5 +146,31 @@ span {
   text-overflow: ellipsis;
 }
 
+@media (max-width: 500px) {
+  #body {
+    background-color: #3040F0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 50%;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    color: white;
+  }
+
+  #avatar {
+    margin-top: 6px;
+  }
+
+  #btn-image {
+    position: absolute;
+    bottom: 5%;
+    right: 35%;
+    border-radius: 100%;
+    cursor: pointer;
+    outline: none;
+  }
+}
+
 /* */
 </style>
