@@ -1,7 +1,7 @@
 <template>
   <div id="body">
     <form @submit.prevent="">
-    <span>Number of points</span>
+      <span>Number of points</span>
       <select v-model="nbPointsConfig">
         <option selected>5</option>
         <option>6</option>
@@ -35,10 +35,10 @@
               <td class="field">Blocked</td>
               <td v-if="tabBlocks[index] == 'blocker'" class="field btnBox">
                 <img
-                    src="/assets/unblock.svg"
-                    alt="unblock"
-                    style="width:30px;cursor:pointer;"
-                    @click="unblock(user)"
+                  src="/assets/unblock.svg"
+                  alt="unblock"
+                  style="width:30px;cursor:pointer;"
+                  @click="unblock(user)"
                 />
               </td>
               <td v-else class="field">Blocked</td>
@@ -54,67 +54,67 @@
                 />
                 <button v-else-if="tabDuels[index].status == 'sent'" @click="unduel(user)">Unduel</button>
                 <template v-else-if="tabDuels[index].status == 'received'">
-                    <img
-                      src="/assets/accept-button.svg"
-                      alt="accept-button"
-                      style="width:20px;cursor:pointer;margin-right:5px;"
-                      @click="accept_duel(user, tabDuels[index].id)"
-                    />
-                    <img
-                      src="/assets/deny-button.svg"
-                      alt="deny-button"
-                      style="width:20px;cursor:pointer;margin-left:5px;"
-                      @click="deny_duel(user)"
-                    />
+                  <img
+                    src="/assets/accept-button.svg"
+                    alt="accept-button"
+                    style="width:20px;cursor:pointer;margin-right:5px;"
+                    @click="accept_duel(user, tabDuels[index].id)"
+                  />
+                  <img
+                    src="/assets/deny-button.svg"
+                    alt="deny-button"
+                    style="width:20px;cursor:pointer;margin-left:5px;"
+                    @click="deny_duel(user)"
+                  />
                 </template>
                 <span v-else>accepted ou jsp quoi</span>
               </td>
               <td class="field btnBox">
                 <img
-                    src="/assets/direct-message.svg"
-                    alt="send dm"
-                    style="width:30px;cursor:pointer;"
-                    @click="send_message(user)"
+                  src="/assets/direct-message.svg"
+                  alt="send dm"
+                  style="width:30px;cursor:pointer;"
+                  @click="send_message(user)"
                 />
               </td>
               <td class="field btnBox">
                 <template v-if="tab[index] == 'received'">
-                    <img
-                        src="/assets/accept-button.svg"
-                        alt="accept-button"
-                        style="width:20px;cursor:pointer;margin-right:5px;"
-                        @click="accept_friend_request(user)"
-                    />
-                    <img
-                        src="/assets/deny-button.svg"
-                        alt="deny-button"
-                        style="width:20px;cursor:pointer;margin-left:5px;"
-                        @click="deny_friend_request(user)"
-                    />
+                  <img
+                    src="/assets/accept-button.svg"
+                    alt="accept-button"
+                    style="width:20px;cursor:pointer;margin-right:5px;"
+                    @click="accept_friend_request(user)"
+                  />
+                  <img
+                    src="/assets/deny-button.svg"
+                    alt="deny-button"
+                    style="width:20px;cursor:pointer;margin-left:5px;"
+                    @click="deny_friend_request(user)"
+                  />
 
                 </template>
                 <span class="field" v-else-if="tab[index] == 'sent'">Sent</span>
                 <img
-                    v-else-if="tab[index] == 'accepted'"
-                    src="/assets/remove-friend.svg"
-                    alt="remove-friend"
-                    style="width:30px;cursor:pointer;"
-                    @click="remove_friend(user)"
+                  v-else-if="tab[index] == 'accepted'"
+                  src="/assets/remove-friend.svg"
+                  alt="remove-friend"
+                  style="width:30px;cursor:pointer;"
+                  @click="remove_friend(user)"
                 />
                 <img
-                    v-else
-                    src="/assets/add-friend.svg"
-                    alt="add-friend"
-                    style="width:30px;cursor:pointer;"
-                    @click="add_friend(user)"
+                  v-else
+                  src="/assets/add-friend.svg"
+                  alt="add-friend"
+                  style="width:30px;cursor:pointer;"
+                  @click="add_friend(user)"
                 />
               </td>
               <td class="field btnBox">
                 <img
-                    src="/assets/block.svg"
-                    alt="block"
-                    style="width:30px;cursor:pointer;"
-                    @click="block(user)"
+                  src="/assets/block.svg"
+                  alt="block"
+                  style="width:30px;cursor:pointer;"
+                  @click="block(user)"
                 />
               </td>
             </template>
@@ -252,10 +252,12 @@ export default Vue.extend({
           withCredentials: true
         }).then(res => {
           let newId;
-          if (res.data.participants[0].userId != this.$store.state.user.id)
+          if (res.data.participants[0].userId != this.$store.state.user.id) {
             newId = res.data.participants[0].userId;
-          else
+          }
+          else {
             newId = res.data.participants[1].userId;
+          }
           this.$store.state.socket.emit('duelSent', {idRoom: res.data.id, id: newId});
           this.$store.state.socket.emit('duelDenied', {idRoom: "room", id: user.id})
           axios({
@@ -285,11 +287,12 @@ export default Vue.extend({
           withCredentials: true
         }).then(res => {
           let newId;
-          if (res.data.participants[0].userId != this.$store.state.user.id)
+          if (res.data.participants[0].userId != this.$store.state.user.id) {
             newId = res.data.participants[0].userId;
-          else
+          }
+          else {
             newId = res.data.participants[1].userId;
-
+          }
           this.$store.state.socket.emit('duelDenied', {idRoom: "room", id: user.id})
           this.$store.state.socket.emit('duelSent', {idRoom: res.data.id, id: newId})
         });
@@ -414,8 +417,8 @@ export default Vue.extend({
 <style scoped>
 
 h1 {
-    margin:0;
-    padding:0;
+  margin:0;
+  padding:0;
 }
 
 .clickable {
@@ -439,14 +442,48 @@ h1 {
 table {
   border: 1px solid #3040F0;
   background-color:white;
+  align-self: center;
+  justify-self: center;
   padding: 25px;
-  width: 70%;
-  height: 60%;
-  border-radius: 25px;
+  width: auto;
+  max-width: 90%;
+  height: 70%;
+  border-radius: 15px;
+  overflow-y: scroll;
+  display: inline-block;
+  margin: 10px;
+}
+
+::-webkit-scrollbar {
+  background: #aaa;
+  width: 15px;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3040F0;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+::-webkit-scrollbar:horizontal {
+  background: #aaa;
+  border-radius: 0;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  background: #3040F0;
+  border-radius: 0;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
 }
 
 td {
   text-align: left;
+  min-width: 56px;
   max-width: 150px;
   margin: 0px;
   overflow: hidden;
