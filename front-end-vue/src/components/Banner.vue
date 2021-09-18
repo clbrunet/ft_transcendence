@@ -99,15 +99,16 @@ export default Vue.extend({
 #left {
   position: relative;
   flex: 2;
+  max-width: 20%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
 }
 
 #avatar {
   border-radius: 100%;
-  width: 142px;
-  height: 142px;
+  max-width: 90%;
+  max-height: 90%;
 }
 
 #btn-image {
@@ -123,6 +124,7 @@ export default Vue.extend({
 
 #right {
   flex: 8;
+  max-width: 80%;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -133,7 +135,7 @@ export default Vue.extend({
 #bottom {
   height: 35%;
   width: 80%;
-  max-width: 800px;
+  max-width: 80%;
   background-color: rgb(8, 19, 136);
   display: flex;
   justify-content: space-around;
@@ -144,6 +146,46 @@ export default Vue.extend({
 span {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@media (max-width: 500px) {
+  #body {
+    background-color: #3040F0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 50%;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    color: white;
+  }
+
+  #left {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  #right {
+    width: 100%;
+    max-width: 100%;
+    justify-content: space-around;
+  }
+
+  #avatar {
+    margin-top: 6px;
+    max-width: 120px;
+    max-height: 120px;
+  }
+
+  #btn-image {
+    position: absolute;
+    bottom: 5%;
+    right: 35%;
+    border-radius: 100%;
+    cursor: pointer;
+    outline: none;
+  }
 }
 
 /* */

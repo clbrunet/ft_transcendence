@@ -4,32 +4,32 @@
       <span>Friends</span>
     </div>
     <div id="table">
-    <table>
-      <template v-for="(friend, index) in friends">
-        <template v-if="friend.requestStatus == 'accepted'">
-          <tr class="row" :key="index">
-            <td>
-              <span>{{ friend.friendName }}</span>
-            </td>
-            <td v-if="is_auth">
-              <span>{{ friend.friendStatus }}</span>
-              <img
-                v-if="friend.friendStatus == 'offline'"
-                src="/assets/offline.svg"
-                alt="offline"
-                style="width:15px;margin-left:5px;"
-              />
-              <img
-                v-else-if="friend.friendStatus == 'online'"
-                src="/assets/online.svg"
-                alt="online"
-                style="width:15px;margin-left:5px;"
-              />
-            </td>
-          </tr>
+      <table>
+        <template v-for="(friend, index) in friends">
+          <template v-if="friend.requestStatus == 'accepted'">
+            <tr class="row" :key="index">
+              <td>
+                <span>{{ friend.friendName }}</span>
+              </td>
+              <td v-if="is_auth">
+                <span>{{ friend.friendStatus }}</span>
+                <img
+                  v-if="friend.friendStatus == 'offline'"
+                  src="/assets/offline.svg"
+                  alt="offline"
+                  style="width:15px;margin-left:5px;"
+                />
+                <img
+                  v-else-if="friend.friendStatus == 'online'"
+                  src="/assets/online.svg"
+                  alt="online"
+                  style="width:15px;margin-left:5px;"
+                />
+              </td>
+            </tr>
+          </template>
         </template>
-      </template>
-    </table>
+      </table>
     </div>
   </div>
 </template>
@@ -48,7 +48,7 @@ export default Vue.extend({
   },
   mounted() {
     if (this.id == this.$store.state.user.id)
-      this.is_auth = true;
+    this.is_auth = true;
     axios({
       url: `${ process.env.VUE_APP_API_URL }/friend/index`,
       method: "get",
@@ -67,9 +67,11 @@ export default Vue.extend({
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  align-content: center;
   border-radius: 15px;
   width: 80%;
-  max-height: 45%;
+  height: 30%;
   overflow-y: auto;
 }
 
@@ -77,6 +79,8 @@ export default Vue.extend({
   width: 100%;
   font-weight: bold;
   background-color: #3040F0;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 
 #title span {
@@ -86,8 +90,7 @@ export default Vue.extend({
 
 #table {
   overflow-y: auto;
-  height:100%;
-  width:100%;
+  width: 100%;
 }
 
 table {
@@ -125,4 +128,11 @@ table td {
   justify-content: center;
   width: 45%;
 }
+
+@media (max-width: 500px) {
+  #body {
+    height: 90%;
+  }
+}
+
 </style>

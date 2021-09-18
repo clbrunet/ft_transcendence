@@ -50,7 +50,7 @@ export default Vue.extend({
   align-items: center;
   border-radius: 15px;
   width: 80%;
-  max-height: 45%;
+  height: 60%;
 }
 
 #title {
@@ -109,5 +109,11 @@ table td {
   align-items: center;
   justify-content: center;
   width: 28%;
+}
+
+@media (max-width: 500px) {
+  #body {
+    height: 90%;
+  }
 }
 </style>

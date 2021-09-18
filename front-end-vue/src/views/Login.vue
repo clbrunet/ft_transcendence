@@ -2,8 +2,8 @@
   <div id="body">
     <div class="pongGame">
       <form @submit.prevent="submit_login">
-        <input type="email" required placeholder="your email" v-model="email">
-        <input type="password" required placeholder="your password" v-model="password">
+        <input type="email" required placeholder="Email" v-model="email">
+        <input type="password" required placeholder="Password" v-model="password">
         <input v-bind:disabled="is_logging_in" type="submit" value="Log-in">
         <p class="error" v-for="(message, index) in messages" :key="index"> {{ message }} </p>
         <p class="notRegistered"> Not <a @click="goToRegister()">registered</a> yet ?</p>
@@ -155,6 +155,8 @@ form {
 
 input {
   text-align: center;
+  width: 40%;
+  max-width: 200px;
   font-size:20px;
   border:none;
   outline:none;
@@ -165,6 +167,7 @@ input {
 }
 
 input[type=submit] {
+  max-width: 100px;
   cursor:pointer;
   background-color: #7583FF;
   border: 2px solid white;
