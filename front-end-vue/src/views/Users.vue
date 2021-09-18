@@ -152,8 +152,6 @@ export default Vue.extend({
     this.get_blocks();
     this.get_duels();
 
-
-
     this.$store.state.socket.on('refreshDuels', (id: any) => {
       if (this.$store.state.user.id == id)
       {
@@ -204,13 +202,9 @@ export default Vue.extend({
       }).then(res => {
         this.duels = res.data;
         if (this.tabDuels != undefined)
-        {
           this.tabDuels.length = 0;
-        }
         else
-        {
           this.tabDuels = [];
-        }
         for (let i = 0; i < this.users.length; i++) {
           var flag = false;
           for (let j = 0; j < this.duels.length; j++) {
@@ -406,7 +400,7 @@ export default Vue.extend({
         method: "patch",
         withCredentials: true
       }).then(res => {
-        console.log("***", res.data);
+        console.log("*", res.data);
         this.get_duels();
         this.$store.state.socket.emit('duelDenied', {idRoom: "room", id: user.id})
       }).catch(err => {

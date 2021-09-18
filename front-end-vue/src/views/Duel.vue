@@ -181,7 +181,7 @@ export default Vue.extend({
 
           if (this.gameid && ((data.id == 'left' && this.side == 'left') || (data.id == 'right' && this.side == 'right')))
           {
-            const url = `${process.env.VUE_APP_API_URL}/game/score/` + this.gameid; //ID DU USER PLUTOT ?
+            const url = `${process.env.VUE_APP_API_URL}/game/score/` + this.gameid;
             axios({
               method: "patch",
               url: url,

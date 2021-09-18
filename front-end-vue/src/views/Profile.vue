@@ -96,8 +96,8 @@ export default Vue.extend({
     } else {
       this.user = this.$store.state.user;
       this.is_auth = true;
-      this.render = true;
     }
+    this.render = true;
   },
   methods: {
     checkAuth(id: string) {
