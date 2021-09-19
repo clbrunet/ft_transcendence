@@ -21,4 +21,9 @@ export class DuelGateway {
     duelAccepted(client:Socket, data: {idRoom: string, id: string, duelId: string}) {
         this.server.emit('duelIsAccepted', data);
     }
+
+    @SubscribeMessage('getOutDuel')
+    getOutDuel(client: Socket, idRoom: any) {
+        this.server.to(idRoom).emit('goBackProfile', idRoom);
+    }
 }
