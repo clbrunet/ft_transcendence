@@ -65,10 +65,9 @@ export default Vue.extend({
     mounted() {
         if (this.$route.params.id && (this.$store.state.gameid || this.$store.state.gameid2)) {
             this.duelid = this.$route.params.id;
-
         }
         else {
-            router.push({name: 'Profile'})
+          router.push({name: 'Profile'})
         }
 
         if (this.$store.state.gameid)
@@ -76,7 +75,14 @@ export default Vue.extend({
         else
           this.gameid = this.$store.state.gameid2;
 
-
+        this.$store.state.socket.on('goBackProfile', (gameId: any) => {
+          alert('The other user left the game');
+          if (gameId == this.gameid)
+          {
+            router.push({name: 'Profile'});
+            this.$store.state.socket.emit("game_won", this.duelid);
+          }
+        });
 
         this.$store.state.duelId = this.duelid; //a retirer avant de push
 
@@ -189,10 +195,8 @@ export default Vue.extend({
               data: {
                 pointToVictory: this.nbPoints
               }
-            }).then(res => {
-              console.log("But !");
             }).catch(err => {
-              console.log(err);
+              console.log("");
             });
           }
 

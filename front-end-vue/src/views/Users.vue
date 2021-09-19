@@ -380,7 +380,8 @@ export default Vue.extend({
         method: "patch",
         withCredentials: true
       }).then(res => {
-        if (res.data == 'Duel cancelled since at least one of the User is offline')
+        if (res.data == 'Duel cancelled since at least one of the User is offline' ||
+            res.data == 'Duel cancelled since at least one of the User is already in-game')
         {
           this.$store.state.socket.emit('duelDenied', {idRoom: 'room', id: user.id})
           alert(res.data);

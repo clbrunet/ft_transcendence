@@ -7,7 +7,6 @@
       </transition>
       <transition name="slide">
         <div class="modal" v-if="showModal">
-
           <template v-if="$store.state.user.isTwoFactorAuthenticationEnabled == false">
             <button v-bind:disabled="is_generating" @click="generate" class="btn">Generate</button>
             <span v-if="loading != '' && QRCodeSRC == ''">{{ loading }}</span>
@@ -15,11 +14,22 @@
           </template>
 
           <template v-if="$store.state.user.isTwoFactorAuthenticationEnabled == false">
-            <input v-if="QRCodeSRC != ''" type="text" required v-model="turnOnCode" placeholder="??????" />
-            <button v-if="QRCodeSRC != ''" v-bind:disabled="is_turning_on" class="btn" @click="turnOn">Enable</button>
+            <input
+              v-if="QRCodeSRC != ''"
+              type="text"
+              required
+              v-model="turnOnCode"
+              placeholder="??????"
+            />
+            <button
+              v-if="QRCodeSRC != ''"
+              v-bind:disabled="is_turning_on"
+              class="btn"
+              @click="turnOn"
+            >Enable</button>
           </template>
           <template v-else>
-            <span> Your double factor authentication is enabled. </span>
+            <span>Your double factor authentication is enabled.</span>
             <button class="btn" v-bind:disabled="is_turning_off" @click="turnOff">Disable</button>
           </template>
           <span v-if="errorQRCode != ''" class="error">{{ errorQRCode }}</span>
@@ -34,7 +44,12 @@
           <MenuBlocks v-if="is_auth" />
         </div>
         <div id="middle">
-          <button id="play" v-if="is_auth">PLAY</button>
+          <button
+            id="play"
+            v-if="is_auth && queueing == false"
+            @click="queue()"
+          >PLAY</button>
+          <button id="play" v-else-if="is_auth" @click="unqueue()">Unqueue</button>
         </div>
         <div id="right">
           <MenuMatchesHistory />
@@ -85,9 +100,15 @@ export default Vue.extend({
       turnOffCode: "",
       is_turning_off: false,
       render: false as any,
+      queueing: false as any
     };
   },
   mounted() {
+    if (this.$store.state.inQueue == undefined)
+      this.$store.state.inQueue = false;
+    else if (this.$store.state.inQueue == true)
+      this.queueing = true;
+
     if (this.$route.params.id) {
       this.checkAuth(this.$route.params.id);
       if (this.$route.params.id == this.$store.state.user.id) {
@@ -107,12 +128,12 @@ export default Vue.extend({
         method: "get",
         withCredentials: true
       })
-      .then(res => {
-        this.user = res.data;
-      })
-      .catch(() => {
-        router.push({ path: "/profile" });
-      });
+        .then(res => {
+          this.user = res.data;
+        })
+        .catch(() => {
+          router.push({ path: "/profile" });
+        });
     },
     async generate() {
       this.QRCodeSRC = "";
@@ -120,23 +141,18 @@ export default Vue.extend({
       this.is_generating = true;
       let response;
       try {
-        response = await fetch(
-          `${process.env.VUE_APP_API_URL}/2fa/generate`,
-          {
-            method: "POST",
-            credentials: "include"
-          }
-        );
-      }
-      catch {
+        response = await fetch(`${process.env.VUE_APP_API_URL}/2fa/generate`, {
+          method: "POST",
+          credentials: "include"
+        });
+      } catch {
         console.log("err while generate qrcode");
       }
       try {
         if (response) {
           this.QRCodeSRC = URL.createObjectURL(await response.blob());
         }
-      }
-      catch {
+      } catch {
         console.log("err while blobing qr code");
       }
       this.is_generating = false;
@@ -152,14 +168,14 @@ export default Vue.extend({
         },
         withCredentials: true
       })
-      .then(() => {
-        this.$store.state.user.isTwoFactorAuthenticationEnabled = true;
-        this.turnOnCode = "";
-        this.showModal = false;
-      })
-      .catch(() => {
-        this.errorQRCode = "Wrong code entered";
-      });
+        .then(() => {
+          this.$store.state.user.isTwoFactorAuthenticationEnabled = true;
+          this.turnOnCode = "";
+          this.showModal = false;
+        })
+        .catch(() => {
+          this.errorQRCode = "Wrong code entered";
+        });
       this.is_turning_on = false;
     },
     turnOff() {
@@ -170,14 +186,75 @@ export default Vue.extend({
         method: "post",
         withCredentials: true
       })
-      .then(() => {
-        console.log("spotify");
-        this.showModal = false;
-        this.$store.state.user.isTwoFactorAuthenticationEnabled = false;
-      }).catch(err => {
-        console.log(err);
-      })
+        .then(() => {
+          console.log("spotify");
+          this.showModal = false;
+          this.$store.state.user.isTwoFactorAuthenticationEnabled = false;
+        })
+        .catch(err => {
+          console.log(err);
+        });
       this.is_turning_off = false;
+    },
+    queue() {
+      this.$store.state.inQueue = true;
+      this.queueing = true;
+      axios({
+        url: process.env.VUE_APP_API_URL + "/queue/go",
+        withCredentials: true,
+        method: "post"
+      })
+        .then(res => {
+          this.queueing = false;
+          this.$store.state.inQueue = false;
+          this.$store.state.gameid = res.data.id;
+          this.$store.state.gameid2 = res.data.id;
+          this.$store.state.nbPoints = 5; //this.nbPointsConfig
+          this.$store.state.socket.emit("duelAccepted", {
+            idRoom: res.data.id,
+            id: "id",
+            duelId: res.data.id
+          });
+        })
+        .catch(err => {
+          this.queueing = false;
+          this.$store.state.inQueue = false;
+          //var stuckgame = false;
+          console.log("will remove all games and all users from theses games");
+          axios({
+            url: process.env.VUE_APP_API_URL + "/game/indexOngoing",
+            withCredentials: true,
+            method: "get"
+          }).then(res => {
+            for (let i = 0; i < res.data.length; i++) {
+              if (
+                res.data[i].players[0].userId == this.$store.state.user.id ||
+                res.data[i].players[1].userId == this.$store.state.user.id
+              ) {
+                //stuckgame = true;
+                axios({
+                  url: process.env.VUE_APP_API_URL + "/game/" + res.data[i].id,
+                  withCredentials: true,
+                  method: "delete"
+                }).then(() => {
+                  console.log("deleted");
+                  this.$store.state.socket.emit("getOutDuel", res.data[i].id);
+                });
+              }
+            }
+            //if (stuckgame == false) this.unqueue();
+          });
+        });
+    },
+    unqueue() {
+      this.$store.state.inQueue = false;
+      axios({
+        url: process.env.VUE_APP_API_URL + "/queue/unqueue",
+        withCredentials: true,
+        method: "delete"
+      }).then(() => {
+        console.log("unqueded");
+      });
     }
   }
 });
@@ -194,7 +271,7 @@ input {
   padding: 5px;
   border: 1px solid black;
   height: 45px;
-  text-align:center;
+  text-align: center;
 }
 
 .btn {
@@ -205,15 +282,14 @@ input {
   background: none;
   cursor: pointer;
   transition: border-radius 0.4s ease-in-out;
-  background-image: linear-gradient(to right, #3040F0, #3040F0);
+  background-image: linear-gradient(to right, #3040f0, #3040f0);
   font-weight: 700;
   font-size: 15px;
 }
 
 .btn:hover {
-  background-image: linear-gradient(to right, #3040F0, #002566);
+  background-image: linear-gradient(to right, #3040f0, #002566);
   border-radius: 12px;
-
 }
 
 * {
@@ -236,7 +312,7 @@ input {
 
   display: inline-block;
   padding: 8px 18px;
-  background-image: linear-gradient(to right, #3040F0, rgb(9, 68, 170));
+  background-image: linear-gradient(to right, #3040f0, rgb(9, 68, 170));
   border-radius: 8px;
   font-size: 18px;
   font-weight: 700;
@@ -365,11 +441,11 @@ input {
   height: 100%;
   margin: auto;
   background-color: #ebebeb;
-  display:flex;
+  display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-content: space-around;
-  align-items:center;
+  align-items: center;
 }
 
 @media (max-width: 500px) {
@@ -386,7 +462,8 @@ input {
     height: 20%;
   }
 
-  #left, #right {
+  #left,
+  #right {
     width: 90%;
     height: 40%;
     display: flex;

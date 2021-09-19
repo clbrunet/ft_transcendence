@@ -168,7 +168,8 @@ export default Vue.extend({
         method: "patch",
         withCredentials: true
       }).then(res => {
-        if (res.data == 'Duel cancelled since at least one of the User is offline')
+        if (res.data == 'Duel cancelled since at least one of the User is offline' ||
+            res.data == 'Duel cancelled since at least one of the User is already in-game')
         {
           let newId;
           if (this.data.participants[0].userId != this.$store.state.user.id)

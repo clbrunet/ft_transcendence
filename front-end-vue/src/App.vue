@@ -50,6 +50,7 @@ export default Vue.extend({
         this.$store.state.gameid = undefined;
         this.$store.state.gameid2 = undefined;
         this.$store.state.side = undefined;
+        this.$store.state.inQueue = undefined;
         this.$store.dispatch("unauthenticate");
         router.push({ name: "App" });
       });
@@ -67,7 +68,9 @@ export default Vue.extend({
     this.$store.state.socket.on('duelIsAccepted', (data: any) => {
       const path = "/duel/" + data.duelId;
       this.$store.state.duelId = data.duelId;
-      router.push({path: path});
+      router.push({path: path}).catch(() => {
+        console.log("Redirection to duel...");
+      })
     });
   }
 });

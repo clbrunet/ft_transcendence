@@ -86,7 +86,7 @@ const routes: Array<RouteConfig> = [
     name: 'Duel',
     component: () => import('../views/Duel.vue'),
     meta: {
-      requiresAuth: false
+      requiresAuth: true
     }
   }
 ]
