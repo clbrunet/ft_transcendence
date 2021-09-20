@@ -107,6 +107,22 @@ export class FriendService {
     return dto;  
   }
 
+  public async getAll(userId: string) {
+    const res = await this.userRepo.findOne(userId,
+      {
+        relations: ['friendOwners', 'friendOwners.friendOwner', 'friendOwners.friend'],
+      }
+    );
+    let dto = [];
+    for (const friendOwner of res.friendOwners) {
+      if (friendOwner.status == 2) {
+        let friendDto: FriendDto = this.friendToDto(friendOwner);
+        dto.push(friendDto);
+      }
+    }
+    return dto;  
+  }
+
   // Return Friend Object with joined tables
   public async findById(id: string) {
     const friend = await this.friendRepo.findOne(id,

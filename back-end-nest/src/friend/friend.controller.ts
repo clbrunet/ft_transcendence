@@ -27,6 +27,12 @@ export class FriendController {
   }
 
   @UseGuards(JwtTwoFactorGuard)
+  @Get('/index/:id')
+  async getAll(@Param('id') id) {
+    return await this.friendService.getAll(id);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
   @Post('/:friendId')
   async create(@Req() request: RequestWithUser, @Param('friendId') friendId) {
     const {user} = request;
