@@ -17,6 +17,7 @@ import { ParticipantService } from '../participant/participant.service';
 import { GameUpdateDto } from '../game/game.dto';
 import { GameDto } from '../game/game.dto';
 import { GameDtoLazy } from '../game/game.dto';
+import { GameHistoryDto } from '../game/game.dto';
 import { ScoreDto } from '../game/game.dto';
 import { PlayerUpdateDto } from '../player/player.dto';
 import { PlayerForGameDto } from '../player/player.dto';
@@ -92,11 +93,11 @@ export class GameService {
     if (!user) {
       throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
     }
-    let dto: GameDto[] = [];
+    let dto: GameHistoryDto[] = [];
     for (const player of user.players) {
       if (player.game.status === 2) {
-        let gameDto: GameDto = this.gameToDto(player.game);
-        dto.push(gameDto);
+        let gameHistoryDto: GameHistoryDto = this.gameToHistoryDto(player.game);
+        dto.push(gameHistoryDto);
       }
     }
     return dto;
@@ -315,6 +316,27 @@ export class GameService {
     dto.status = GameStatus[game.status];
     dto.startTime = game.startTime;
     dto.pointToVictory = game.pointToVictory;
+    return dto;
+  }
+
+  public gameToHistoryDto(game: Game) {
+    let dto = new GameHistoryDto();
+    dto.id = game.id;
+    dto.status = GameStatus[game.status];
+    dto.startTime = game.startTime;
+    dto.pointToVictory = game.pointToVictory;
+    if (game.players[0].point > game.players[1].point) {
+      dto.winnerName = game.players[0].user.name;
+      dto.winnerPoint = game.players[0].point;
+      dto.loserName = game.players[1].user.name;
+      dto.loserPoint = game.players[1].point;
+    }
+    else {
+      dto.winnerName = game.players[1].user.name;
+      dto.winnerPoint = game.players[1].point;
+      dto.loserName = game.players[0].user.name;
+      dto.loserPoint = game.players[0].point;
+    }
     return dto;
   }
 }
