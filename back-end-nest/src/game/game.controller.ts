@@ -39,6 +39,32 @@ export class GameController {
   }
 
   @UseGuards(JwtTwoFactorGuard)
+  @Patch('/unfinished/:id')
+  async setAsUnfinished(@Req() request: RequestWithUser, @Param('id') id) {
+    const {user} = request;
+    return await this.gameService.setAsUnfinished(user.id, id);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/indexPrepared')
+  async getAllPreparedActiveUser(@Req() request: RequestWithUser) {
+    const {user} = request;
+    return await this.gameService.getAllPrepared(user.id);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/indexOngoing')
+  async getAllOngoing() {
+    return await this.gameService.getAllOngoing();
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/indexUnfinished')
+  async getAllUnfinished() {
+    return await this.gameService.getAllUnfinished();
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
   @Get('/history')
   async getHistoryActiveUser(@Req() request: RequestWithUser) {
     const {user} = request;
@@ -49,12 +75,6 @@ export class GameController {
   @Get('/history/:userId')
   async getHistoryGivenUser(@Param('userId') userId) {
     return await this.gameService.getHistory(userId);
-  }
-
-  @UseGuards(JwtTwoFactorGuard)
-  @Get('/indexOngoing')
-  async getAllOngoing() {
-    return await this.gameService.getAllOngoing();
   }
 
   // ROUTES FOR DEV ONLY TO BE COMMENTED

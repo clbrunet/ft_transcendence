@@ -53,18 +53,15 @@ export class GameService {
     return await this.gameRepo.save(game);
   }
 
-  public async matchById(userId1: string, userId2: string, pointToVictory: number) {
+  public async matchByIdObject(userId1: string, userId2: string, pointToVictory: number) {
     let game = await this.create(pointToVictory);
     const player1 = await this.playerService.create(userId1, game.id);
     const player2 = await this.playerService.create(userId2, game.id);
-
-    game = await this.gameRepo.findOne(game.id,
+    return await this.gameRepo.findOne(game.id,
       {
         relations: ['players', 'players.user'],
       }
     );
-
-    return this.gameToDto(game);
   }
 
   public async findAll() {
@@ -103,13 +100,48 @@ export class GameService {
     return dto;
   }
 
+  public async getAllPrepared(userId: string) {
+    const user = await this.userRepo.findOne(userId,
+      {
+        relations: ['players', 'players.game', 'players.game.players', 'players.game.players.user'],
+      }
+    );
+    if (!user) {
+      throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+    }
+    let dto: GameDto[] = [];
+    for (const player of user.players) {
+      if (player.game.status === 0) {
+        let gameDto: GameDto = this.gameToDto(player.game);
+        dto.push(gameDto);
+      }
+    }
+    return dto;
+  }
+
   public async getAllOngoing() {
     const games = await this.gameRepo.find(
       {
         relations: ['players', 'players.user'],
         where: [
-            { status: 0 },
             { status: 1 },
+        ],
+      }
+    );
+    let dto: GameDto[] = [];
+    for (const game of games) {
+      let gameDto: GameDto = this.gameToDto(game);
+      dto.push(gameDto);
+    }
+    return dto;
+  }
+
+  public async getAllUnfinished() {
+    const games = await this.gameRepo.find(
+      {
+        relations: ['players', 'players.user'],
+        where: [
+            { status: 3 },
         ],
       }
     );
@@ -160,7 +192,7 @@ export class GameService {
     throw new HttpException('Game update failed', HttpStatus.NOT_FOUND);
   }
 
-  public async setPointToVictory(userId:string, id: string, pointToVictory: number) {
+  private async setPointToVictory(id: string, pointToVictory: number) {
     let gameUpdateDto = new GameUpdateDto();
     gameUpdateDto.pointToVictory = pointToVictory;
     return this.gameToDto(await this.update(id, gameUpdateDto));
@@ -175,6 +207,23 @@ export class GameService {
   public async setAsFinished(id: string) {
     let gameUpdateDto = new GameUpdateDto();
     gameUpdateDto.status = 2;
+    return this.gameToDto(await this.update(id, gameUpdateDto));
+  }
+
+  public async setAsUnfinished(userId:string, id: string) {
+    if (!(await this.isPlayer(userId, id))) {
+      throw new HttpException('User is not a Player of that Game', HttpStatus.NOT_FOUND);
+    }    
+    const game = await this.findById(id);
+    for (const player of game.players) {
+      if (player.user.status == 2) {
+        let userUpdateDto = new UserUpdateDto();
+        userUpdateDto.status = 1;
+        this.userService.update(player.user.id, userUpdateDto);
+      }
+    }
+    let gameUpdateDto = new GameUpdateDto();
+    gameUpdateDto.status = 3;
     return this.gameToDto(await this.update(id, gameUpdateDto));
   }
 
@@ -218,7 +267,7 @@ export class GameService {
     const author = await this.participantService.findByUserAndChannelLazy(game.players[0].user.id, direct.id);
     let messageCreationDto = new MessageCreationDto();
     messageCreationDto.authorId = author.id;
-    messageCreationDto.content = "Le match va commencer. Bonne chance!";
+    messageCreationDto.content = "The game is about to start, good luck!";
     return await this.messageService.create(messageCreationDto);
   }
 
@@ -236,7 +285,7 @@ export class GameService {
     }
     let messageCreationDto = new MessageCreationDto();
     messageCreationDto.authorId = author.id;
-    messageCreationDto.content = "Je gagne! Hahahahahahah";
+    messageCreationDto.content = "I won! ahahahahahahah";
     return await this.messageService.create(messageCreationDto);
   }
 
@@ -244,8 +293,8 @@ export class GameService {
     if (!(await this.isPlayer(userId, id))) {
       throw new HttpException('User is not a Player of that Game', HttpStatus.NOT_FOUND);
     }
-    const game = await this.findById(id);  
-    await this.setPointToVictory(userId, id, pointToVictory);
+    const game = await this.findById(id);
+    await this.setPointToVictory(id, pointToVictory);
     await this.introductionMessage(game);
     await this.setAsOngoing(id);
     return await this.getById(id);

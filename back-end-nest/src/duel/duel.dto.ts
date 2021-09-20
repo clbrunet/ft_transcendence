@@ -17,10 +17,17 @@ export class DuelUpdateActiveUserDto {
 
   @IsOptional()
   status: DuelStatus;
+
+  @IsOptional()
+  gameId: string;
 }
 
 export class DuelUpdateDto {
+  @IsOptional()
   status: DuelStatus;
+
+  @IsOptional()
+  gameId: string;
 }
 
 export class DuelDto {
@@ -30,4 +37,5 @@ export class DuelDto {
   duelId: string;
   duelName: string;
   status: string;
+  gameId: string;
 }

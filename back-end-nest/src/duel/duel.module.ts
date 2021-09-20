@@ -11,6 +11,7 @@ import { MessageModule } from '../message/message.module';
 
 import Duel from './duel.entity';
 import User from '../user/user.entity';
+import Game from '../game/game.entity';
 
 import { DuelService } from './duel.service';
 
@@ -19,7 +20,7 @@ import { DuelController } from './duel.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Duel, User]),
+    TypeOrmModule.forFeature([Duel, User, Game]),
     UserModule,
     QueueModule,
   	GameModule,
