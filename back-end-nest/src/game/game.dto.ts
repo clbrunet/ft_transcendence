@@ -34,6 +34,17 @@ export class GameDto {
   players: PlayerForGameDto[];
 }
 
+export class GameHistoryDto {
+  id: string;
+  startTime: Date;
+  status: string;
+  pointToVictory: number;
+  winnerName: string;
+  winnerPoint: number;
+  loserName: string;
+  loserPoint: number;
+}
+
 export class GameDtoLazy {
   id: string;
   startTime: Date;
