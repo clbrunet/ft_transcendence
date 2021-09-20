@@ -7,4 +7,9 @@ export class QueueDto {
   queuerId: string;
   queuerName: string;
   queueTime: Date;
+  gameId: string;
+}
+
+export class QueueUpdateDto {
+  gameId: string;
 }

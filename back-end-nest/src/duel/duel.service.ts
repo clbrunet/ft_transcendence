@@ -88,50 +88,6 @@ export class DuelService {
     return ret;
   }
 
-  public async go(userId: string, duelId: string) {
-    let duel1 = await this.findByOwnerAndDuel(userId, duelId);
-    let duel2 = await this.findByOwnerAndDuel(duelId, userId);
-    while (duel2 && duel2.status == 1) { 
-      duel2 = await this.duelRepo.findOne(duel2.id);
-    }
-    if (!duel2) {
-      return "Successfull unduel";
-    }
-    if (duel2.status == 3) {
-      return "Duel has been rejected";
-    }
-    if (duel2.status == 2) {
-      const duelOwner = await this.userService.findByIdLazy(userId);
-      const duel = await this.userService.findByIdLazy(duelId);
-      if (duelOwner.status == 0 || duel.status == 0) {
-        return "Duel cancelled since at least one of the User is offline";         
-      }
-      if (duelOwner.status == 2 || duel.status == 2) {
-        return "Duel cancelled since at least one of the User is already in-game";         
-      }
-      if (await this.queueService.inQueue(userId)) {
-        const duelOwner = await this.userService.findByIdQueuer(userId);
-        await this.queueService.delete(duelOwner.queuers[0].id);
-      }
-      if (await this.queueService.inQueue(duelId)) {
-        const duel = await this.userService.findByIdQueuer(duelId);
-        await this.queueService.delete(duel.queuers[0].id);
-      }
-      await this.gameService.matchById(userId, duelId, 5);
-      let players = await this.playerService.findByUserAmongPreparedGame(userId);
-      if (players.length === 1) {
-        let userUpdateDto = new UserUpdateDto();
-        userUpdateDto.status = 2;
-        await this.userService.update(userId, userUpdateDto);
-        await this.userService.update(duelId, userUpdateDto);
-        return this.gameService.gameToDto(players[0].game);
-      }
-      else {
-        throw new HttpException('More than one game in preparation for this user', HttpStatus.NOT_FOUND);
-      }
-    }
-  }
-
   public async findAll() {
     return await this.duelRepo.find(
       {
@@ -240,8 +196,52 @@ export class DuelService {
     return "Successfull Duel deletion";
   }
 
+  public async go(userId: string, duelId: string) {
+    let duel1 = await this.findByOwnerAndDuel(userId, duelId);
+    let duel2 = await this.findByOwnerAndDuel(duelId, userId);
+    while (duel2 && duel2.status == 1) { 
+      duel2 = await this.duelRepo.findOne(duel2.id);
+    }
+    if (!duel2) {
+      return "Successfull unduel";
+    }
+    if (duel2.status == 3) {
+      await this.delete(duel1.id);
+      await this.delete(duel2.id);
+      return "Duel has been rejected";
+    }
+    if (duel2.status == 2) {
+      const duelOwner = await this.userService.findByIdLazy(userId);
+      const duel = await this.userService.findByIdLazy(duelId);
+      if (duelOwner.status == 0) {
+        return "Duel cancelled since the active User is offline";         
+      }
+      if (duelOwner.status == 2) {
+        return "Duel cancelled since the active User is already in-game";         
+      }
+      if (await this.queueService.inQueue(userId)) {
+        const duelOwner = await this.userService.findByIdQueuer(userId);
+        await this.queueService.delete(duelOwner.queuers[0].id);
+      }
+      if (await this.queueService.inQueue(duelId)) {
+        const duel = await this.userService.findByIdQueuer(duelId);
+        await this.queueService.delete(duel.queuers[0].id);
+      }
+      const game = await this.gameService.matchByIdObject(userId, duelId, 5);
+      let duelUpdateDto = new DuelUpdateDto();
+      duelUpdateDto.gameId = game.id;
+      await this.update(duel1.id, duelUpdateDto);
+      await this.update(duel2.id, duelUpdateDto);
+      let userUpdateDto = new UserUpdateDto();
+      userUpdateDto.status = 2;
+      await this.userService.update(userId, userUpdateDto);
+      await this.userService.update(duelId, userUpdateDto);
+      return this.gameService.gameToDto(game);
+    }
+  }
+
   public async accept(userId: string, duelId: string) {
-    const duel1 = await this.findByOwnerAndDuel(userId, duelId);
+    let duel1 = await this.findByOwnerAndDuel(userId, duelId);
     if (duel1.status == 0) {
       throw new HttpException('User can not accept a Duel he has sent', HttpStatus.NOT_FOUND);      
     }
@@ -258,10 +258,9 @@ export class DuelService {
     await this.update(duel2.id, duelUpdateDto);
     await this.update(duel1.id, duelUpdateDto);
 
-    let players = await this.playerService.findByUserAmongPreparedGame(userId);
     let duel = await this.userService.findByIdLazy(duelId);
-    while (players.length < 1 && duel.status == 1) {
-      players = await this.playerService.findByUserAmongPreparedGame(userId);
+    while (!duel1.gameId && duel.status == 1) {
+      duel1 = await this.findByOwnerAndDuel(userId, duelId);
       duel = await this.userService.findByIdLazy(duelId);
     }
 
@@ -276,17 +275,13 @@ export class DuelService {
     await this.messageService.update(messages[0].id, messageUpdateDto);
 
     if (duel.status === 0) {
-      return "Duel cancelled since at least one of the User is offline";   
+      return "Duel cancelled since the other User is offline";   
     }
     if (duel.status === 2) {
-      return "Duel cancelled since at least one of the User is already in-game"; 
-    }    
-    if (players.length === 1) {
-      return this.gameService.gameToDto(players[0].game);
-    }
-    else {
-      throw new HttpException('More than one game in preparation for this user', HttpStatus.NOT_FOUND);
-    }
+      return "Duel cancelled since the other User is already in-game"; 
+    } 
+    const game = await this.gameService.findById(duel1.gameId);   
+    return this.gameService.gameToDto(game);
   }
 
   public async reject(userId: string, duelId: string) {
@@ -307,8 +302,6 @@ export class DuelService {
     await this.update(duel2.id, duelUpdateDto);
     await this.update(duel1.id, duelUpdateDto);
 
-    await this.delete(duel1.id);
-    await this.delete(duel2.id);
     const messages = await this.messageService.findByDuelIdLazy(duel2.id);
     if (messages.length != 1) {
       throw new HttpException('No or more than one Message with this duelId attribute', HttpStatus.NOT_FOUND);   
@@ -329,6 +322,7 @@ export class DuelService {
 
     await this.delete(duel1.id);
     await this.delete(duel2.id);
+
     const messages = await this.messageService.findByDuelIdLazy(duel1.id);
     if (messages.length != 1) {
       throw new HttpException('No or more than one Message with this duelId attribute', HttpStatus.NOT_FOUND);   
@@ -348,7 +342,7 @@ export class DuelService {
     const author = await this.participantService.findByUserAndChannelLazy(duelOwnerId, direct.id);
     let messageCreationDto = new MessageCreationDto();
     messageCreationDto.authorId = author.id;
-    messageCreationDto.content = "Je t'ai invite a un game. Releveras tu le defi?";
+    messageCreationDto.content = "I invited you to a game, will you take the challenge?";
     messageCreationDto.button = true;
     messageCreationDto.duelId = duelObjectId;
     return await this.messageService.create(messageCreationDto);
@@ -362,6 +356,7 @@ export class DuelService {
     dto.duelId = duel.duel.id;
     dto.duelName = duel.duel.name;
     dto.status = DuelStatus[duel.status];
+    dto.gameId = duel.gameId;
     return dto;
   }
 }

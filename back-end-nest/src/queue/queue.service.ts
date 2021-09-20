@@ -10,6 +10,7 @@ import { GameService } from '../game/game.service';
 import { PlayerService } from '../player/player.service';
 
 import { QueueDto } from './queue.dto';
+import { QueueUpdateDto } from './queue.dto';
 import { GameDto } from '../game/game.dto';
 import { UserUpdateDto } from '../user/user.dto';
 
@@ -81,6 +82,15 @@ export class QueueService {
     throw new HttpException('Queue with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
+  public async update(id: string, queueUpdateDto: QueueUpdateDto) {
+    const res = await this.queueRepo.update(id, queueUpdateDto);
+    if (res) {
+      const duel = await this.findById(id);
+      return this.queueToDto(duel);
+    }
+    throw new HttpException('Duel update failed', HttpStatus.NOT_FOUND);
+  }
+
   public async delete(id: string) {
     try {
       await this.findByIdLazy(id);
@@ -135,9 +145,6 @@ export class QueueService {
     if (res.length == 0) {
       return false;
     }
-    if (res.length == 1 && (await this.inQueue(queuerId))) {
-      return false;
-    }
     return true;
   }
 
@@ -152,31 +159,33 @@ export class QueueService {
     if (await this.isThereAnotherQueuer(userId)) {
       const res = await this.findAll();
       const queuer = await this.userService.findByIdLazy(res[0].queuer.id);
-      const gameDto = await this.gameService.matchById(userId, queuer.id, 5);
+      const game = await this.gameService.matchByIdObject(userId, queuer.id, 5);
+
+      let queueUpdateDto = new QueueUpdateDto();
+      queueUpdateDto.gameId = game.id;
+      await this.update(res[0].id, queueUpdateDto);      
+
       let userUpdateDto = new UserUpdateDto();
       userUpdateDto.status = 2;
       await this.userService.update(userId, userUpdateDto);
       await this.userService.update(queuer.id, userUpdateDto);
-      await this.delete(res[0].id);
-      return gameDto;
+      
+      return this.gameService.gameToDto(game);
     }
     else {
-      await this.create(userId);
+      let queueDto = await this.create(userId);
+      let queue = await this.findByIdLazy(queueDto.id);
       let inQueue = await this.inQueue(userId);
-      while (inQueue) {
+      while (inQueue && !queue.gameId) {
+        queue = await this.findByIdLazy(queue.id);
         inQueue = await this.inQueue(userId);
       }
-      const players = await this.playerService.findByUserAmongPreparedGame(userId);
-      if (players.length === 0) {
+      if (!inQueue) {
         return "Successfull unqueue";
       }
-      else if (players.length === 1) {
-        return this.gameService.gameToDto(players[0].game);
-      }
-      else {
-        // Impossible route
-        throw new HttpException('More than one game in preparation for this user', HttpStatus.NOT_FOUND);
-      }
+      await this.delete(queue.id);
+      const game = await this.gameService.findById(queue.gameId);   
+      return this.gameService.gameToDto(game);
     }
   }
 
@@ -186,6 +195,7 @@ export class QueueService {
     dto.queuerId = queue.queuer.id;
     dto.queuerName = queue.queuer.name;
     dto.queueTime = queue.queueTime;
+    dto.gameId = queue.gameId;
     return dto;
   }
 }
