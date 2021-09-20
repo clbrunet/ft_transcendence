@@ -1,33 +1,58 @@
 <template>
   <div id="body-chat">
-    <div class="list_channels" v-bind:class="{ 'list_channels--inactive': isChatActive }">
-      <button class="add-button" @click="open_popup_create()">+</button>
-      <span>channels general</span>
-      <div class="channel" v-for="(channel, index) in channels" :key="index" @click="select_channel(channel, index)">
-        <span>{{ channel.name }} </span> 
-        <span>{{ channel.status }} </span>
-        <button v-if="channel.ownerId == $store.state.user.id" @click.stop="open_params()">params</button>
-        <button v-if="channel.activeUserParticipant == true && channel.activeUserAuthorized == true" @click.stop="leave_channel(channel)">leave</button>
+    <div id="revamp">
+      <div id="revamp2">
+        <div class="creating">
+          <span>Add a channel </span>
+          <img
+            src="/assets/add.svg"
+            alt="add"
+            style="width:30px;cursor:pointer;"
+             @click="open_popup_create()"
+          />
+        </div>
+        <div class="list_channels" v-bind:class="{ 'list_channels--inactive': isChatActive }">
+          <span style="font-weight:700;font-size:23px;text-decoration:underline;">channels general</span>
+          <div class="channel" v-for="(channel, index) in channels" :key="index" @click="select_channel(channel, index)">
+            <span>{{ channel.name }} </span> 
+            <span>{{ channel.status }} </span>
+            <div class="buttons-channels">
+              <img
+                v-if="channel.activeUserParticipant == true && channel.activeUserAuthorized == true"
+                src="/assets/leave.svg"
+                alt="leave"
+                style="width:30px;cursor:pointer;"
+                @click.stop="leave_channel(channel)"
+              />
+              <img
+                v-if="channel.ownerId == $store.state.user.id"
+                src="/assets/settings.svg"
+                alt="settings"
+                style="width:30px;cursor:pointer;"
+                @click.stop="open_params()"
+              />
+            </div>
+          </div>
+          <span style="font-weight:700;font-size:23px;text-decoration:underline;">direct messages</span>
+          <div class="channel" v-for="(conv, indexdm) in dm" :key="(indexdm + 12) * 12" @click="select_dm(conv, indexdm)">
+            <span>{{ conv.name }} </span> 
+          </div>
+        </div>
       </div>
-      <span>direct messages</span>
-      <div class="channel" v-for="(conv, indexdm) in dm" :key="(indexdm + 12) * 12" @click="select_dm(conv, indexdm)">
-        <span>{{ conv.name }} </span> 
+      <div class="current-chat" v-bind:class="{ 'current-chat--active': isChatActive }">
+        <template v-for="(channel, index) in channels">
+          <template v-if="(channel.status != 'protected' || channel.activeUserAuthorized == true) && showDm == false">
+            <Chat v-show="numberSelectedChannel == index" :key="index" :data="channel" />
+          </template>
+          <template v-else-if="showDm == false">
+            <Chat v-if="numberSelectedChannel == index" :key="index" :data="channel" />
+          </template>
+        </template>
+        <template v-for="(conv, indexdm) in dm">
+          <DirectMessage v-if="showDm == true && numberSelectedDm == indexdm" :key="indexdm" :data="conv" />
+        </template>
       </div>
     </div>
-    <div class="current-chat" v-bind:class="{ 'current-chat--active': isChatActive }">
-      <template v-for="(channel, index) in channels">
-        <template v-if="(channel.status != 'protected' || channel.activeUserAuthorized == true) && showDm == false">
-          <Chat v-show="numberSelectedChannel == index" :key="index" :data="channel" />
-        </template>
-        <template v-else-if="showDm == false">
-          <Chat v-if="numberSelectedChannel == index" :key="index" :data="channel" />
-        </template>
-      </template>
-      <template v-for="(conv, indexdm) in dm">
-        <DirectMessage v-if="showDm == true && numberSelectedDm == indexdm" :key="indexdm" :data="conv" />
-      </template>
-    </div>
-
     <!-- popups -->
     <portal-target v-if="popup_password" id="popup-password" name="popup-password">
       <div id="popup-password-content">
@@ -101,6 +126,7 @@ export default Vue.extend({
       selectedChannel: undefined as any,
       currentSelectedChannel: undefined as any,
       numberSelectedDm: 0 as any,
+      currentNumberSelectedChannel: 0 as any,
       popup_password: false as any,
       popup_create: false as any,
       password_input: undefined as any,
@@ -112,6 +138,7 @@ export default Vue.extend({
       changePassword: undefined as any,
       params: false as any,
       showDm: false as any,
+      flag: false as any
     };
   },
   store: store,
@@ -134,6 +161,7 @@ export default Vue.extend({
   },
   methods: {
     refresh_channels() {
+      
       axios({
         method: "get",
         url: `${ process.env.VUE_APP_API_URL }/channel/index`,
@@ -141,6 +169,11 @@ export default Vue.extend({
       })
       .then(res => {
         this.channels = res.data;
+        if (this.flag == false)
+        {
+          this.flag = true;
+          this.select_channel(this.channels[0], 0);
+        }
       })
       .catch(() => {
         router.push({name: 'App'});
@@ -172,6 +205,7 @@ export default Vue.extend({
     },
     select_channel(channel: any, index: number) {
       this.currentSelectedChannel = channel;
+      this.currentNumberSelectedChannel = index;
       if (channel.status == 'protected' && channel.activeUserAuthorized == false)
       {
         this.popup_password = true;
@@ -222,6 +256,9 @@ export default Vue.extend({
         this.password_input = undefined;
         this.selectedChannel = this.currentSelectedChannel;
         this.currentSelectedChannel = undefined;
+        this.numberSelectedChannel = this.currentNumberSelectedChannel;
+        this.currentSelectedChannel = undefined;
+        this.currentNumberSelectedChannel = undefined;
         this.popup_password = false;
         this.refresh_channels();
       }).catch(err => {
@@ -332,6 +369,35 @@ export default Vue.extend({
 
 /* popup password */
 
+#revamp {
+  display:flex;
+  flex-direction: row;
+  width:100%;
+}
+
+.buttons-channels {
+  display:flex;
+
+}
+
+  .buttonAdd {
+    cursor:pointer;
+    width:30%;
+  }
+
+#revamp2 {
+  display: flex;
+  flex-direction: column;
+  width:20%;
+}
+
+.creating {
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  background-color:white;
+}
+
 #popup-password {
   z-index: 1000;
   width:100vw;
@@ -383,7 +449,7 @@ export default Vue.extend({
 }
 
 .list_channels{
-  width: 30%;
+  width: 100%;
   border: 3px solid black;
   background-color :white;
   max-height: 100%;
@@ -395,8 +461,10 @@ export default Vue.extend({
   width: 100%;
   min-height: 50px;
   height: auto;
+  padding:2%;
   border: 1px solid #aaa;
-  color:red;
+  color:white;
+  background-color:#3040F0;
   margin:0;
   display:flex;
   align-items:center;
@@ -404,6 +472,10 @@ export default Vue.extend({
   flex-direction:column;
   cursor:pointer;
   word-break: break-all;
+}
+
+.channel:nth-child(even) {
+  background-color:rgb(68, 96, 253);
 }
 
 .channel:focus {
@@ -454,6 +526,8 @@ export default Vue.extend({
   width: 70%;
 }
 
+
+
 @media (max-width: 770px) {
   .list_channels {
     width: 100%;
@@ -469,11 +543,6 @@ export default Vue.extend({
     min-height: 50px;
   }
 
-  .add-button {
-    width: 50px;
-    height: 30px;
-    margin: 10px;
-  }
 
   .current-chat {
     display: none;

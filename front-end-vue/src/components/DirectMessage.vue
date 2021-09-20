@@ -2,16 +2,21 @@
   <div class="chat_and_participant">
     <div class="chat">
       <div class="title">
-        <span> direct message with {{data.name}}</span>
+        <span> direct message with <span class="clickable" @click="goToProfile(data)">{{data.name}}</span></span>
       </div>
       <template>
         <div class="messages">
-          <p v-for="(message, index) in messages" :key="index">
-            {{message.userName}}: {{message.content}}
-            <template v-if="message.button == true && message.userId != $store.state.user.id">
-              <a @click="acceptDuel(message.userId, message.duelId)">accept</a> <a @click="rejectDuel(message.userId)">reject</a>
-            </template>
-          </p>
+          <template v-for="(message, index) in messages">
+            <p class="pbase" :key="index" v-if="message.userName != $store.state.user.name">
+              <span style="font-weight:700;"> {{message.userName}}:</span> {{message.content}}
+              <template v-if="message.button == true && message.userId != $store.state.user.id">
+                <a @click="acceptDuel(message.userId, message.duelId)">accept</a> <a @click="rejectDuel(message.userId)">reject</a>
+              </template>
+            </p>
+            <p class="pyou" :key="index" v-else>
+              <span style="font-weight:700;"> {{message.content}}</span>
+            </p>
+          </template>
         </div>
       </template>
 
@@ -29,21 +34,27 @@
         alt="close chat icon"
         @click="closeChat()"
       />
-      <span> You</span>
+      <span style="padding:1% 0 1% 0;"> You</span>
       <div class="row-participant">
         <span class="clickable" @click="goToProfile(data)"> {{data.name}}</span>
-        <button v-if="pendingDuel == false" @click="duelFriend()">Duel</button>
-        <form @submit.prevent="">
-          <span>Number of points</span>
-          <select v-model="nbPointsConfig">
-            <option selected>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-            <option>10</option>
-          </select>
-        </form>
+        <template v-if="pendingDuel == false">
+          <img
+            src="/assets/duel.svg"
+            alt="duel"
+            style="width:30px;cursor:pointer;"
+            @click="duelFriend()"
+          />
+          <form @submit.prevent="">
+            <select v-model="nbPointsConfig">
+              <option selected>5</option>
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+              <option>9</option>
+              <option>10</option>
+            </select>
+          </form>
+        </template>
       </div>
     </div>
   </div>
@@ -247,19 +258,15 @@ export default Vue.extend({
 }
 
 .row-participant {
-  background-color: #999;
+  background-color: rgb(245, 62, 108);
   width: 100%;
+  color:white;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.partipants {
-  width: 30%;
-  height: 100%;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  padding: 1% 0 1% 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .clickable {
@@ -270,23 +277,22 @@ export default Vue.extend({
   text-decoration: underline;
 }
 
-
 .chat {
   display: flex;
   border: 1px solid black;
   width: 70%;
+  height: 100%;
   flex-direction: column;
-  position: relative;
-  background-color: #aaa;
+  background-color:rgb(250, 99, 137);
 }
 
 .title {
   color: white;
-  background-color: black;
+  font-weight:700;
+  background-color: #3040F0;
   padding: 15px;
   word-break: break-all;
 }
-
 .messages {
   overflow-y: auto;
   display:flex;
@@ -299,6 +305,41 @@ export default Vue.extend({
   width: 100%;
   height: 10%;
 }
+
+p {
+  padding: 1% 0 1% 0;
+  margin:0;
+  color:black;
+}
+
+.partipants {
+  width: 30%;
+  height: 100%;
+  background-color: rgb(68, 96, 253);
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+}
+
+p:nth-child(even) {
+  background-color:rgb(250, 99, 137);
+}
+
+p:nth-child(odd) {
+  background-color:rgb(245, 62, 108);
+}
+
+.pbase {
+  text-align:left;
+  padding-left:2%;
+}
+
+.pyou {
+  text-align:right;
+  padding-right:2%;
+}
+
 
 .message {
   flex: 3;

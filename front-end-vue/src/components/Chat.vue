@@ -2,22 +2,22 @@
   <div class="chat_and_participant">
     <div class="chat">
       <div class="title">
-        <span>{{data.name}} by {{data.ownerName}}</span>
+        <span>{{data.name}} by <span class="clickable" @click="goToProfile({userId: data.ownerId})">{{data.ownerName}}</span></span>
         <button v-if="isOwner == true" @click="open_popup_settings()">add</button>
       </div>
 
       <template v-if="data.status == 'public' || (data.activeUserParticipant == true && data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false)">
         <div class="messages">
-          <p
-            v-for="(message, index) in messages"
-            :key="index"
-          >{{message.userName}}: {{message.content}}</p>
+          <template v-for="(message, index) in messages">
+            <p class="pbase" :key="index" v-if="message.userName != $store.state.user.name"><span style="font-weight:700;"> {{message.userName}}:</span> {{message.content}} </p>
+            <p class="pyou" :key="index" v-else><span style="font-weight:700;"> {{message.content}}</span> </p>
+          </template>
         </div>
       </template>
       <template v-else>
         <div class="messages">
-          <p v-if="data.activeUserParticipant == false">you are not a participant of this channel</p>
-          <p v-else-if="data.activeUserBan == true || isCurrentlyBanMute(data.activeUserBanEndDateTime) == true">you were banned from this channel</p>
+          <p v-if="data.activeUserParticipant == false" style="text-align:center;font-size:18px;">you are not a participant of this channel</p>
+          <p v-else-if="data.activeUserBan == true || isCurrentlyBanMute(data.activeUserBanEndDateTime) == true" style="text-align:center;font-size:18px;">you were banned from this channel</p>
         </div>
       </template>
 
@@ -29,18 +29,19 @@
         && data.activeUserMute == false
         && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false
         && isCurrentlyBanMute(data.activeUserMuteEndDateTime) == false)">
-        <input class="message" type="text" placeholder="type your message here" v-model="messageTyping" />
-        <input class="send" type="submit" value="send" />
+        <input autofocus style="text-align:center;font-size:18px;" class="message" type="text" placeholder="type your message here" v-model="messageTyping" />
+        <input  style="text-align:center;font-size:18px;" class="send" type="submit" value="send" />
       </form>
       <div class="buttons" v-else>
         <template v-if="data.activeUserParticipant == false">
           <input
+            style="text-align:center;font-size:18px;"
             class="message"
             type="text"
             placeholder="you are not a participant from this channel"
             disabled
           />
-          <input class="send" type="submit" value="not participant" disabled />
+          <input class="send" style="text-align:center;font-size:18px;" type="submit" value="not participant" disabled />
         </template>
         <template
           v-else-if="(data.activeUserBan == true || isCurrentlyBanMute(data.activeUserBanEndDateTime) == true) && data.status != 'public'"
@@ -48,10 +49,11 @@
           <input
             class="message"
             type="text"
+            style="text-align:center;font-size:18px;"
             placeholder="you were banned from this channel"
             disabled
           />
-          <input class="send" type="submit" value="banned" disabled />
+          <input class="send" type="submit" value="banned"  style="text-align:center;font-size:18px;" disabled />
         </template>
         <template
           v-else-if="data.activeUserMute == true || isCurrentlyBanMute(data.activeUserMuteEndDateTime) == true"
@@ -76,7 +78,7 @@
       />
       <template v-for="(participant, index) in participants">
         <template v-if="participant.userName == $store.state.user.name">
-          <span :key="index" class="you">You</span>
+          <span :key="index" class="you" style="padding: 1% 0 1% 0;">You</span>
         </template>
         <template v-else-if="participant.left != true">
           <div class="row-participant" :key="index">
@@ -570,18 +572,21 @@ export default Vue.extend({
   width: 70%;
   height: 100%;
   flex-direction: column;
-  background-color: #aaa;
+  background-color:rgb(250, 99, 137);
 }
 
 .title {
   color: white;
-  background-color: black;
+  font-weight:700;
+  background-color: #3040F0;
   padding: 15px;
   word-break: break-all;
 }
 
 .you {
+  color:white;
   font-style: italic;
+  text-align:center;
 }
 
 .buttons {
@@ -724,10 +729,36 @@ export default Vue.extend({
 }*/
 
 .row-participant {
-  background-color: #999;
+  background-color: rgb(245, 62, 108);
   width: 100%;
+  color:white;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 1% 0 1% 0;
+}
+
+p {
+  padding: 1% 0 1% 0;
+  color:black;
+  margin:0;
+}
+
+p:nth-child(even) {
+  background-color:rgb(250, 99, 137);
+}
+
+p:nth-child(odd) {
+  background-color:rgb(245, 62, 108);
+}
+
+.pbase {
+  text-align:left;
+  padding-left:2%;
+}
+
+.pyou {
+  text-align:right;
+  padding-right:2%;
 }
 
 .message {
@@ -741,10 +772,11 @@ export default Vue.extend({
 .partipants {
   width: 30%;
   height: 100%;
-  background-color: white;
+  background-color: rgb(68, 96, 253);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
 }
 
 .close-chat-icon {
