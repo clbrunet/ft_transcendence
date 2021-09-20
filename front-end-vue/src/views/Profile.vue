@@ -403,10 +403,10 @@ input {
   border-radius: 25px;
   border: 3px solid black;
   width: 100%;
-  max-width: 150px;
+  max-width: 180px;
   height: 100%;
   max-height: 150px;
-  font-size: 50px;
+  font-size: 35px;
   outline: none;
   color: white;
   cursor: pointer;

@@ -448,7 +448,8 @@ table {
   padding: 25px;
   width: auto;
   max-width: 90%;
-  height: 70%;
+  height: auto;
+  max-height: 70%;
   border-radius: 15px;
   overflow-y: scroll;
   display: inline-block;

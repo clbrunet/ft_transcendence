@@ -25,10 +25,10 @@
         @submit.prevent="send_message()"
         class="buttons"
         v-if="(data.status == 'public' && data.activeUserParticipant == true) ||  
-              (data.activeUserParticipant == true && data.activeUserBan == false
-              && data.activeUserMute == false
-              && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false
-              && isCurrentlyBanMute(data.activeUserMuteEndDateTime) == false)">
+        (data.activeUserParticipant == true && data.activeUserBan == false
+        && data.activeUserMute == false
+        && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false
+        && isCurrentlyBanMute(data.activeUserMuteEndDateTime) == false)">
         <input class="message" type="text" placeholder="type your message here" v-model="messageTyping" />
         <input class="send" type="submit" value="send" />
       </form>
@@ -69,6 +69,11 @@
 
     <!-- participants -->
     <div class="partipants" v-if="data.status == 'public' || (data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false)">
+      <img class="close-chat-icon"
+        src="/assets/close-chat.svg"
+        alt="close chat icon"
+        @click="closeChat()"
+      />
       <template v-for="(participant, index) in participants">
         <template v-if="participant.userName == $store.state.user.name">
           <span :key="index" class="you">You</span>
@@ -79,10 +84,10 @@
 
             <template v-if="participant.ban == false && isCurrentlyBanMute(participant.banEndDateTime) == false">
               <button v-if="isOwner == true" @click="changeOwner(participant)">change owner</button>
-              
+
               <button v-if="isOwner == true && participant.admin == false" @click="addAdmin(participant)">+ admin</button>
               <button v-else-if="isOwner == true" @click="removeAdmin(participant)">- admin</button>
-             
+
               <button v-if="data.activeUserAdmin == true  && participant.admin == false && data.status != 'public'" @click="open_popup_ban(participant)">Ban</button>
             </template>
             <button v-else @click="unbanParticipant(participant)">unban</button>
@@ -134,19 +139,19 @@
 
     <div v-if="popup_settings" class="popup-settings">
       <div class="popup-settings-content">
-          <div class="popup-settings-add-participant">
-            <h3>Add participants :</h3>
-            <div
-              v-if="candidateParticipants"
-              style="display:flex;flex-direction:column;color:white;"
-            >
-              <template v-for="(user, index) in candidateParticipants">
-                <div :key="index">
-                  <span>{{ user.name }}</span>
-                  <button @click="addParticipant(user)">ajouter</button>
-                </div>
-              </template>
-            </div>
+        <div class="popup-settings-add-participant">
+          <h3>Add participants :</h3>
+          <div
+            v-if="candidateParticipants"
+            style="display:flex;flex-direction:column;color:white;"
+          >
+            <template v-for="(user, index) in candidateParticipants">
+              <div :key="index">
+                <span>{{ user.name }}</span>
+                <button @click="addParticipant(user)">ajouter</button>
+              </div>
+            </template>
+          </div>
         </div>
         <button @click="close_popup_settings()" id="popup-settings-btn">Close</button>
       </div>
@@ -160,6 +165,7 @@
 import Vue from "vue";
 import axios from "axios";
 import router from "../router";
+import store from "../store";
 
 export default Vue.extend({
   name: "Chat",
@@ -184,17 +190,20 @@ export default Vue.extend({
       messageTyping: undefined as any
     };
   },
+  store: store,
   watch: {
     data: function() {
       this.mounted_like();
     },
     participants: function() {
-      if (this.data.ownerId == this.$store.state.user.id)
+      if (this.data.ownerId == this.$store.state.user.id) {
         this.refresh_candidateParticipants();
+      }
     },
     users: function() {
-      if (this.data.ownerId == this.$store.state.user.id)
+      if (this.data.ownerId == this.$store.state.user.id) {
         this.refresh_candidateParticipants();
+      }
     },
     idData: function() {
       this.refresh_participants();
@@ -208,6 +217,9 @@ export default Vue.extend({
     });
   },
   methods: {
+    closeChat() {
+      this.$store.dispatch('desactivateChat');
+    },
     mounted_like() {
       this.refresh_participants();
       this.refresh_users();
@@ -238,7 +250,7 @@ export default Vue.extend({
           this.$store.state.socket.emit('chatToServer', {sender: this.$store.state.user.name, room:this.data.name, message: this.messageTyping});
           this.messageTyping = "";
         });
-        }
+      }
     },
     refresh_participants() {
       const url = `${process.env.VUE_APP_API_URL}/channel/` + this.data.id;
@@ -406,12 +418,12 @@ export default Vue.extend({
         url: url,
         withCredentials: true
       })
-        .then(res => {
-          this.candidateParticipants = res.data;
-        })
-        .catch(() => {
-          console.log("");
-        });
+      .then(res => {
+        this.candidateParticipants = res.data;
+      })
+      .catch(() => {
+        console.log("");
+      });
     },
     isCurrentlyBanMute(timestamp: any) {
       let current = new Date();
@@ -439,12 +451,15 @@ export default Vue.extend({
     banParticipant(participant: any) {
       let banTime;
 
-      if (this.selectBanTime == '15min')
+      if (this.selectBanTime == '15min') {
         banTime = 15;
-      else if (this.selectBanTime == '30min')
+      }
+      else if (this.selectBanTime == '30min') {
         banTime = 30;
-      else if (this.selectBanTime == '1hour')
+      }
+      else if (this.selectBanTime == '1hour') {
         banTime = 60;
+      }
       axios({
         method: "post",
         url: `${process.env.VUE_APP_API_URL}/channel/ban`,
@@ -466,12 +481,15 @@ export default Vue.extend({
     muteParticipant(participant: any) {
       let muteTime;
 
-      if (this.selectMuteTime == '15min')
+      if (this.selectMuteTime == '15min') {
         muteTime = 15;
-      else if (this.selectMuteTime == '30min')
+      }
+      else if (this.selectMuteTime == '30min') {
         muteTime = 30;
-      else if (this.selectMuteTime == '1hour')
+      }
+      else if (this.selectMuteTime == '1hour') {
         muteTime = 60;
+      }
       axios({
         method: "post",
         url: `${process.env.VUE_APP_API_URL}/channel/mute`,
@@ -536,7 +554,7 @@ export default Vue.extend({
   overflow-y: auto;
   display:flex;
   flex-direction:column-reverse;
-  height:80%;
+  height:100%;
 
 }
 
@@ -549,9 +567,9 @@ export default Vue.extend({
 .chat {
   display: flex;
   border: 1px solid black;
-  width: 60%;
+  width: 70%;
+  height: 100%;
   flex-direction: column;
-  position: relative;
   background-color: #aaa;
 }
 
@@ -559,6 +577,7 @@ export default Vue.extend({
   color: white;
   background-color: black;
   padding: 15px;
+  word-break: break-all;
 }
 
 .you {
@@ -567,8 +586,6 @@ export default Vue.extend({
 
 .buttons {
   display: flex;
-  position: absolute;
-  bottom: 0;
   width: 100%;
   height: 10%;
 }
@@ -657,19 +674,21 @@ export default Vue.extend({
 
 .popup-settings {
   z-index: 1000;
+  position: fixed;
   width: 100vw;
   height: 100vh;
+  top:0;
+  left:0;
   background-color: rgba(48, 74, 36, 0.6);
-  position: absolute;
   margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .popup-settings-content {
-  position: absolute;
-  width: 40vw;
-  height: 60vh;
-  left: 20%;
-  top: 20%;
+  width: 50%;
+  height: 60%;
   background-color: blue;
   display: flex;
   flex-direction: column;
@@ -687,7 +706,11 @@ export default Vue.extend({
   display: flex;
   flex-direction: column;
   width: 80%;
+  height: 80%;
   background-color: aqua;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-y: scroll;
 }
 
 /* incoming
@@ -702,6 +725,9 @@ export default Vue.extend({
 
 .row-participant {
   background-color: #999;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .message {
@@ -721,5 +747,39 @@ export default Vue.extend({
   align-items: flex-start;
 }
 
+.close-chat-icon {
+  display: none;
+}
+
+@media (max-width: 770px) {
+  .chat_and_participant {
+    width: 100%;
+  }
+
+  .chat {
+    width: 70%;
+  }
+
+  .message {
+    width: 75%;
+  }
+
+  .send {
+    width: 25%;
+  }
+
+  .close-chat-icon {
+    display: block;
+    justify-self: center;
+    align-self: center;
+    cursor: pointer;
+    width: 40px;
+    margin: 5px;
+  }
+
+  .popup-settings-content {
+    width: 80%;
+  }
+}
 
 </style>

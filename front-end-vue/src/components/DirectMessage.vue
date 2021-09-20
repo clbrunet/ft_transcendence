@@ -8,9 +8,9 @@
         <div class="messages">
           <p v-for="(message, index) in messages" :key="index">
             {{message.userName}}: {{message.content}}
-          <template v-if="message.button == true && message.userId != $store.state.user.id">
-            <a @click="acceptDuel(message.userId, message.duelId)">accept</a> <a @click="rejectDuel(message.userId)">reject</a>
-          </template>
+            <template v-if="message.button == true && message.userId != $store.state.user.id">
+              <a @click="acceptDuel(message.userId, message.duelId)">accept</a> <a @click="rejectDuel(message.userId)">reject</a>
+            </template>
           </p>
         </div>
       </template>
@@ -24,22 +24,27 @@
 
     <!-- participants -->
     <div class="partipants">
-        <span> You</span>
-          <div class="row-participant">
-            <span class="clickable" @click="goToProfile(data)"> {{data.name}}</span>
-            <button v-if="pendingDuel == false" @click="duelFriend()">Duel</button>
-              <form @submit.prevent="">
-              <span>Number of points</span>
-                <select v-model="nbPointsConfig">
-                  <option selected>5</option>
-                  <option>6</option>
-                  <option>7</option>
-                  <option>8</option>
-                  <option>9</option>
-                  <option>10</option>
-                </select>
-              </form>
-          </div>
+      <img class="close-chat-icon"
+        src="/assets/close-chat.svg"
+        alt="close chat icon"
+        @click="closeChat()"
+      />
+      <span> You</span>
+      <div class="row-participant">
+        <span class="clickable" @click="goToProfile(data)"> {{data.name}}</span>
+        <button v-if="pendingDuel == false" @click="duelFriend()">Duel</button>
+        <form @submit.prevent="">
+          <span>Number of points</span>
+          <select v-model="nbPointsConfig">
+            <option selected>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+          </select>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -77,11 +82,15 @@ export default Vue.extend({
     });
 
     this.$store.state.socket.on('refreshDuels', (id: any) => {
-      if (this.$store.state.user.id == id)
+      if (this.$store.state.user.id == id) {
         this.refresh_messages();
+      }
     });
   },
   methods: {
+    closeChat() {
+      this.$store.dispatch('desactivateChat');
+    },
     mounted_like() {
       this.refresh_messages();
       this.refresh_channel();
@@ -101,7 +110,7 @@ export default Vue.extend({
           this.$store.state.socket.emit('dmToServer', {sender: this.$store.state.user.name, room:this.data.id, message: this.messageTyping});
           this.messageTyping = "";
         });
-        }
+      }
     },
     refresh_channel() {
       axios({
@@ -122,8 +131,9 @@ export default Vue.extend({
         this.pendingDuel = false;
         this.messages = res.data.reverse();
         for (let i = 0; i < this.messages.length; i++) {
-          if (this.messages[i].button == true)
+          if (this.messages[i].button == true) {
             this.pendingDuel = true;
+          }
         }
       }).catch(() => {
         console.log("No permission so see some of messages");
@@ -131,10 +141,12 @@ export default Vue.extend({
     },
     duelFriend() {
       let newId: any;
-      if (this.data.participants[0].userId != this.$store.state.user.id)
+      if (this.data.participants[0].userId != this.$store.state.user.id) {
         newId = this.data.participants[0].userId;
-      else
+      }
+      else {
         newId = this.data.participants[1].userId;
+      }
 
       const url = `${process.env.VUE_APP_API_URL}/duel/` + newId;
       axios({
@@ -142,7 +154,7 @@ export default Vue.extend({
         method: "post",
         withCredentials: true
       }).then(res => {
-      this.refresh_messages();
+        this.refresh_messages();
         this.$store.state.socket.emit('dmToServer', {sender: "sender", room:this.data.id, message: "message"});
         this.$store.state.socket.emit('duelDenied', {idRoom: "room", id: newId}); //just a refresh
         axios({
@@ -156,10 +168,12 @@ export default Vue.extend({
       });
     },
     goToProfile(user: any) {
-      if (user.participants[0].userId != this.$store.state.user.id)
+      if (user.participants[0].userId != this.$store.state.user.id) {
         var path = "/profile/" + user.participants[0].userId;
-      else
+      }
+      else {
         var path = "/profile/" + user.participants[1].userId;
+      }
       router.push({ path: path });
     },
     acceptDuel(userId: string, duelId: string) {
@@ -169,13 +183,15 @@ export default Vue.extend({
         withCredentials: true
       }).then(res => {
         if (res.data == 'Duel cancelled since at least one of the User is offline' ||
-            res.data == 'Duel cancelled since at least one of the User is already in-game')
+          res.data == 'Duel cancelled since at least one of the User is already in-game')
         {
           let newId;
-          if (this.data.participants[0].userId != this.$store.state.user.id)
+          if (this.data.participants[0].userId != this.$store.state.user.id) {
             newId = this.data.participants[0].userId;
-          else
+          }
+          else {
             newId = this.data.participants[1].userId;
+          }
           this.$store.state.socket.emit('duelDenied', {idRoom: this.data.id, id: newId})
           alert(res.data);
           this.refresh_messages();
@@ -186,10 +202,12 @@ export default Vue.extend({
           this.refresh_messages();
           this.$store.state.gameid2 = res.data.id;
           let newId;
-          if (this.data.participants[0].userId != this.$store.state.user.id)
+          if (this.data.participants[0].userId != this.$store.state.user.id) {
             newId = this.data.participants[0].userId;
-          else
+          }
+          else {
             newId = this.data.participants[1].userId;
+          }
           this.$store.state.socket.emit('duelAccepted', {idRoom: this.data.id, id: newId, duelId: duelId})
         }
       }).catch(err => {
@@ -206,10 +224,12 @@ export default Vue.extend({
         this.refresh_channel();
         this.refresh_messages();
         let newId;
-        if (this.data.participants[0].userId != this.$store.state.user.id)
+        if (this.data.participants[0].userId != this.$store.state.user.id) {
           newId = this.data.participants[0].userId;
-        else
+        }
+        else {
           newId = this.data.participants[1].userId;
+        }
         this.$store.state.socket.emit('duelDenied', {idRoom: this.data.id, id: newId})
       });
     }
@@ -228,6 +248,9 @@ export default Vue.extend({
 
 .row-participant {
   background-color: #999;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .partipants {
@@ -251,7 +274,7 @@ export default Vue.extend({
 .chat {
   display: flex;
   border: 1px solid black;
-  width: 60%;
+  width: 70%;
   flex-direction: column;
   position: relative;
   background-color: #aaa;
@@ -261,20 +284,18 @@ export default Vue.extend({
   color: white;
   background-color: black;
   padding: 15px;
+  word-break: break-all;
 }
 
 .messages {
   overflow-y: auto;
   display:flex;
   flex-direction:column-reverse;
-  height:80%;
-
+  height:100%;
 }
 
 .buttons {
   display: flex;
-  position: absolute;
-  bottom: 0;
   width: 100%;
   height: 10%;
 }
@@ -294,6 +315,37 @@ a {
 
 a:hover {
   cursor:pointer;
+}
+
+.close-chat-icon {
+  display: none;
+}
+
+@media (max-width: 770px) {
+  .chat_and_participant {
+    width: 100%;
+  }
+
+  .chat {
+    width: 70%;
+  }
+
+  .message {
+    width: 75%;
+  }
+
+  .send {
+    width: 25%;
+  }
+
+  .close-chat-icon {
+    display: block;
+    justify-self: center;
+    align-self: center;
+    cursor: pointer;
+    width: 40px;
+    margin: 5px;
+  }
 }
 
 </style>
