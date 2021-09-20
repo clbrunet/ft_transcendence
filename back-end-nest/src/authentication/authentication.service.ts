@@ -89,16 +89,16 @@ export class AuthenticationService {
     const payload: TokenPayload = { userId };
     const token = this.jwtService.sign(payload);
     if ("IS_HEROKU" in process.env) {
-      return `Authentication=${token}; HttpOnly; Path=/; Max-Age='1d'; SameSite=None; Secure`;
+      return `Authentication=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=None; Secure`;
     }
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age='1d'; SameSite=Lax`;
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict`;
   }
 
   public getCookieForLogOut() {
     if ("IS_HEROKU" in process.env) {
       return `Authentication=; HttpOnly; Path=/; Max-Age=0; SameSite=None; Secure`;
     }
-    return `Authentication=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax`;
+    return `Authentication=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict`;
   }
 
   public getCookieWithJwtAccessToken(userId: string, isSecondFactorAuthenticated = false) {
@@ -108,8 +108,8 @@ export class AuthenticationService {
       expiresIn: `1d`
     });
     if ("IS_HEROKU" in process.env) {
-      return `Authentication=${token}; HttpOnly; Path=/; Max-Age='1d'; SameSite=None; Secure`;
+      return `Authentication=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=None; Secure`;
     }
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age='1d'; SameSite=Lax`;
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict`;
   }
 }
