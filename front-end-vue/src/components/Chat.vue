@@ -568,7 +568,7 @@ export default Vue.extend({
 
 .chat {
   display: flex;
-  border: 1px solid black;
+  outline: 1px solid black;
   width: 70%;
   height: 100%;
   flex-direction: column;
@@ -811,6 +811,10 @@ p:nth-child(odd) {
 
   .popup-settings-content {
     width: 80%;
+  }
+
+  .partipants {
+    border: none;
   }
 }
 

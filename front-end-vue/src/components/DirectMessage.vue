@@ -279,7 +279,7 @@ export default Vue.extend({
 
 .chat {
   display: flex;
-  border: 1px solid black;
+  outline: 1px solid black;
   width: 70%;
   height: 100%;
   flex-direction: column;
@@ -386,6 +386,10 @@ a:hover {
     cursor: pointer;
     width: 40px;
     margin: 5px;
+  }
+
+  .partipants {
+    border: none;
   }
 }
 

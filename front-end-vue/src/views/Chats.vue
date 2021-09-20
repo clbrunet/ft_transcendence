@@ -1,17 +1,17 @@
 <template>
   <div id="body-chat">
     <div id="revamp">
-      <div id="revamp2">
+      <div class="revamp2" v-bind:class="{ 'revamp2--inactive': isChatActive }">
         <div class="creating">
           <span>Add a channel </span>
           <img
             src="/assets/add.svg"
             alt="add"
             style="width:30px;cursor:pointer;"
-             @click="open_popup_create()"
+            @click="open_popup_create()"
           />
         </div>
-        <div class="list_channels" v-bind:class="{ 'list_channels--inactive': isChatActive }">
+        <div class="list_channels">
           <span style="font-weight:700;font-size:23px;text-decoration:underline;">channels general</span>
           <div class="channel" v-for="(channel, index) in channels" :key="index" @click="select_channel(channel, index)">
             <span>{{ channel.name }} </span> 
@@ -148,7 +148,6 @@ export default Vue.extend({
     },
   },
   mounted() {
-    this.$store.dispatch('desactivateChat');
     this.refresh_channels();
     this.refresh_dm();
 
@@ -161,7 +160,6 @@ export default Vue.extend({
   },
   methods: {
     refresh_channels() {
-      
       axios({
         method: "get",
         url: `${ process.env.VUE_APP_API_URL }/channel/index`,
@@ -173,6 +171,7 @@ export default Vue.extend({
         {
           this.flag = true;
           this.select_channel(this.channels[0], 0);
+          this.$store.dispatch('desactivateChat');
         }
       })
       .catch(() => {
@@ -281,7 +280,6 @@ export default Vue.extend({
     },
     create_channel() {
       this.errorCreate = "";
-      console.log(this.createStatus);
       if (this.createStatus == 'public') {
         this.createPassword = undefined;
         this.createStatus = 0;
@@ -380,15 +378,15 @@ export default Vue.extend({
 
 }
 
-  .buttonAdd {
-    cursor:pointer;
-    width:30%;
-  }
+.buttonAdd {
+  cursor:pointer;
+  width:30%;
+}
 
-#revamp2 {
+.revamp2 {
   display: flex;
   flex-direction: column;
-  width:20%;
+  width:25%;
 }
 
 .creating {
@@ -450,7 +448,7 @@ export default Vue.extend({
 
 .list_channels{
   width: 100%;
-  border: 3px solid black;
+  outline: 3px solid black;
   background-color :white;
   max-height: 100%;
   overflow-y: auto; /* maybe remove */
@@ -461,8 +459,9 @@ export default Vue.extend({
   width: 100%;
   min-height: 50px;
   height: auto;
-  padding:2%;
-  border: 1px solid #aaa;
+  padding-top:2%;
+  padding-bottom:2%;
+  outline: 1px solid #aaa;
   color:white;
   background-color:#3040F0;
   margin:0;
@@ -523,26 +522,20 @@ export default Vue.extend({
 }
 
 .current-chat {
-  width: 70%;
+  width: 75%;
 }
 
 
 
 @media (max-width: 770px) {
-  .list_channels {
+  .revamp2 {
     width: 100%;
   }
 
-  .list_channels--inactive {
+  .revamp2--inactive {
     flex-direction: row;
     display: none;
   }
-
-  .channel {
-    width: 100%;
-    min-height: 50px;
-  }
-
 
   .current-chat {
     display: none;
