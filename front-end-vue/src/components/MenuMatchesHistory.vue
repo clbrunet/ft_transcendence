@@ -7,13 +7,15 @@
       <table>
         <tr class="row" v-for="(match, index) in matchesHistory" :key="index">
           <td>
-            <span>WIP</span>
+            <span v-if="$store.state.user.name != match.winnerName"> {{ match.winnerName }} </span>
+            <span v-else> {{ match.loserName }} </span>
           </td>
           <td>
-            <span>WIP</span>
+            <span>{{match.winnerPoint}} - {{match.loserPoint}} </span>
           </td>
           <td>
-            <span>{{matchesHistory}}</span>
+            <span v-if="$store.state.user.name == match.winnerName"> Win </span>
+            <span v-else> Lose </span>
           </td>
         </tr>
       </table>
@@ -33,7 +35,7 @@ export default Vue.extend({
   },
   mounted() {
     axios({
-      url: `${ process.env.VUE_APP_API_URL }/block/index`,
+      url: `${ process.env.VUE_APP_API_URL }/game/history`,
       method: "get",
       withCredentials: true
     }).then(res => {
