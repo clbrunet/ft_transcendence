@@ -1,7 +1,9 @@
 <template>
     <div>
-      <p>{{duelid}}</p>
-      <h1>Vous pouvez jouer avec flèche du haut / bas</h1>
+      <template v-if="!game_won">
+        <h1 v-if="side == 'left' || side == 'right'">You can play with up/down arrow</h1>
+        <h1 v-else>You are spectating</h1>
+      </template>
       <canvas
         v-if="!game_won"
         ref="Game"
@@ -13,11 +15,11 @@
       </canvas>
       <h2 v-if="!game_won">Points : {{ left_point }} : {{ right_point }}</h2>
       <div v-else>
-        <div>
-          <span v-if="(side == 'left' && winner == 'left') || (side == 'right' && winner == 'right')">Vous avez gagné !</span>
-          <span v-else-if="(side == 'left' || side == 'right')">Vous avez perdu</span>
-          <span v-else>Game is ended</span>
-          <button @click="goToProfile()">Retour</button>
+        <div class="ending">
+          <span class="ended" v-if="(side == 'left' && winner == 'left') || (side == 'right' && winner == 'right')">You won this match !</span>
+          <span class="ended" v-else-if="(side == 'left' || side == 'right')">You lost this match</span>
+          <span class="ended" v-else>Game is ended</span>
+          <button @click="goToProfile()">Go back</button>
         </div>
     </div>
   </div>
@@ -276,5 +278,39 @@ export default Vue.extend({
 <style scoped>
   canvas {
     background-color: #3043f0;
+  }
+
+  h1 {
+    color : black;
+  }
+
+  span {
+    color:black;
+  }
+
+  .ending {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+    .ending button {
+      margin-top: 2%;
+      background-color: #3043f0;
+      width: 200px;
+      padding: 1%;
+      outline: none;
+      cursor:pointer;
+      border: 1px solid white;
+      border-radius: 5px;
+  }
+
+  .ending button:hover {
+    
+      background-color: #1a2ff0;
+  }
+
+  .ended {
+    margin-top:3%;
   }
 </style>
