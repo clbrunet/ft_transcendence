@@ -227,7 +227,7 @@ export class DuelService {
         const duel = await this.userService.findByIdQueuer(duelId);
         await this.queueService.delete(duel.queuers[0].id);
       }
-      const game = await this.gameService.matchByIdObject(userId, duelId, 5);
+      const game = await this.gameService.matchByIdObject(userId, duelId, 5, 5, 5);
       let duelUpdateDto = new DuelUpdateDto();
       duelUpdateDto.gameId = game.id;
       await this.update(duel1.id, duelUpdateDto);

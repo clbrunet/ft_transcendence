@@ -18,17 +18,10 @@ export class GameController {
   ) {}
 
   @UseGuards(JwtTwoFactorGuard)
-  @Post('/launch1/:id')
-  async launchActiveUser1(@Req() request: RequestWithUser, @Param('id') id, @Body() gameUpdateDto: GameUpdateDto) {
+  @Post('/launch/:id')
+  async launchActiveUser(@Req() request: RequestWithUser, @Param('id') id, @Body() gameUpdateDto: GameUpdateDto) {
     const {user} = request;
-    return this.gameService.launchActiveUser1(user.id, id, gameUpdateDto.pointToVictory);
-  }
-
-  @UseGuards(JwtTwoFactorGuard)
-  @Post('/launch2/:id')
-  async launchActiveUser2(@Req() request: RequestWithUser, @Param('id') id) {
-    const {user} = request;
-    return this.gameService.launchActiveUser2(user.id, id);
+    return this.gameService.launchActiveUser(user.id, id, gameUpdateDto.pointToVictory, gameUpdateDto.ballSize, gameUpdateDto.ballSpeed);
   }
 
   @UseGuards(JwtTwoFactorGuard)

@@ -44,17 +44,25 @@ export class GameService {
     private readonly messageService: MessageService,
   ) {}
 
-  public async create(pointToVictory: number) {
+  public async create(pointToVictory: number, ballSize: number, ballSpeed: number) {
     if (pointToVictory < 1 || pointToVictory > 10) {
       throw new HttpException('pointToVictory must be between 1 and 10', HttpStatus.NOT_FOUND);
     }
+    if (ballSize < 1 || ballSize > 10) {
+      throw new HttpException('ballSize must be between 1 and 10', HttpStatus.NOT_FOUND);
+    }
+    if (ballSpeed < 1 || ballSpeed > 10) {
+      throw new HttpException('ballSpeed must be between 1 and 10', HttpStatus.NOT_FOUND);
+    }
     const game = new Game();
     game.pointToVictory = pointToVictory;
+    game.ballSize = ballSize;
+    game.ballSpeed = ballSpeed;
     return await this.gameRepo.save(game);
   }
 
-  public async matchByIdObject(userId1: string, userId2: string, pointToVictory: number) {
-    let game = await this.create(pointToVictory);
+  public async matchByIdObject(userId1: string, userId2: string, pointToVictory: number, ballSize: number, ballSpeed: number) {
+    let game = await this.create(pointToVictory, ballSize, ballSpeed);
     const player1 = await this.playerService.create(userId1, game.id);
     const player2 = await this.playerService.create(userId2, game.id);
     return await this.gameRepo.findOne(game.id,
@@ -192,9 +200,11 @@ export class GameService {
     throw new HttpException('Game update failed', HttpStatus.NOT_FOUND);
   }
 
-  private async setPointToVictory(id: string, pointToVictory: number) {
+  private async setGameAttributes(id: string, pointToVictory: number, ballSize: number, ballSpeed: number) {
     let gameUpdateDto = new GameUpdateDto();
     gameUpdateDto.pointToVictory = pointToVictory;
+    gameUpdateDto.ballSize = ballSize;
+    gameUpdateDto.ballSpeed = ballSpeed;
     return this.gameToDto(await this.update(id, gameUpdateDto));
   }
 
@@ -289,26 +299,15 @@ export class GameService {
     return await this.messageService.create(messageCreationDto);
   }
 
-  public async launchActiveUser1(userId: string, id: string, pointToVictory: number) {
+  public async launchActiveUser(userId: string, id: string, pointToVictory: number, ballSize: number, ballSpeed: number) {
     if (!(await this.isPlayer(userId, id))) {
       throw new HttpException('User is not a Player of that Game', HttpStatus.NOT_FOUND);
     }
     const game = await this.findById(id);
-    await this.setPointToVictory(id, pointToVictory);
+    await this.setGameAttributes(id, pointToVictory, ballSize, ballSpeed);
     await this.introductionMessage(game);
     await this.setAsOngoing(id);
     return await this.getById(id);
-  }
-
-  public async launchActiveUser2(userId: string, id: string) {
-    if (!(await this.isPlayer(userId, id))) {
-      throw new HttpException('User is not a Player of that Game', HttpStatus.NOT_FOUND);
-    }
-    let game = await this.findById(id);
-    while (game.status === 0) {
-      game = await this.findByIdLazy(id);
-    }
-    return await this.getById(id); 
   }
 
   public async scoreActiveUser(userId: string, id: string, addedPoint: number) {
@@ -345,6 +344,8 @@ export class GameService {
     dto.status = GameStatus[game.status];
     dto.startTime = game.startTime;
     dto.pointToVictory = game.pointToVictory;
+    dto.ballSize = game.ballSize;
+    dto.ballSpeed = game.ballSpeed;
     dto.players = [];
     if (game.players) {
       for (const player of game.players) {
@@ -365,6 +366,8 @@ export class GameService {
     dto.status = GameStatus[game.status];
     dto.startTime = game.startTime;
     dto.pointToVictory = game.pointToVictory;
+    dto.ballSize = game.ballSize;
+    dto.ballSpeed = game.ballSpeed;
     return dto;
   }
 
@@ -374,6 +377,8 @@ export class GameService {
     dto.status = GameStatus[game.status];
     dto.startTime = game.startTime;
     dto.pointToVictory = game.pointToVictory;
+    dto.ballSize = game.ballSize;
+    dto.ballSpeed = game.ballSpeed;
     if (game.players[0].point > game.players[1].point) {
       dto.winnerName = game.players[0].user.name;
       dto.winnerPoint = game.players[0].point;
