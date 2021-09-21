@@ -10,17 +10,27 @@ export class GameSeedDto {
   userEmail2: string;
   playerPoint2: number;
   pointToVictory: number;
+  ballSize: number;
+  ballSpeed: number;
 }
 
 export class GameMatchDto {
   userId1: string;
   userId2: string;
   pointToVictory: number;
+  ballSize: number;
+  ballSpeed: number;
 }
 
 export class GameUpdateDto {
   @IsOptional()
   pointToVictory: number;
+
+  @IsOptional()
+  ballSize: number;
+
+  @IsOptional()
+  ballSpeed: number;
 
   @IsOptional()
   status: GameStatus;
@@ -31,6 +41,8 @@ export class GameDto {
   startTime: Date;
   status: string;
   pointToVictory: number;
+  ballSize: number;
+  ballSpeed: number;
   players: PlayerForGameDto[];
 }
 
@@ -39,6 +51,8 @@ export class GameHistoryDto {
   startTime: Date;
   status: string;
   pointToVictory: number;
+  ballSize: number;
+  ballSpeed: number;
   winnerName: string;
   winnerPoint: number;
   loserName: string;
@@ -50,6 +64,8 @@ export class GameDtoLazy {
   startTime: Date;
   status: string;
   pointToVictory: number;
+  ballSize: number;
+  ballSpeed: number;
 }
 
 export class ScoreDto {

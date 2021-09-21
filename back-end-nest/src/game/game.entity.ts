@@ -17,6 +17,12 @@ class Game {
 	@Column()
   	public pointToVictory: number;
 
+  @Column()
+    public ballSize: number;
+
+  @Column()
+    public ballSpeed: number;
+
 	@Column({ default: 0 })
   	public status: GameStatus;
 

@@ -159,7 +159,7 @@ export class QueueService {
     if (await this.isThereAnotherQueuer(userId)) {
       const res = await this.findAll();
       const queuer = await this.userService.findByIdLazy(res[0].queuer.id);
-      const game = await this.gameService.matchByIdObject(userId, queuer.id, 5);
+      const game = await this.gameService.matchByIdObject(userId, queuer.id, 5, 5, 5);
 
       let queueUpdateDto = new QueueUpdateDto();
       queueUpdateDto.gameId = game.id;
