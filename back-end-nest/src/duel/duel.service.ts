@@ -232,10 +232,6 @@ export class DuelService {
       duelUpdateDto.gameId = game.id;
       await this.update(duel1.id, duelUpdateDto);
       await this.update(duel2.id, duelUpdateDto);
-      let userUpdateDto = new UserUpdateDto();
-      userUpdateDto.status = 2;
-      await this.userService.update(userId, userUpdateDto);
-      await this.userService.update(duelId, userUpdateDto);
       return this.gameService.gameToDto(game);
     }
   }
@@ -279,7 +275,13 @@ export class DuelService {
     }
     if (duel.status === 2) {
       return "Duel cancelled since the other User is already in-game"; 
-    } 
+    }
+
+    let userUpdateDto = new UserUpdateDto();
+    userUpdateDto.status = 2;
+    await this.userService.update(userId, userUpdateDto);
+    await this.userService.update(duelId, userUpdateDto);
+
     const game = await this.gameService.findById(duel1.gameId);   
     return this.gameService.gameToDto(game);
   }
