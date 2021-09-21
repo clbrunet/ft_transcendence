@@ -76,6 +76,7 @@ export default Vue.extend({
 
 table {
   width: 100%;
+  table-layout: fixed;
   background-color: white;
   padding-bottom: 2%;
   padding-top: 2%;
@@ -97,6 +98,8 @@ td span {
   font-size:1rem;
   text-align:center;
   width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .row {
@@ -113,9 +116,15 @@ table td {
   width: 28%;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   #body {
     height: 90%;
+    max-height: 200px;
+    margin: 10px;
+  }
+
+  table {
+    min-height: 15px;
   }
 }
 </style>

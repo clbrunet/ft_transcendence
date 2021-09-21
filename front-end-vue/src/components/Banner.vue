@@ -148,7 +148,7 @@ span {
   text-overflow: ellipsis;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   #body {
     background-color: #3040F0;
     display: flex;

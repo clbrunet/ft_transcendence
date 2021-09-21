@@ -448,12 +448,12 @@ input {
   align-items: center;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   #bottom {
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 150%;
+    justify-content: flex-start;
+    height: auto;
   }
 
   #middle {
@@ -465,15 +465,18 @@ input {
   #left,
   #right {
     width: 90%;
-    height: 40%;
+    height: auto;
     display: flex;
     justify-content: center;
   }
 
   #play {
     font-size: 40px;
-    height: 70%;
     width: 70%;
+    min-width: 190px;
+    min-height: 70px;
+    height: 70%;
+    margin: 10px;
   }
 }
 

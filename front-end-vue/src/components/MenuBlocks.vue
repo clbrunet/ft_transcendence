@@ -45,7 +45,7 @@ export default Vue.extend({
   justify-content: center;
   border-radius: 15px;
   width: 80%;
-  height: 30%;
+  height: 40%;
 }
 
 #title {
@@ -62,11 +62,12 @@ export default Vue.extend({
 }
 
 #table {
-  overflow-y: auto;
   width: 100%;
+  overflow-y: auto;
 }
 
 table {
+  table-layout: fixed;
   width: 100%;
   background-color: white;
   padding-bottom: 2%;
@@ -86,6 +87,8 @@ tr {
 td span {
   padding: 3%;
   text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .row {
@@ -99,12 +102,18 @@ table td {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 45%;
+  width: 75%;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   #body {
     height: 90%;
+    max-height: 200px;
+    margin: 10px;
+  }
+
+  table {
+    min-height: 15px;
   }
 }
 

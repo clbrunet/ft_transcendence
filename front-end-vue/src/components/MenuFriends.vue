@@ -35,6 +35,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable */
 import Vue from "vue";
 import axios from "axios";
 export default Vue.extend({
@@ -71,7 +72,7 @@ export default Vue.extend({
   align-content: center;
   border-radius: 15px;
   width: 80%;
-  height: 30%;
+  height: 40%;
   overflow-y: auto;
 }
 
@@ -94,6 +95,7 @@ export default Vue.extend({
 }
 
 table {
+  table-layout: fixed;
   width: 100%;
   background-color: white;
   padding-bottom: 2%;
@@ -113,6 +115,8 @@ tr {
 td span {
   padding: 3%;
   text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .row {
@@ -129,9 +133,15 @@ table td {
   width: 45%;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   #body {
     height: 90%;
+    margin: 10px;
+    max-height: 200px;
+  }
+
+  table {
+    min-height: 15px;
   }
 }
 
