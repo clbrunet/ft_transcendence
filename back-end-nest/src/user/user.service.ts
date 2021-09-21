@@ -6,23 +6,46 @@ import { Level } from './enum.level';
 import { Status } from './enum.status';
 
 import User from './user.entity';
+import Channel from '../channel/channel.entity';
+import Participant from '../participant/participant.entity';
 
 import RegisterDto from '../authentication/register.dto';
 import { UserDtoLazy } from './user.dto';
 import { ActiveUserDto } from './user.dto';
 import { UserUpdateDto } from './user.dto';
+import { ParticipantCreationDto } from '../participant/participant.dto';
 
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User> ) {}
+    private userRepository: Repository<User>,
+    @InjectRepository(Channel)
+    private channelRepository: Repository<Channel>,
+    @InjectRepository(Participant)
+    private participantRepository: Repository<Participant>,
+  ) {}
 
   public async create(registerData: RegisterDto) {
-    const newUser = await this.userRepository.create(registerData);
-    await this.userRepository.save(newUser);
+    let newUser = await this.userRepository.create(registerData);
+    newUser = await this.userRepository.save(newUser);
+    await this.addToAllPublicChannel(newUser);
     return newUser;
+  }
+
+  private async addToAllPublicChannel(user: User) {
+    const channels = await this.channelRepository.find(
+      {
+        where: { status: 0 },
+      }     
+    );
+    for (const channel of channels) {
+        let participant = new Participant();
+        participant.user = user;
+        participant.channel = channel;
+        await this.participantRepository.save(participant);
+    }
   }
 
   public async setTwoFactorAuthenticationSecret(secret: string, userId: string) {

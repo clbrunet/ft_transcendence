@@ -45,7 +45,7 @@ export class ChannelService {
     private readonly blockService: BlockService,
   ) {}
 
-  async create(channelCreationDto: ChannelCreationDto) {
+  public async create(channelCreationDto: ChannelCreationDto) {
     let hashedPassword;
     if (channelCreationDto.status == 2) {
       hashedPassword = await bcrypt.hash(channelCreationDto.password, 10);
@@ -74,7 +74,22 @@ export class ChannelService {
     participantCreationDto.admin = true;
     participantCreationDto.authorized = true;
     await this.participantService.create(participantCreationDto);
+    if (channelCreationDto.status == 0) {
+      this.addAllUser(newChannel.owner.id, newChannel.id);
+    }
     return this.channelToDtoLazy(newChannel);
+  }
+
+  private async addAllUser(ownerId: string, channelId: string) {
+    const users = await this.userService.findAllLazy();
+    for (const user of users) {
+      if (user.id != ownerId) {
+        let participantCreationDto = new ParticipantCreationDto();
+        participantCreationDto.userId = user.id;
+        participantCreationDto.channelId = channelId;
+        await this.participantService.create(participantCreationDto);
+      }
+    }
   }
 
   public async findAll(direct: boolean) {

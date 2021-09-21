@@ -99,9 +99,6 @@ export const channels: ChannelSeedDto[] = [
 ];
 
 export const participants: ParticipantSeedDto[] = [
-  { channelName: 'Global Announcement', userEmail: 'nicolas@yopmail.com'},
-  { channelName: 'Global Announcement', userEmail: 'clement@yopmail.com'},
-
   { channelName: 'Karate budokai', userEmail: 'nicolas@yopmail.com'},
   { channelName: 'Karate budokai', userEmail: 'come@yopmail.com'},
 
