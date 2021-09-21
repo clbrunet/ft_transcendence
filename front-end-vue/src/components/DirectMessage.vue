@@ -179,7 +179,7 @@ export default Vue.extend({
           this.$store.state.gameid = res.data.id;
           this.$store.state.nbPoints = this.nbPointsConfig;
         });
-      });
+      }).catch(() => console.log(''));
     },
     goToProfile(user: any) {
       if (user.participants[0].userId != this.$store.state.user.id) {

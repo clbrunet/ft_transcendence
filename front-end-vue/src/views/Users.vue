@@ -295,14 +295,39 @@ export default Vue.extend({
             method: "post",
             withCredentials: true 
           }).then((res) => {
-            if (this.$store.state.user != undefined)
+            if (res.data == 'Duel cancelled since the active User is already in-game')
+            {
+              alert('you were already in a game, you can now play');
+              axios({
+                    url: process.env.VUE_APP_API_URL + "/game/indexOngoing",
+                    method: "get",
+                    withCredentials: true
+                  }).then(res => {
+                    let allOngoing = res.data;
+
+                    for (let i = 0; i < allOngoing.length; i++)
+                    {
+                      if (allOngoing[i].players[0].userId == this.$store.state.user.id || allOngoing[i].players[1].userId == this.$store.state.user.id)
+                      {
+                        axios({
+                          url: process.env.VUE_APP_API_URL + "/game/unfinished/" + allOngoing[i].id,
+                          method: "patch",
+                          withCredentials: true
+                        }).then(() => {
+                          this.$store.state.socket.emit('gameBugged', {idGame:allOngoing[i].id, page:'Profile', idUser: this.$store.state.user.id});
+                        })
+                      }
+                    }
+                  }).catch(() => console.log(""));
+            }
+            else if (this.$store.state.user != undefined)
             {
               this.$store.state.gameid = res.data.id;
               this.$store.state.nbPoints = this.nbPointsConfig;
             }
           });
         });
-      });
+      }).catch(() => console.log(''));
     },
     unduel(user: any) {
       const url = `${process.env.VUE_APP_API_URL}/duel/unduel/` + user.id;

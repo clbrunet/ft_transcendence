@@ -78,7 +78,7 @@ export default Vue.extend({
               if (data.idUser ==  this.$store.state.user.id)
                 router.push({name: data.page}).catch(() => console.log('Redirection...'));
               else
-                router.push({name: 'Profile'});
+                router.push({name: 'Profile'}).catch(() => console.log('Redirection...'));
             }
           }
         });
@@ -107,16 +107,18 @@ export default Vue.extend({
         {
           this.nbPoints = this.$store.state.nbPoints;
           axios({
-            url: process.env.VUE_APP_API_URL + "/game/launch1/" + this.gameid,
+            url: process.env.VUE_APP_API_URL + "/game/launch/" + this.gameid,
             method: "post",
             withCredentials: true,
             data: {
-              pointToVictory: this.nbPoints
+              pointToVictory: this.nbPoints,
+              ballSize: 8,
+              ballSpeed: 4
             }
             }).then(res => {
               duelLaunch1 = true;
             }).catch(err => {
-              console.log("error gamelaunch1")
+              console.log("")
           });
         }
 

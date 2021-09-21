@@ -255,7 +255,6 @@ export default Vue.extend({
         .catch(err => {
           this.queueing = false;
           this.$store.state.inQueue = false;
-          console.log("will remove all games and all users from theses games");
         });
     },
     unqueue() {
