@@ -15,7 +15,8 @@
       <div v-else>
         <div>
           <span v-if="(side == 'left' && winner == 'left') || (side == 'right' && winner == 'right')">Vous avez gagné !</span>
-          <span v-else>Vous avez perdu</span>
+          <span v-else-if="(side == 'left' || side == 'right')">Vous avez perdu</span>
+          <span v-else>Game is ended</span>
           <button @click="goToProfile()">Retour</button>
         </div>
     </div>
@@ -83,7 +84,7 @@ export default Vue.extend({
           }
         });
         /**/
-        if (this.$route.params.id && this.$store.state.user != undefined && (this.$store.state.gameid || this.$store.state.gameid2)) {
+        if (this.$route.params.id && this.$store.state.user.id != undefined && (this.$store.state.gameid || this.$store.state.gameid2)) {
             this.duelid = this.$route.params.id;
         }
         else {
@@ -135,6 +136,7 @@ export default Vue.extend({
         this.context = canv.getContext('2d');
 
         this.$store.state.socket.on("position", (obj: any) => {
+          console.log("get_position");
             this.position[0] = obj[0];
             this.position[1] = obj[1];
 

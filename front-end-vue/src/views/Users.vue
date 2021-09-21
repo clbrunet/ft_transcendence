@@ -9,7 +9,6 @@
         <option>8</option>
         <option>9</option>
         <option>10</option>
-        <option>300</option>
       </select>
     </form>
     <table>

@@ -144,9 +144,9 @@ export class PonggameGateway {
             rect_height: this.alldata[this.rooms.indexOf(data.idDuel)].RECT_HEIGHT
         });
 
-        if (this.alldata[this.rooms.indexOf(data.idDuel)].players.length <= this.alldata[this.rooms.indexOf(data.idDuel)].NB_PLAYERS) {
+        //if (this.alldata[this.rooms.indexOf(data.idDuel)].players.length <= this.alldata[this.rooms.indexOf(data.idDuel)].NB_PLAYERS) {
             client.emit("position", [this.alldata[this.rooms.indexOf(data.idDuel)].player_left, this.alldata[this.rooms.indexOf(data.idDuel)].player_right]);
-        }
+        //}
 
         if (this.alldata[this.rooms.indexOf(data.idDuel)].players.length == this.alldata[this.rooms.indexOf(data.idDuel)].NB_PLAYERS) {
             if (this.alldata[this.rooms.indexOf(data.idDuel)].players[0] && this.alldata[this.rooms.indexOf(data.idDuel)].players[1])
@@ -185,7 +185,7 @@ export class PonggameGateway {
             const index_player = this.alldata[this.rooms.indexOf(data.idDuel)].players.indexOf(client);
             const obj = [this.alldata[this.rooms.indexOf(data.idDuel)].player_left, this.alldata[this.rooms.indexOf(data.idDuel)].player_right];
 
-            if (index_player != -1) {
+            if (index_player != -1 && (index_player == 0 || index_player == 1)) {
                 switch (data.key) {
                     case "ArrowUp":
                         obj[index_player].y -= 0.02 * this.canvas.height;

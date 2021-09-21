@@ -67,7 +67,7 @@ export default Vue.extend({
     this.$store.state.socket = io(process.env.VUE_APP_API_URL);
 
     this.$store.state.socket.on('duelIsAccepted', (data: any) => {
-      if (this.$store.state.user != undefined)
+      if (this.$store.state.user.id != undefined)
       {
         const path = "/duel/" + data.duelId;
         this.$store.state.duelId = data.duelId;
