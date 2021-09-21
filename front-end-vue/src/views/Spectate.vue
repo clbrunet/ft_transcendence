@@ -3,9 +3,9 @@
         <div id="content">
             <table v-if="matches.length != 0">
                 <tr v-for="(match, index) in matches" :key="index">
-                    <td> {{ match.players[0].userName }} vs {{ match.players[1].userName }} </td>
-                    <td> {{ match.players[0].point }} - {{ match.players[1].point }} </td>
-                    <td><button @click="spectate(match)">spectate</button></td>
+                    <td> <strong>{{ match.players[0].userName }}</strong> vs <strong>{{ match.players[1].userName }}</strong> </td>
+                    <td> <strong>{{ match.players[0].point }}</strong> - <strong>{{ match.players[1].point }}</strong> </td>
+                    <td><button @click="spectate(match)" class="btn">spectate</button></td>
                 </tr>
             </table>
             <span v-else> No match on going...</span>
@@ -68,8 +68,44 @@ export default Vue.extend({
 }
 
 #content {
-    background-color:green;
+    background-color:white;
+    border-radius:25px;
     width:60%;
-    height:60%;
+}
+
+table {
+    padding:2% 0 2% 0;
+    width: 90%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+tr {
+    width: 100%;
+}
+
+td {
+    font-size: 18px;
+    padding:1% 0 1% 0;
+    text-align:center;
+}
+
+tr:nth-child(odd) {
+    background-color: rgb(219, 219, 219);
+}
+
+.btn {
+    outline:none;
+    border:1px solid white;
+    border-radius:5px;
+    color:white;
+    padding:5%;
+    cursor:pointer;
+    background-color: #3040F0;
+}
+
+.btn:hover {
+    background-color: rgb(19, 37, 231);
+    
 }
 </style>
