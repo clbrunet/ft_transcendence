@@ -66,11 +66,14 @@ export default Vue.extend({
     this.$store.state.socket = io(process.env.VUE_APP_API_URL);
 
     this.$store.state.socket.on('duelIsAccepted', (data: any) => {
-      const path = "/duel/" + data.duelId;
-      this.$store.state.duelId = data.duelId;
-      router.push({path: path}).catch(() => {
-        console.log("Redirection to duel...");
+      if (this.$store.state.user != undefined)
+      {
+        const path = "/duel/" + data.duelId;
+        this.$store.state.duelId = data.duelId;
+        router.push({path: path}).catch(() => {
+          console.log("Redirection...");
       })
+      }
     });
   }
 });

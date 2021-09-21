@@ -40,7 +40,7 @@ export default Vue.extend({
       withCredentials: true
     }).then(res => {
       this.matchesHistory = res.data;
-    });
+    }).catch(() => console.log(""));
   }
 });
 </script>

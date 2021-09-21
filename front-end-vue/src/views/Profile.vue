@@ -40,7 +40,7 @@
       <Banner v-if="user" :id="user.id" />
       <div id="bottom">
         <div id="left">
-          <MenuFriends v-if="render" :id="user.id" />
+          <MenuFriends v-if="render && $store.state.user.id" :id="user.id" />
           <MenuBlocks v-if="is_auth" />
         </div>
         <div id="middle">
@@ -52,7 +52,7 @@
           <button id="play" v-else-if="is_auth" @click="unqueue()">Unqueue</button>
         </div>
         <div id="right">
-          <MenuMatchesHistory />
+          <MenuMatchesHistory v-if="$store.state.user.id" />
           <!--<MenuDuels v-if="is_auth" />-->
         </div>
       </div>
@@ -104,6 +104,12 @@ export default Vue.extend({
     };
   },
   mounted() {
+
+    if (this.$store.state.user.id == undefined)
+    {
+      router.push({name: 'Login'}).catch(() => console.log("Redirection..."));
+    }
+
     if (this.$store.state.inQueue == undefined)
       this.$store.state.inQueue = false;
     else if (this.$store.state.inQueue == true)
@@ -119,6 +125,36 @@ export default Vue.extend({
       this.is_auth = true;
     }
     this.render = true;
+
+    /* check game ongoing */
+
+    if (this.$store.state.user.id != undefined)
+    {
+    axios({
+      url: process.env.VUE_APP_API_URL + "/game/indexOngoing",
+      method: "get",
+      withCredentials: true
+    }).then(res => {
+      let allOngoing = res.data;
+
+      for (let i = 0; i < allOngoing.length; i++)
+      {
+        if (allOngoing[i].players[0].userId == this.$store.state.user.id || allOngoing[i].players[1].userId == this.$store.state.user.id)
+        {
+          axios({
+            url: process.env.VUE_APP_API_URL + "/game/unfinished/" + allOngoing[i].id,
+            method: "patch",
+            withCredentials: true
+          }).then(() => {
+            this.$store.state.socket.emit('gameBugged', {idGame:allOngoing[i].id, page:'Profile', idUser: this.$store.state.user.id});
+          })
+        }
+      }
+    }).catch(() => console.log(""));
+    }
+
+    /**/
+
   },
   methods: {
     checkAuth(id: string) {
@@ -192,7 +228,7 @@ export default Vue.extend({
           this.$store.state.user.isTwoFactorAuthenticationEnabled = false;
         })
         .catch(err => {
-          console.log(err);
+          console.log("");
         });
       this.is_turning_off = false;
     },
@@ -219,31 +255,7 @@ export default Vue.extend({
         .catch(err => {
           this.queueing = false;
           this.$store.state.inQueue = false;
-          //var stuckgame = false;
           console.log("will remove all games and all users from theses games");
-          axios({
-            url: process.env.VUE_APP_API_URL + "/game/indexOngoing",
-            withCredentials: true,
-            method: "get"
-          }).then(res => {
-            for (let i = 0; i < res.data.length; i++) {
-              if (
-                res.data[i].players[0].userId == this.$store.state.user.id ||
-                res.data[i].players[1].userId == this.$store.state.user.id
-              ) {
-                //stuckgame = true;
-                axios({
-                  url: process.env.VUE_APP_API_URL + "/game/" + res.data[i].id,
-                  withCredentials: true,
-                  method: "delete"
-                }).then(() => {
-                  console.log("deleted");
-                  this.$store.state.socket.emit("getOutDuel", res.data[i].id);
-                });
-              }
-            }
-            //if (stuckgame == false) this.unqueue();
-          });
         });
     },
     unqueue() {

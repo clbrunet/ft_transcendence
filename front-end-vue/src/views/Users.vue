@@ -153,11 +153,41 @@ export default Vue.extend({
     this.get_duels();
 
     this.$store.state.socket.on('refreshDuels', (id: any) => {
-      if (this.$store.state.user.id == id)
+      if (this.$store.state.user != undefined)
       {
-        this.get_duels();
+        if (this.$store.state.user.id == id)
+        {
+          this.get_duels();
+        }
       }
     });
+
+    /* check game ongoing */
+    if (this.$store.state.user != undefined)
+    {
+    axios({
+      url: process.env.VUE_APP_API_URL + "/game/indexOngoing",
+      method: "get",
+      withCredentials: true
+    }).then(res => {
+      let allOngoing = res.data;
+
+      for (let i = 0; i < allOngoing.length; i++)
+      {
+        if (allOngoing[i].players[0].userId == this.$store.state.user.id || allOngoing[i].players[1].userId == this.$store.state.user.id)
+        {
+          axios({
+            url: process.env.VUE_APP_API_URL + "/game/unfinished/" + allOngoing[i].id,
+            method: "patch",
+            withCredentials: true
+          }).then(() => {
+            this.$store.state.socket.emit('gameBugged', {idGame:allOngoing[i].id, page:'Users', idUser: this.$store.state.user.id});
+          })
+        }
+      }
+    });
+    }
+    /**/
   },
   methods: {
     get_users() {
@@ -265,8 +295,11 @@ export default Vue.extend({
             method: "post",
             withCredentials: true 
           }).then((res) => {
-            this.$store.state.gameid = res.data.id;
-            this.$store.state.nbPoints = this.nbPointsConfig;
+            if (this.$store.state.user != undefined)
+            {
+              this.$store.state.gameid = res.data.id;
+              this.$store.state.nbPoints = this.nbPointsConfig;
+            }
           });
         });
       });
@@ -380,7 +413,7 @@ export default Vue.extend({
         method: "patch",
         withCredentials: true
       }).then(res => {
-        if (res.data == 'Duel cancelled since at least one of the User is offline' ||
+        if (res.data == 'Duel cancelled since the other User is offline' ||
             res.data == 'Duel cancelled since at least one of the User is already in-game')
         {
           this.$store.state.socket.emit('duelDenied', {idRoom: 'room', id: user.id})
@@ -391,11 +424,12 @@ export default Vue.extend({
         {
           this.get_duels();
           this.$store.state.gameid2 = res.data.id;
-          this.$store.state.socket.emit('duelAccepted', {idRoom: "room", id: user.id, duelId: duelId})
+          this.$store.state.socket.emit('duelAccepted', {idRoom: "room", id: user.id, duelId: res.data.id})
         }
         this.get_duels();
       }).catch(err => {
-        console.log(err);
+        alert('Duel cancelled because of other user disconnected')
+        this.get_duels();
       });
     },
     deny_duel(user: any) {
@@ -404,11 +438,10 @@ export default Vue.extend({
         method: "patch",
         withCredentials: true
       }).then(res => {
-        console.log("*", res.data);
         this.get_duels();
         this.$store.state.socket.emit('duelDenied', {idRoom: "room", id: user.id})
       }).catch(err => {
-        console.log(err);
+        console.log("");
       })
     }
   }

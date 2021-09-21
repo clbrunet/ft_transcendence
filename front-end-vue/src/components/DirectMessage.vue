@@ -93,8 +93,11 @@ export default Vue.extend({
     });
 
     this.$store.state.socket.on('refreshDuels', (id: any) => {
-      if (this.$store.state.user.id == id) {
-        this.refresh_messages();
+      if (this.$store.state.user != undefined)
+      {
+        if (this.$store.state.user.id == id) {
+          this.refresh_messages();
+        }
       }
     });
   },
@@ -219,7 +222,7 @@ export default Vue.extend({
           else {
             newId = this.data.participants[1].userId;
           }
-          this.$store.state.socket.emit('duelAccepted', {idRoom: this.data.id, id: newId, duelId: duelId})
+          this.$store.state.socket.emit('duelAccepted', {idRoom: this.data.id, id: newId, duelId: res.data.id})
         }
       }).catch(err => {
         console.log("")

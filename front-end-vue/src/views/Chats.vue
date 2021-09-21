@@ -157,6 +157,35 @@ export default Vue.extend({
         this.refresh_dm();
       }
     });
+
+    /* check game ongoing */
+
+    if (this.$store.state.user.id != undefined)
+    {
+    axios({
+      url: process.env.VUE_APP_API_URL + "/game/indexOngoing",
+      method: "get",
+      withCredentials: true
+    }).then(res => {
+      let allOngoing = res.data;
+
+      for (let i = 0; i < allOngoing.length; i++)
+      {
+        if (allOngoing[i].players[0].userId == this.$store.state.user.id || allOngoing[i].players[1].userId == this.$store.state.user.id)
+        {
+          axios({
+            url: process.env.VUE_APP_API_URL + "/game/unfinished/" + allOngoing[i].id,
+            method: "patch",
+            withCredentials: true
+          }).then(() => {
+            this.$store.state.socket.emit('gameBugged', {idGame:allOngoing[i].id, page:'Chats', idUser: this.$store.state.user.id});
+          })
+        }
+      }
+    });
+    }
+
+    /**/
   },
   methods: {
     refresh_channels() {

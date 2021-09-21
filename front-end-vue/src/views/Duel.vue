@@ -63,7 +63,27 @@ export default Vue.extend({
       });
     },
     mounted() {
-        if (this.$route.params.id && (this.$store.state.gameid || this.$store.state.gameid2)) {
+
+        const disc = document.getElementById("btn-disconnect");
+        disc ? (disc.style.display = "none") : 0;
+
+        /**/
+        this.$store.state.socket.on('gameHasBugged', (data: any) => {
+          if (this.$store.state.user.id != undefined)
+          {
+            if (data.idGame == this.gameid)
+            {
+              this.$store.state.socket.emit("game_won", this.duelid);
+              alert('Game finished because one of the players disconnected from the game');
+              if (data.idUser ==  this.$store.state.user.id)
+                router.push({name: data.page}).catch(() => console.log('Redirection...'));
+              else
+                router.push({name: 'Profile'});
+            }
+          }
+        });
+        /**/
+        if (this.$route.params.id && this.$store.state.user != undefined && (this.$store.state.gameid || this.$store.state.gameid2)) {
             this.duelid = this.$route.params.id;
         }
         else {
@@ -75,21 +95,13 @@ export default Vue.extend({
         else
           this.gameid = this.$store.state.gameid2;
 
-        this.$store.state.socket.on('goBackProfile', (gameId: any) => {
-          alert('The other user left the game');
-          if (gameId == this.gameid)
-          {
-            router.push({name: 'Profile'});
-            this.$store.state.socket.emit("game_won", this.duelid);
-          }
-        });
-
-        this.$store.state.duelId = this.duelid; //a retirer avant de push
+        this.$store.state.duelId = this.duelid; //a retirer avant de push spectacte
 
         let duelLaunch1 = false;
         let duelLaunch2 = false;
 
-        this.$store.state.socket.emit('connection', {idDuel: this.duelid, validate: this.$store.state.duelId == this.duelid});
+        if (this.$store.state.user.id != undefined)
+          this.$store.state.socket.emit('connection', {idDuel: this.duelid, validate: this.$store.state.duelId == this.duelid});
 
         if (this.$store.state.gameid)
         {
@@ -137,20 +149,23 @@ export default Vue.extend({
         });
         /**/
 
-        this.$store.state.socket.on("ball_position", (ball: any) => {
-        if (this.game_won == false && this.canvas.width != undefined && this.canvas.height != undefined)
-        {
-          this.context.clearRect(
-            0,
-            0,
-            this.canvas.width,
-            this.canvas.height
-          );
-        }
-  
-        this.drawLine();
-        this.drawBall(ball);
-        this.drawPlayers(this.position[0], this.position[1]);
+        this.$store.state.socket.on("ball_position", (data: any) => {
+          if (this.gameid == data.idDuel)
+          {
+            if (this.game_won == false && this.canvas.width != undefined && this.canvas.height != undefined)
+            {
+              this.context.clearRect(
+                0,
+                0,
+                this.canvas.width,
+                this.canvas.height
+              );
+            }
+      
+            this.drawLine();
+            this.drawBall(data.ball);
+            this.drawPlayers(this.position[0], this.position[1]);
+            }
       });
   
       this.$store.state.socket.on("youAre", (side: any) => {
@@ -161,10 +176,8 @@ export default Vue.extend({
       var flagpassage = false;
 
       this.$store.state.socket.on("update_point", (data: any) => {
-
         if (data.idDuel == this.duelid)
         {
-
           this.left_point = data.points.left;
           this.right_point = data.points.right;
 

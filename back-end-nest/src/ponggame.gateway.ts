@@ -1,8 +1,6 @@
 import { WebSocketGateway, SubscribeMessage, WebSocketServer } from "@nestjs/websockets"
 import { Socket } from "socket.io"
 
-process.setMaxListeners(0);
-
 @WebSocketGateway({ cors: true })
 export class PonggameGateway {
 
@@ -19,6 +17,7 @@ export class PonggameGateway {
     @WebSocketServer()
     server;
 
+
     edges(ball: any, idDuel: any) {
         if (ball.y > this.canvas.height - ball.radius) {
             ball.y = this.canvas.height - ball.radius;
@@ -32,11 +31,10 @@ export class PonggameGateway {
             ball.x = this.canvas.width / 2;
             ball.y = this.canvas.height / 2;
             ball.vx *= -1;
-            if (this.alldata[this.rooms.indexOf(idDuel)] && this.alldata[this.rooms.indexOf(idDuel)].players[0] && this.alldata[this.rooms.indexOf(idDuel)].players[1])
+            if (this.alldata[this.rooms.indexOf(idDuel)])
             {
                 this.alldata[this.rooms.indexOf(idDuel)].points.left++;
-                this.alldata[this.rooms.indexOf(idDuel)].players[0].emit("update_point", { idDuel: idDuel, points: this.alldata[this.rooms.indexOf(idDuel)].points, id: "left" });
-                this.alldata[this.rooms.indexOf(idDuel)].players[1].emit("update_point", { idDuel: idDuel, points: this.alldata[this.rooms.indexOf(idDuel)].points, id: "left" });
+                this.server.to(idDuel).emit("update_point", { idDuel: idDuel, points: this.alldata[this.rooms.indexOf(idDuel)].points, id: "left" });
             }
             //this.server.to(idDuel).emit("update_point", {points:this.alldata[this.rooms.indexOf(idDuel)].points, id:"left"});
         }
@@ -47,8 +45,7 @@ export class PonggameGateway {
             if (this.alldata[this.rooms.indexOf(idDuel)] && this.alldata[this.rooms.indexOf(idDuel)].players[0] && this.alldata[this.rooms.indexOf(idDuel)].players[1])
             {
                 this.alldata[this.rooms.indexOf(idDuel)].points.right++;
-                this.alldata[this.rooms.indexOf(idDuel)].players[0].emit("update_point", { idDuel: idDuel, points: this.alldata[this.rooms.indexOf(idDuel)].points, id: "right" });
-                this.alldata[this.rooms.indexOf(idDuel)].players[1].emit("update_point", { idDuel: idDuel, points: this.alldata[this.rooms.indexOf(idDuel)].points, id: "right" });
+               this.server.to(idDuel).emit("update_point", { idDuel: idDuel, points: this.alldata[this.rooms.indexOf(idDuel)].points, id: "right" });
             }
             // this.server.to(idDuel).emit("update_point", {points:this.alldata[this.rooms.indexOf(idDuel)].points, id:"right"});
         }
@@ -84,6 +81,8 @@ export class PonggameGateway {
 
     @SubscribeMessage('connection')
     connection(client: Socket, data: { idDuel: string, validate: boolean }) {
+
+        client.setMaxListeners(0);
 
         client.join(data.idDuel);
 
@@ -162,8 +161,6 @@ export class PonggameGateway {
 
         client.on("disconnect", () => {
             let index_player;
-            if (this.alldata[this.rooms.indexOf(data.idDuel)])
-                index_player = this.alldata[this.rooms.indexOf(data.idDuel)].players.indexOf(client);
             client.leave(data.idDuel);
 
 
@@ -176,12 +173,8 @@ export class PonggameGateway {
                 {
                     this.alldata[this.rooms.indexOf(data.idDuel)].indexInTab = index_player;
                     this.alldata[this.rooms.indexOf(data.idDuel)].players.splice(index_player, 1);
+                    this.server.to(data.idDuel).emit('gameHasBugged', {idGame:data.idDuel, page:'Profile', idUser: 'id'});
                 }
-            }
-            if (this.alldata[this.rooms.indexOf(data.idDuel)])
-            {
-                if (this.alldata[this.rooms.indexOf(data.idDuel)].players.length < this.alldata[this.rooms.indexOf(data.idDuel)].NB_PLAYERS && this.alldata[this.rooms.indexOf(data.idDuel)].loop != 0)
-                    clearInterval(this.alldata[this.rooms.indexOf(data.idDuel)].loop);
             }
         });
     }
@@ -214,7 +207,7 @@ export class PonggameGateway {
     animate(idDuel: any) {
         if (this.alldata[this.rooms.indexOf(idDuel)])
         {
-            this.server.to(idDuel).emit("ball_position", this.alldata[this.rooms.indexOf(idDuel)].ball);
+            this.server.to(idDuel).emit("ball_position", {ball:this.alldata[this.rooms.indexOf(idDuel)].ball, idDuel:idDuel});
             this.update(this.alldata[this.rooms.indexOf(idDuel)].ball, idDuel);
         }
     }

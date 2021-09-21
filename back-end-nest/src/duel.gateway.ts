@@ -6,6 +6,8 @@ export class DuelGateway {
     @WebSocketServer()
     server;
 
+
+
     //subscribe message server.on
     @SubscribeMessage('duelSent')
     duelSent(client:Socket, data: {idRoom: string, id: string}) {
@@ -22,8 +24,8 @@ export class DuelGateway {
         this.server.emit('duelIsAccepted', data);
     }
 
-    @SubscribeMessage('getOutDuel')
-    getOutDuel(client: Socket, idRoom: any) {
-        this.server.to(idRoom).emit('goBackProfile', idRoom);
+    @SubscribeMessage('gameBugged')
+    gameBugged(client:Socket, data: {idGame: string, page: string, idUser: string}) {
+        this.server.to(data.idGame).emit('gameHasBugged', data);
     }
 }
