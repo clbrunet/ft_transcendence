@@ -303,6 +303,15 @@ export class GameService {
     if (!(await this.isPlayer(userId, id))) {
       throw new HttpException('User is not a Player of that Game', HttpStatus.NOT_FOUND);
     }
+    if (pointToVictory < 1 || pointToVictory > 10) {
+      throw new HttpException('pointToVictory must be between 1 and 10', HttpStatus.NOT_FOUND);
+    }
+    if (ballSize < 1 || ballSize > 10) {
+      throw new HttpException('ballSize must be between 1 and 10', HttpStatus.NOT_FOUND);
+    }
+    if (ballSpeed < 1 || ballSpeed > 10) {
+      throw new HttpException('ballSpeed must be between 1 and 10', HttpStatus.NOT_FOUND);
+    }
     const game = await this.findById(id);
     await this.setGameAttributes(id, pointToVictory, ballSize, ballSpeed);
     await this.introductionMessage(game);
