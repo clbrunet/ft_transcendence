@@ -88,6 +88,14 @@ const routes: Array<RouteConfig> = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: '/spectate',
+    name: 'Spectate',
+    component: () => import('../views/Spectate.vue'),
+    meta: {
+      requiresAuth: true
+    }
   }
 ]
 

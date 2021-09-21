@@ -104,6 +104,8 @@ export default Vue.extend({
     };
   },
   mounted() {
+    const disc = document.getElementById("btn-disconnect");
+    disc ? (disc.style.display = "inline-block") : 0;
 
     if (this.$store.state.user.id == undefined)
     {

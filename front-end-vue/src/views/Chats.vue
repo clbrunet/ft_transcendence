@@ -148,6 +148,9 @@ export default Vue.extend({
     },
   },
   mounted() {
+        const disc = document.getElementById("btn-disconnect");
+        disc ? (disc.style.display = "inline-block") : 0;
+
     this.refresh_channels();
     this.refresh_dm();
 

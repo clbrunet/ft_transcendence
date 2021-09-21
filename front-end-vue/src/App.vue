@@ -4,6 +4,7 @@
       <template v-if="is_auth">
         <router-link to="/profile">Profile</router-link>
         <router-link to="/users">Users</router-link>
+        <router-link to="/spectate">Spectate</router-link>
         <router-link to="/chats">Chats</router-link>
         <button v-bind:disabled="is_disconnecting" id="btn-disconnect" @click="logout">Disconnect</button>
       </template>

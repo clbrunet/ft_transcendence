@@ -9,6 +9,7 @@
         <option>8</option>
         <option>9</option>
         <option>10</option>
+        <option>300</option>
       </select>
     </form>
     <table>
@@ -67,7 +68,7 @@
                     @click="deny_duel(user)"
                   />
                 </template>
-                <span v-else>accepted ou jsp quoi</span>
+                <span v-else>sending</span>
               </td>
               <td class="field btnBox">
                 <img
@@ -148,6 +149,11 @@ export default Vue.extend({
     };
   },
   mounted() {
+
+    const disc = document.getElementById("btn-disconnect");
+    disc ? (disc.style.display = "inline-block") : 0;
+
+
     this.get_users();
     this.get_blocks();
     this.get_duels();
