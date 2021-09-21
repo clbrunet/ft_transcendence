@@ -1,7 +1,7 @@
 <template>
   <div id="body-chat">
     <div id="revamp">
-      <div class="revamp2" v-bind:class="{ 'revamp2--inactive': isChatActive }">
+      <div class="revamp2" id="revamp2" v-bind:class="{ 'revamp2--inactive': isChatActive }">
         <div class="creating">
           <span>Add a channel </span>
           <img
@@ -39,7 +39,7 @@
           </div>
         </div>
       </div>
-      <div class="current-chat" v-bind:class="{ 'current-chat--active': isChatActive }">
+      <div id="current-chat" v-bind:class="{ 'current-chat--active': isChatActive }">
         <template v-for="(channel, index) in channels">
           <template v-if="(channel.status != 'protected' || channel.activeUserAuthorized == true) && showDm == false">
             <Chat v-show="numberSelectedChannel == index" :key="index" :data="channel" />
@@ -57,27 +57,27 @@
     <portal-target v-if="popup_password" id="popup-password" name="popup-password">
       <div id="popup-password-content">
         <form action="" @submit.prevent="form_password_submit">
-          <input type="password" required placeolder="password" v-model="password_input">
-          <input type="submit" value="Access">
+          <input type="password" required placeholder="password" v-model="password_input">
+          <input type="submit" value="Access" class="btn-close">
         </form>
-        <button @click="close_popup_password()">Close</button>
+        <button @click="close_popup_password()" class="btn-close">Close</button>
       </div>
     </portal-target>
 
     <div v-if="popup_create" id="popup-create">
       <div id="popup-create-content">
         <form @submit.prevent="create_channel()" id="form-create-channel">
-          <input type="text" required v-model="createName">
+          <input type="text" required placeholder="name of the channel" v-model="createName">
           <select required v-model="createStatus">
             <option selected>public</option>
             <option>private</option>
             <option>protected</option>
           </select>
-          <input v-if="createStatus == 'protected'" required type="password" v-model="createPassword">
-          <input type="submit">
+          <input v-if="createStatus == 'protected'" required type="password" placeholder="password" v-model="createPassword">
+          <input type="submit" value="validate">
         </form>
         <p class="error">{{errorCreate}}</p>
-        <button @click="close_popup_create()">Close</button>
+        <button @click="close_popup_create()" class="btn-close">Close</button>
       </div>
     </div>
 
@@ -93,7 +93,7 @@
           <input v-if="changeStatus == 'protected'" type="password" v-model="changePassword" />
           <input type="submit" />
         </form>
-        <button @click="close_params()">Close</button>
+        <button @click="close_params()" class="btn-close">Close</button>
       </div>
     </div>
     <!--  -->
@@ -335,7 +335,7 @@ export default Vue.extend({
         this.close_popup_create();
         this.refresh_channels();
       }).catch(err => {
-        this.errorCreate = Array.isArray(err.response.data.message) ? [err.response.data.message] : err.response.data.message;
+        this.errorCreate = Array.isArray(err.response.data.message) ? err.response.data.message[0] : err.response.data.message;
       });
     },
     change_status() {
@@ -416,6 +416,7 @@ export default Vue.extend({
   display: flex;
   flex-direction: column;
   width:25%;
+  z-index:2;
 }
 
 .creating {
@@ -439,8 +440,65 @@ export default Vue.extend({
   height:60vh;
   left: 20%;
   top: 20%;
-  background-color:blue;
+  background-color:white;
+  border-radius:25px;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
+
+#popup-password-content form {
+  display:flex;
+  width:80%;
+  background-color:white;
+  flex-direction: column;
+  align-items:center;
+  justify-content: space-around;
+}
+
+#popup-password-content form input{
+    margin:4%;
+  width:20%;
+  padding:3%;
+}
+
+#popup-password-content form select{
+      margin:2%;
+  width:40%;
+  padding:2%;
+}
+
+#popup-create-content {
+  display:flex;
+  align-items:center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#popup-create-content form {
+  display:flex;
+  width:80%;
+  background-color:white;
+  border-radius:25px;
+  flex-direction: column;
+  align-items:center;
+  justify-content: space-around;
+}
+
+#popup-create-content form select {
+  margin:2%;
+  width:40%;
+  padding:2%;
+}
+
+
+#popup-create-content form input {
+      margin:4%;
+  width:20%;
+  padding:1%;
+}
+
 
 #popup-create {
   z-index: 1000;
@@ -456,7 +514,7 @@ export default Vue.extend({
   height:60vh;
   left: 20%;
   top: 20%;
-  background-color:blue;
+  background-color:white;
 }
 
 /**/
@@ -465,6 +523,7 @@ export default Vue.extend({
   display:flex;
   flex-direction: column;
   align-items:center;
+  width:80%;
 }
 
 #body-chat {
@@ -527,15 +586,36 @@ export default Vue.extend({
 .popup-params-content {
   width: 50%;
   height: 60%;
-  background-color: blue;
+  background-color: white;
+  border-radius: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
 }
 
+.popup-params-content input {
+  margin:5%;
+  width:40%;
+  padding:5%;
+}
+
+.popup-params-content select {
+      margin:5%;
+  width:40%;
+  padding:2%;
+  cursor:pointer;
+
+}
+
 .error {
   color: red;
+}
+
+.btn-close {
+  padding: 2%;
+  width:20%;
+  cursor:pointer;
 }
 
 .nothing-selected {
@@ -550,7 +630,7 @@ export default Vue.extend({
   background-color: #777;
 }
 
-.current-chat {
+#current-chat {
   width: 75%;
 }
 

@@ -6,7 +6,7 @@
         <button v-if="isOwner == true" @click="open_popup_settings()">add</button>
       </div>
 
-      <template v-if="data.status == 'public' || (data.activeUserParticipant == true && data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false)">
+      <template v-if="data.activeUserParticipant == true && data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false">
         <div class="messages">
           <template v-for="(message, index) in messages">
             <p class="pbase" :key="index" v-if="message.userName != $store.state.user.name"><span style="font-weight:700;"> {{message.userName}}:</span> {{message.content}} </p>
@@ -24,8 +24,7 @@
       <form
         @submit.prevent="send_message()"
         class="buttons"
-        v-if="(data.status == 'public' && data.activeUserParticipant == true) ||  
-        (data.activeUserParticipant == true && data.activeUserBan == false
+        v-if="  (data.activeUserParticipant == true && data.activeUserBan == false
         && data.activeUserMute == false
         && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false
         && isCurrentlyBanMute(data.activeUserMuteEndDateTime) == false)">
@@ -44,7 +43,7 @@
           <input class="send" style="text-align:center;font-size:18px;" type="submit" value="not participant" disabled />
         </template>
         <template
-          v-else-if="(data.activeUserBan == true || isCurrentlyBanMute(data.activeUserBanEndDateTime) == true) && data.status != 'public'"
+          v-else-if="(data.activeUserBan == true || isCurrentlyBanMute(data.activeUserBanEndDateTime) == true)"
         >
           <input
             class="message"
@@ -70,7 +69,7 @@
     </div>
 
     <!-- participants -->
-    <div class="partipants" v-if="data.status == 'public' || (data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false)">
+    <div class="partipants" v-if="(data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false)">
       <img class="close-chat-icon"
         src="/assets/close-chat.svg"
         alt="close chat icon"
@@ -90,10 +89,10 @@
               <button v-if="isOwner == true && participant.admin == false" @click="addAdmin(participant)">+ admin</button>
               <button v-else-if="isOwner == true" @click="removeAdmin(participant)">- admin</button>
 
-              <button v-if="data.activeUserAdmin == true  && participant.admin == false && data.status != 'public'" @click="open_popup_ban(participant)">Ban</button>
+              <button v-if="data.activeUserAdmin == true  && participant.admin == false" @click="open_popup_ban(participant)">Ban</button>
             </template>
             <button v-else @click="unbanParticipant(participant)">unban</button>
-            <template v-if="data.activeUserAdmin == true&& participant.admin == false && data.status != 'public'">
+            <template v-if="data.activeUserAdmin == true&& participant.admin == false">
               <button v-if="participant.mute == false && isCurrentlyBanMute(participant.muteEndDateTime) == false" @click="open_popup_mute(participant)">Mute</button>
               <button v-else @click="unmuteParticipant(participant)">unmute</button>
             </template>
@@ -107,25 +106,9 @@
 
     <!-- absolute -->
 
-    <div v-if="popup_mute" class="popup-mute">
-      <div class="popup-mute-content">
-        <h3>mute :</h3>
-        <form @submit.prevent="muteParticipant()" class="form-popup-mute">
-          <select v-model="selectMuteTime">
-            <option selected>15min</option>
-            <option>30min</option>
-            <option>1hour</option>
-            <option>always</option>
-          </select>
-          <input type="submit" />
-        </form>
-        <button @click="close_popup_mute()" id="popup-mute-btn">Close</button>
-      </div>
-    </div>
-
     <div v-if="popup_ban" class="popup-ban">
       <div class="popup-ban-content">
-        <h3>Ban :</h3>
+        <h3>Ban a participant :</h3>
         <form @submit.prevent="banParticipant()" class="form-popup-ban">
           <select v-model="selectBanTime">
             <option selected>15min</option>
@@ -133,11 +116,28 @@
             <option>1hour</option>
             <option>always</option>
           </select>
-          <input type="submit" />
+          <input type="submit" value="validate" />
         </form>
         <button @click="close_popup_ban()" id="popup-ban-btn">Close</button>
       </div>
     </div>
+
+    <div v-if="popup_mute" class="popup-mute">
+      <div class="popup-mute-content">
+        <h3>Mute a participant :</h3>
+        <form @submit.prevent="muteParticipant()" class="form-popup-mute">
+          <select v-model="selectMuteTime">
+            <option selected>15min</option>
+            <option>30min</option>
+            <option>1hour</option>
+            <option>always</option>
+          </select>
+          <input type="submit" value="validate"/>
+        </form>
+        <button @click="close_popup_mute()" id="popup-mute-btn">Close</button>
+      </div>
+    </div>
+
 
     <div v-if="popup_settings" class="popup-settings">
       <div class="popup-settings-content">
@@ -370,45 +370,66 @@ export default Vue.extend({
     close_popup_settings() {
       const nav = document.getElementById("nav");
       nav ? (nav.style.display = "flex") : 0;
-      const list_channels = document.getElementById("list_channels");
+      const list_channels = document.getElementById("revamp2");
       list_channels ? (list_channels.style.display = "block") : 0;
+      
+      const global = document.getElementById("current-chat");
+      global ? (global.style.width = "75%") : 0;
+
       this.popup_settings = false;
     },
     close_popup_ban() {
       const nav = document.getElementById("nav");
       nav ? (nav.style.display = "flex") : 0;
-      const list_channels = document.getElementById("list_channels");
+      const list_channels = document.getElementById("revamp2");
       list_channels ? (list_channels.style.display = "block") : 0;
+
+      const global = document.getElementById("current-chat");
+      global ? (global.style.width = "75%") : 0;
+      
       this.popup_ban = false;
     },
     close_popup_mute() {
       const nav = document.getElementById("nav");
       nav ? (nav.style.display = "flex") : 0;
-      const list_channels = document.getElementById("list_channels");
+      const list_channels = document.getElementById("revamp2");
       list_channels ? (list_channels.style.display = "block") : 0;
+
+      const global = document.getElementById("current-chat");
+      global ? (global.style.width = "75%") : 0;
       this.popup_mute = false;
     },
     open_popup_settings() {
       const nav = document.getElementById("nav");
       nav ? (nav.style.display = "none") : 0;
-      const list_channels = document.getElementById("list_channels");
+      const list_channels = document.getElementById("revamp2");
       list_channels ? (list_channels.style.display = "none") : 0;
+
+      const global = document.getElementById("current-chat");
+      global ? (global.style.width = "100%") : 0;
       this.popup_settings = true;
     },
     open_popup_ban(participant: any) {
       this.currentParticipantSelected = participant;
       const nav = document.getElementById("nav");
       nav ? (nav.style.display = "none") : 0;
-      const list_channels = document.getElementById("list_channels");
+      const list_channels = document.getElementById("revamp2");
       list_channels ? (list_channels.style.display = "none") : 0;
+
+
+      const global = document.getElementById("current-chat");
+      global ? (global.style.width = "100%") : 0;
       this.popup_ban = true;
     },
     open_popup_mute(participant: any) {
       this.currentParticipantSelected = participant;
       const nav = document.getElementById("nav");
       nav ? (nav.style.display = "none") : 0;
-      const list_channels = document.getElementById("list_channels");
+      const list_channels = document.getElementById("revamp2");
       list_channels ? (list_channels.style.display = "none") : 0;
+
+      const global = document.getElementById("current-chat");
+      global ? (global.style.width = "100%") : 0;
       this.popup_mute = true;
     },
     refresh_candidateParticipants() {
@@ -599,7 +620,7 @@ export default Vue.extend({
   z-index: 1000;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(48, 74, 36, 0.6);
+  background-color: rgba(48, 74, 36, 0.8);
   position: absolute;
   margin: 0;
 }
@@ -607,14 +628,24 @@ export default Vue.extend({
 .form-popup-mute {
   display:flex;
   width:80%;
-  background-color:yellow;
+  background-color:white;
   flex-direction: column;
   align-items:center;
   justify-content: space-around;
 }
 
-.form-popup-mute input {
+.form-popup-mute input{
+  margin:5%;
   width:40%;
+  padding:5%;
+
+}
+
+.form-popup-mute select {
+    margin:5%;
+  width:40%;
+  padding:2%;
+
 }
 
 .popup-mute-content {
@@ -623,7 +654,8 @@ export default Vue.extend({
   height: 60vh;
   left: 20%;
   top: 20%;
-  background-color: blue;
+  background-color: white;
+  border-radius:25px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -637,34 +669,43 @@ export default Vue.extend({
 }
 
 .popup-ban {
-  z-index: 1000;
+  z-index: 6000;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(48, 74, 36, 0.6);
   position: absolute;
+  background-color: rgba(0, 0, 0, 0.6);
   margin: 0;
 }
 
 .form-popup-ban {
   display:flex;
   width:80%;
-  background-color:yellow;
+  background-color:white;
   flex-direction: column;
   align-items:center;
   justify-content: space-around;
 }
 
 .form-popup-ban input {
+  margin:5%;
   width:40%;
+  padding:5%;
+}
+
+.form-popup-ban select {
+    margin:5%;
+  width:40%;
+  padding:2%;
 }
 
 .popup-ban-content {
   position: absolute;
+  background-color:white;
   width: 40vw;
+  border-radius:25px;
   height: 60vh;
   left: 20%;
   top: 20%;
-  background-color: blue;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -684,7 +725,7 @@ export default Vue.extend({
   height: 100vh;
   top:0;
   left:0;
-  background-color: rgba(48, 74, 36, 0.6);
+  background-color: rgba(0, 0, 0, 0.6);
   margin: 0;
   display: flex;
   justify-content: center;
@@ -694,7 +735,8 @@ export default Vue.extend({
 .popup-settings-content {
   width: 50%;
   height: 60%;
-  background-color: blue;
+  background-color: white;
+  border-radius: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -712,7 +754,7 @@ export default Vue.extend({
   flex-direction: column;
   width: 80%;
   height: 80%;
-  background-color: aqua;
+  background-color: white;
   overflow: hidden;
   text-overflow: ellipsis;
   overflow-y: scroll;
