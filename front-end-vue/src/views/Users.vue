@@ -3,7 +3,9 @@
     <form @submit.prevent="">
       <span>Number of points</span>
       <select v-model="nbPointsConfig">
-        <option selected>5</option>
+        <option selected>3</option>
+        <option>4</option>
+        <option>5</option>
         <option>6</option>
         <option>7</option>
         <option>8</option>
@@ -144,7 +146,7 @@ export default Vue.extend({
       tabBlocks: [] as any,
       duels: [] as any,
       tabDuels: undefined as any,
-      nbPointsConfig: 5 as any
+      nbPointsConfig: 3 as any
     };
   },
   mounted() {
@@ -168,7 +170,7 @@ export default Vue.extend({
     });
 
     this.$store.state.socket.on('refreshAllUsers', (idUser: any) => {
-      if (this.$store.state.user.id == idUser)
+      if (this.$store.state.user.id == idUser || idUser == 'all')
       {
         this.get_users();
       }

@@ -257,6 +257,7 @@ export default Vue.extend({
             this.$store.state.socket.emit("game_won", this.duelid);
             if (this.left_point >= this.nbPoints) this.winner = "left";
             else this.winner = "right";
+            this.$store.state.socket.emit('refreshUsers', 'all');
           }
 
         }
