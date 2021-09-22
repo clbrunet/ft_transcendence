@@ -288,6 +288,7 @@ export default Vue.extend({
         this.selectedChannel = this.currentSelectedChannel;
         this.currentSelectedChannel = undefined;
         this.numberSelectedChannel = this.currentNumberSelectedChannel;
+        this.$store.state.socket.emit('joinRoom', this.selectedChannel.name);
         this.currentSelectedChannel = undefined;
         this.currentNumberSelectedChannel = undefined;
         this.popup_password = false;

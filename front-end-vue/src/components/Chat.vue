@@ -755,6 +755,20 @@ export default Vue.extend({
   padding: 2%;
 }
 
+.popup-settings-add-participant button {
+  cursor:pointer;
+  padding: 2%;
+  outline: none;
+  color:white;
+  border-radius: 8px;
+  background-color:#3040F0;
+  border: 1px solid white;
+}
+
+.popup-settings-add-participant button:hover {
+  background-color:rgb(28, 46, 247);
+}
+
 .popup-settings-add-participant {
   display: flex;
   flex-direction: column;
@@ -763,7 +777,21 @@ export default Vue.extend({
   background-color: white;
   overflow: hidden;
   text-overflow: ellipsis;
-  overflow-y: scroll;
+  overflow-y: auto;
+  align-items:center;
+}
+
+.popup-settings-add-participant span {
+  color: black;
+  margin: 0 2% 0 2%;
+  width: 30%;
+}
+
+.popup-settings-add-participant div {
+  width :80%;
+  display:flex;
+  align-items:center;
+  justify-content: space-around;
 }
 
 /* incoming
