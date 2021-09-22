@@ -256,7 +256,6 @@ export default Vue.extend({
       this.$store.dispatch('activateChat');
     },
     select_dm(channel: any, index: number) {
-      console.log("select dm = ", channel);
       this.showDm = true;
       this.numberSelectedDm = index;
       this.selectedChannel = channel;

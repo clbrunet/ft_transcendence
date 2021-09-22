@@ -1,6 +1,6 @@
 <template>
   <div id="body">
-    <button class="size" @click="get_ongoing()">Refresh</button>
+    <!--<button class="size" @click="get_ongoing()">Refresh</button>-->
     <div id="content">
       <table v-if="matches.length != 0">
         <tr v-for="(match, index) in matches" :key="index">
@@ -43,7 +43,6 @@ export default Vue.extend({
     disc ? (disc.style.display = "inline-block") : 0;
 
     this.$store.state.socket.on('refreshAllSpectates', () => {
-      console.log("will refrehs get on oging");
       this.get_ongoing();
     });
 

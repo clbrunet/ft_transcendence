@@ -222,7 +222,7 @@ export default Vue.extend({
           else {
             newId = this.data.participants[1].userId;
           }
-          this.$store.state.socket.emit('duelAccepted', {idRoom: this.data.id, id: newId, duelId: res.data.id})
+          this.$store.state.socket.emit('duelAccepted', {idRoom: this.data.id, id: newId, ownerId: this.$store.state.user.id, duelId: res.data.id})
         }
       }).catch(err => {
         console.log("")
