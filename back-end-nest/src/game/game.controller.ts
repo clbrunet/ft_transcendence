@@ -52,6 +52,13 @@ export class GameController {
   }
 
   @UseGuards(JwtTwoFactorGuard)
+  @Get('/ongoing')
+  async getGameOngoingActiveUser(@Req() request: RequestWithUser) {
+    const {user} = request;
+    return await this.gameService.getGameOngoingActiveUser(user.id);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
   @Get('/indexUnfinished')
   async getAllUnfinished() {
     return await this.gameService.getAllUnfinished();

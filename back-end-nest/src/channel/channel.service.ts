@@ -517,6 +517,20 @@ export class ChannelService {
     }
   }
 
+  async goDirectActiveUserNoBlock(channelDirectCreationDto: ChannelDirectCreationDto) {
+    if (channelDirectCreationDto.userId1 === channelDirectCreationDto.userId2) {
+      throw new HttpException('User can not create a direct Channel with himself', HttpStatus.BAD_REQUEST);      
+    }
+    let direct = await this.findDirect(channelDirectCreationDto);
+    if (direct) {
+      return this.channelToDtoDirectActiveUser(channelDirectCreationDto.userId1, direct);
+    }
+    else if (!direct) {
+      direct = await this.createDirect(channelDirectCreationDto);
+      return this.channelToDtoDirectActiveUser(channelDirectCreationDto.userId1, direct);
+    }
+  }
+
   // <------------- FUNCTIONS CHANNEL TO DTO ------------->
 
   public async channelToDto(channel: Channel) {

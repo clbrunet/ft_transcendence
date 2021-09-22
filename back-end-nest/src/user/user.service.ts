@@ -44,6 +44,7 @@ export class UserService {
         let participant = new Participant();
         participant.user = user;
         participant.channel = channel;
+        participant.authorized = true;
         await this.participantRepository.save(participant);
     }
   }

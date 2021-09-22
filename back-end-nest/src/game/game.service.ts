@@ -45,8 +45,8 @@ export class GameService {
   ) {}
 
   public async create(pointToVictory: number, ballSize: number, ballSpeed: number) {
-    if (pointToVictory < 1 || pointToVictory > 10) {
-      throw new HttpException('pointToVictory must be between 1 and 10', HttpStatus.NOT_FOUND);
+    if (pointToVictory < 3 || pointToVictory > 10) {
+      throw new HttpException('pointToVictory must be between 3 and 10', HttpStatus.NOT_FOUND);
     }
     if (ballSize < 1 || ballSize > 10) {
       throw new HttpException('ballSize must be between 1 and 10', HttpStatus.NOT_FOUND);
@@ -140,6 +140,28 @@ export class GameService {
     for (const game of games) {
       let gameDto: GameDto = this.gameToDto(game);
       dto.push(gameDto);
+    }
+    return dto;
+  }
+
+  public async getGameOngoingActiveUser(userId: string) {
+    const games = await this.gameRepo.find(
+      {
+        relations: ['players', 'players.user'],
+        where: [
+            { status: 1 },
+        ],
+      }
+    );
+    let dto: GameDto[] = [];
+    for (const game of games) {
+      if (this.isPlayer(userId, game.id)) {
+        let gameDto: GameDto = this.gameToDto(game);
+        dto.push(gameDto);
+      }
+    }
+    if (dto.length > 1) {
+      throw new HttpException('There is more than one game ongoing for User', HttpStatus.NOT_FOUND);
     }
     return dto;
   }
@@ -273,7 +295,7 @@ export class GameService {
     let channelDirectCreationDto = new ChannelDirectCreationDto();
     channelDirectCreationDto.userId1 = game.players[0].user.id;
     channelDirectCreationDto.userId2 = game.players[1].user.id;    
-    const direct = await this.channelService.goDirectActiveUser(channelDirectCreationDto);
+    const direct = await this.channelService.goDirectActiveUserNoBlock(channelDirectCreationDto);
     const author = await this.participantService.findByUserAndChannelLazy(game.players[0].user.id, direct.id);
     let messageCreationDto = new MessageCreationDto();
     messageCreationDto.authorId = author.id;
@@ -285,7 +307,7 @@ export class GameService {
     let channelDirectCreationDto = new ChannelDirectCreationDto();
     channelDirectCreationDto.userId1 = game.players[0].user.id;
     channelDirectCreationDto.userId2 = game.players[1].user.id;    
-    const direct = await this.channelService.goDirectActiveUser(channelDirectCreationDto);
+    const direct = await this.channelService.goDirectActiveUserNoBlock(channelDirectCreationDto);
     let author;
     if (game.players[0].point > game.players[1].point) {
       author = await this.participantService.findByUserAndChannelLazy(game.players[0].user.id, direct.id);
@@ -303,8 +325,8 @@ export class GameService {
     if (!(await this.isPlayer(userId, id))) {
       throw new HttpException('User is not a Player of that Game', HttpStatus.NOT_FOUND);
     }
-    if (pointToVictory < 1 || pointToVictory > 10) {
-      throw new HttpException('pointToVictory must be between 1 and 10', HttpStatus.NOT_FOUND);
+    if (pointToVictory < 3 || pointToVictory > 10) {
+      throw new HttpException('pointToVictory must be between 3 and 10', HttpStatus.NOT_FOUND);
     }
     if (ballSize < 1 || ballSize > 10) {
       throw new HttpException('ballSize must be between 1 and 10', HttpStatus.NOT_FOUND);
