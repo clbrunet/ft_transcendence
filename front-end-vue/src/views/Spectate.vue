@@ -10,10 +10,6 @@
             </table>
             <span v-else> No match on going...</span>
         </div>
-        <div>
-            with = {{windowWidth}}
-            height = {{windowHeight}}
-        </div>
     </div>
 </template>
 
@@ -64,7 +60,6 @@ export default Vue.extend({
 
     /**/
 
-        console.log("test");
         axios({
             url: process.env.VUE_APP_API_URL + "/game/indexOngoing",
             method: "get",
