@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, MinLength, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsNotEmpty, MinLength, IsOptional, IsEnum, MaxLength } from 'class-validator';
 
 import User from '../user/user.entity';
 
@@ -11,6 +11,7 @@ import { ParticipantForChannelDirectDto } from '../participant/participant.dto';
 export class ChannelCreationDto {
   @IsString()
   @IsNotEmpty()
+  @MaxLength(25)
   name: string;
 
   @IsEnum(ChannelStatus)

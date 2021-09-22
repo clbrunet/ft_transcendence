@@ -67,7 +67,7 @@
     <div v-if="popup_create" id="popup-create">
       <div id="popup-create-content">
         <form @submit.prevent="create_channel()" id="form-create-channel">
-          <input type="text" required placeholder="name of the channel" v-model="createName">
+          <input type="text" required maxlength="25" placeholder="name of the channel" v-model="createName">
           <select required v-model="createStatus">
             <option selected>public</option>
             <option>private</option>
@@ -312,16 +312,17 @@ export default Vue.extend({
     },
     create_channel() {
       this.errorCreate = "";
+      let statusEnum: number = 0;
       if (this.createStatus == 'public') {
         this.createPassword = undefined;
-        this.createStatus = 0;
+        statusEnum = 0;
       }
       else if (this.createStatus == 'private') {
         this.createPassword = undefined;
-        this.createStatus = 1;
+        statusEnum = 1;
       }
       else if (this.createStatus == 'protected') {
-        this.createStatus = 2;
+        statusEnum = 2;
       }
 
       axios({
@@ -330,7 +331,7 @@ export default Vue.extend({
         withCredentials: true,
         data: {
           name: this.createName,
-          status: this.createStatus,
+          status: statusEnum,
           password: this.createPassword
         }
       })
@@ -342,7 +343,7 @@ export default Vue.extend({
       });
     },
     change_status() {
-      let statusEnum;
+      let statusEnum: number = 0;
 
       if (this.changeStatus == "public") {
         this.changePassword = undefined;

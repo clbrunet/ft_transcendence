@@ -3,7 +3,7 @@
     <div class="pongGame">
       <form @submit.prevent="submit_register">
         <input type="email" required placeholder="Email" v-model="email" />
-        <input type="text" required placeholder="Name" v-model="name" />
+        <input type="text" required maxlength="15" placeholder="Name" v-model="name" />
         <input type="password" required placeholder="Password" v-model="password" />
         <input type="password" required placeholder="Confirm password" v-model="confirmPassword" />
         <input v-bind:disabled="is_registering" type="submit" value="Register"/>
