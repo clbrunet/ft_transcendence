@@ -471,7 +471,7 @@ export default Vue.extend({
         {
           this.get_duels();
           this.$store.state.gameid2 = res.data.id;
-          this.$store.state.socket.emit('duelAccepted', {idRoom: "room", id: user.id, duelId: res.data.id})
+          this.$store.state.socket.emit('duelAccepted', {idRoom: "room", id: user.id, ownerId: this.$store.state.user.id, duelId: res.data.id})
         }
         this.get_duels();
       }).catch(err => {

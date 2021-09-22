@@ -251,6 +251,7 @@ export default Vue.extend({
           this.$store.state.socket.emit("duelAccepted", {
             idRoom: res.data.id,
             id: "id",
+            ownerId: this.$store.state.user.id,
             duelId: res.data.id
           });
         })

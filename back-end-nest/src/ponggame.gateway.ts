@@ -144,15 +144,15 @@ export class PonggameGateway {
             rect_height: this.alldata[this.rooms.indexOf(data.idDuel)].RECT_HEIGHT
         });
 
-        //if (this.alldata[this.rooms.indexOf(data.idDuel)].players.length <= this.alldata[this.rooms.indexOf(data.idDuel)].NB_PLAYERS) {
-            client.emit("position", [this.alldata[this.rooms.indexOf(data.idDuel)].player_left, this.alldata[this.rooms.indexOf(data.idDuel)].player_right]);
-        //}
+        client.emit("position", [this.alldata[this.rooms.indexOf(data.idDuel)].player_left, this.alldata[this.rooms.indexOf(data.idDuel)].player_right]);
 
         if (this.alldata[this.rooms.indexOf(data.idDuel)].players.length == this.alldata[this.rooms.indexOf(data.idDuel)].NB_PLAYERS) {
             if (this.alldata[this.rooms.indexOf(data.idDuel)].players[0] && this.alldata[this.rooms.indexOf(data.idDuel)].players[1])
             {
                 this.alldata[this.rooms.indexOf(data.idDuel)].players[0].emit('youAre', "left");
                 this.alldata[this.rooms.indexOf(data.idDuel)].players[1].emit('youAre', "right");
+                console.log("Passage");
+                setTimeout(() => this.server.emit('refreshAllSpectates'), 100);
             }
             this.alldata[this.rooms.indexOf(data.idDuel)].loop = setInterval(() => {
                 this.animate(data.idDuel);

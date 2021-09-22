@@ -70,7 +70,6 @@ export default Vue.extend({
     },
     mounted() {
             
-        this.$store.state.socket.emit('refreshSpectating');
         this.windowWidth = window.innerWidth;
         this.windowHeight = window.innerHeight;
           if (this.windowWidth >= 1400)

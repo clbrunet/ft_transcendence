@@ -69,11 +69,15 @@ export default Vue.extend({
     this.$store.state.socket.on('duelIsAccepted', (data: any) => {
       if (this.$store.state.user.id != undefined)
       {
-        const path = "/duel/" + data.duelId;
-        this.$store.state.duelId = data.duelId;
-        router.push({path: path}).catch(() => {
-          console.log("Redirection...");
-      })
+        if (this.$store.state.user.id == data.id ||
+        this.$store.state.user.id == data.ownerId)
+        {
+          const path = "/duel/" + data.duelId;
+          this.$store.state.duelId = data.duelId;
+          router.push({path: path}).catch(() => {
+            console.log("Redirection...");
+          })
+        }
       }
     });
   }
