@@ -167,6 +167,13 @@ export default Vue.extend({
       }
     });
 
+    this.$store.state.socket.on('refreshAllUsers', (idUser: any) => {
+      if (this.$store.state.user.id == idUser)
+      {
+        this.get_users();
+      }
+    })
+
     /* check game ongoing */
     if (this.$store.state.user != undefined)
     {
@@ -294,6 +301,7 @@ export default Vue.extend({
           else {
             newId = res.data.participants[1].userId;
           }
+          
           this.$store.state.socket.emit('duelSent', {idRoom: res.data.id, id: newId});
           this.$store.state.socket.emit('duelDenied', {idRoom: "room", id: user.id})
           axios({
@@ -370,6 +378,7 @@ export default Vue.extend({
         withCredentials: true
       }).then(() => {
         this.get_users();
+        this.$store.state.socket.emit('refreshUsers', user.id);
       });
     },
     remove_friend(user: any) {
@@ -380,6 +389,7 @@ export default Vue.extend({
         withCredentials: true
       }).then(() => {
         this.get_users();
+        this.$store.state.socket.emit('refreshUsers', user.id);
       });
     },
     accept_friend_request(user: any) {
@@ -390,6 +400,7 @@ export default Vue.extend({
         withCredentials: true
       }).then(() => {
         this.get_users();
+        this.$store.state.socket.emit('refreshUsers', user.id);
       });
     },
     deny_friend_request(user: any) {
@@ -400,6 +411,7 @@ export default Vue.extend({
         withCredentials: true
       }).then(() => {
         this.get_users();
+        this.$store.state.socket.emit('refreshUsers', user.id);
       });
     },
     block(user: any) {
@@ -411,6 +423,7 @@ export default Vue.extend({
       }).then(() => {
         this.get_users();
         this.get_blocks();
+        this.$store.state.socket.emit('refreshUsers', user.id);
       });
     },
     unblock(user: any) {
@@ -422,6 +435,7 @@ export default Vue.extend({
       }).then(() => {
         this.get_users();
         this.get_blocks();
+        this.$store.state.socket.emit('refreshUsers', user.id);
       });
     },
     send_message(user: any) {

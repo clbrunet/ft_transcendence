@@ -6,9 +6,6 @@ export class DuelGateway {
     @WebSocketServer()
     server;
 
-
-
-    //subscribe message server.on
     @SubscribeMessage('duelSent')
     duelSent(client:Socket, data: {idRoom: string, id: string}) {
         this.server.emit('refreshChannels', data.id);
@@ -27,5 +24,10 @@ export class DuelGateway {
     @SubscribeMessage('gameBugged')
     gameBugged(client:Socket, data: {idGame: string, page: string, idUser: string}) {
         this.server.to(data.idGame).emit('gameHasBugged', data);
+    }
+
+    @SubscribeMessage('refreshUsers')
+    refreshFriends(client:Socket, idUser: string) {
+        this.server.emit('refreshAllUsers', idUser);
     }
 }
