@@ -43,7 +43,7 @@
               </td>
               <td v-else class="field">Blocked</td>
             </template>
-            <template v-else-if="friends && tabDuels">
+            <template v-else-if="friends && tabDuels != undefined && tabDuels.length != 0">
               <td class="field btnBox">
                 <img
                   v-if="tabDuels[index].status == 'none'"        
@@ -147,6 +147,14 @@ export default Vue.extend({
       nbPointsConfig: 5 as any
     };
   },
+  watch: {
+    tabDuels: function () {
+      this.get_duels();
+    },
+    tabBlocks: function() {
+      this.get_blocks();
+    }
+  },
   mounted() {
 
     const disc = document.getElementById("btn-disconnect");
@@ -203,6 +211,7 @@ export default Vue.extend({
       }).then(res => {
         this.users = res.data;
         this.get_friends();
+        this.get_blocks();
       });
     },
     get_blocks() {
