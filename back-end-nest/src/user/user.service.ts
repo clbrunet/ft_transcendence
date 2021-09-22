@@ -85,7 +85,12 @@ export class UserService {
 
   // Return User DtoLazy without any relation
   public async getByIdLazy(id: string) {
-    const user = await this.userRepository.findOne(id);
+    let user;
+    try {
+      user = await this.userRepository.findOne(id);
+    } catch (error) {
+      throw new HttpException('Id does not respect UUID format', HttpStatus.INTERNAL_SERVER_ERROR); 
+    }
     if (user) { 
       return this.userToDtoLazy(user);
     }
@@ -112,8 +117,13 @@ export class UserService {
 
   // Return User Object without any relation
   public async findByIdLazy(id: string) {
-    const user = await this.userRepository.findOne(id);
-    if (user) {
+    let user;
+    try {
+      user = await this.userRepository.findOne(id);
+    } catch (error) {
+      throw new HttpException('Id does not respect UUID format', HttpStatus.INTERNAL_SERVER_ERROR); 
+    }
+    if (user) { 
       return user;
     }
     throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
