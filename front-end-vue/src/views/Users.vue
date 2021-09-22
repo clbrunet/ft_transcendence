@@ -43,17 +43,17 @@
               </td>
               <td v-else class="field">Blocked</td>
             </template>
-            <template v-else-if="friends && tabDuels != undefined && tabDuels.length != 0">
+            <template v-else-if="friends">
               <td class="field btnBox">
                 <img
-                  v-if="tabDuels[index].status == 'none'"        
+                  v-if="tabDuels != undefined && tabDuels[index] != undefined && tabDuels[index].status == 'none'"        
                   src="/assets/duel.svg"
                   alt="duel"
                   style="width:30px;cursor:pointer;"
                   @click="duel(user)"
                 />
-                <button v-else-if="tabDuels[index].status == 'sent'" @click="unduel(user)">Unduel</button>
-                <template v-else-if="tabDuels[index].status == 'received'">
+                <button v-else-if="tabDuels != undefined && tabDuels[index] != undefined && tabDuels[index].status == 'sent'" @click="unduel(user)">Unduel</button>
+                <template v-else-if="tabDuels != undefined && tabDuels[index] != undefined && tabDuels[index].status == 'received'">
                   <img
                     src="/assets/accept-button.svg"
                     alt="accept-button"
@@ -142,18 +142,10 @@ export default Vue.extend({
       tab: [] as any,
       socket: {} as any,
       tabBlocks: [] as any,
-      duels: undefined as any,
+      duels: [] as any,
       tabDuels: undefined as any,
       nbPointsConfig: 5 as any
     };
-  },
-  watch: {
-    tabDuels: function () {
-      this.get_duels();
-    },
-    tabBlocks: function() {
-      this.get_blocks();
-    }
   },
   mounted() {
 
