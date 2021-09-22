@@ -104,7 +104,12 @@ export default Vue.extend({
 
 #nav a {
   font-weight: bold;
-  padding: 15px;
+  height: 80%;
+  width: fit-content;
+  padding: 0 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 10px;
   color:white;
 }
@@ -117,7 +122,6 @@ export default Vue.extend({
 #nav a.router-link-exact-active {
   color: #3040F0;
   background-color:white;
-  margin:15px;
   border-radius: 10px;
 }
 
@@ -133,7 +137,6 @@ export default Vue.extend({
   background-color:#3040F0;
   outline:none;
   border:none;
-  margin:15px;
 }
 
 
@@ -142,25 +145,12 @@ export default Vue.extend({
   color: #3040F0;
 }
 
-@media (max-width: 360px) {
+@media (max-width: 400px) {
   #nav a {
-    font-weight: bold;
-    font-size: 15px;
-    padding: 10px;
-    border-radius: 10px;
-    color:white;
-  }
-
-  #nav a.router-link-exact-active {
-    margin:5px;
-    border-radius: 10px;
+    font-size: 13px;
   }
   #btn-disconnect {
-    font-size: 15px;
-    border-radius: 10px;
-    margin: 0;
+    font-size: 13px;
   }
 }
-
-
 </style>
