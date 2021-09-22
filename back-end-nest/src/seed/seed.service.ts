@@ -30,7 +30,6 @@ import { blocks } from './data';
 import { games } from './data';
 import { channels } from './data';
 import { participants } from './data';
-import { directs } from './data';
 import { messages } from './data';
 
 import { UserUpdateDto } from '../user/user.dto';
@@ -95,11 +94,6 @@ export class SeedService {
       let user2 = await this.userService.findByEmailLazy(user.email);
       let userUpdateDto = new UserUpdateDto();
       userUpdateDto.avatar = user.avatar;
-      userUpdateDto.level = user.level;
-      userUpdateDto.nGames = user.nGames;
-      userUpdateDto.nWins = user.nWins;
-      userUpdateDto.nLosses = user.nLosses;
-      userUpdateDto.xp = user.xp;      
       await this.userService.update(user2.id, userUpdateDto);
     }
     console.log('User seeding complete!');
@@ -135,14 +129,22 @@ export class SeedService {
   async seedGame() {
     console.log('Seeding games...');
     for await (const game of games) {
+      console.log('Playing one...');
       const match = await this.gameService.create(game.pointToVictory, game.ballSize, game.ballSpeed);
-      await this.gameService.setAsFinished(match.id);
       const user1 = await this.userService.findByEmailLazy(game.userEmail1);
       const user2 = await this.userService.findByEmailLazy(game.userEmail2);
       const player1 = await this.playerService.create(user1.id, match.id);
       const player2 = await this.playerService.create(user2.id, match.id);
-      await this.playerService.score(match.id, user1.id, game.playerPoint1);
-      await this.playerService.score(match.id, user2.id, game.playerPoint2);
+      let c = 0;
+      while (c < game.playerPoint1) {
+        await this.gameService.scoreSeed(user1.id, match.id, 1);
+        c = c + 1;
+      }
+      c = 0;
+      while (c < game.playerPoint2) {
+        await this.gameService.scoreSeed(user2.id, match.id, 1);
+        c = c + 1;
+      }
     }
     console.log('Game seeding complete!');
     return true;
@@ -174,20 +176,6 @@ export class SeedService {
       await this.participantService.create(participantCreationDto);
     }
     console.log('Participant seeding complete!');
-    return true;
-  }
-
-  async seedDirect() {
-    console.log('Seeding directs...');
-    for await (const direct of directs) {
-      const user1 = await this.userService.findByNameLazy(direct.name1);
-      const user2 = await this.userService.findByNameLazy(direct.name2);
-      let channelDirectCreationDto = new ChannelDirectCreationDto();
-      channelDirectCreationDto.userId1 = user1.id;
-      channelDirectCreationDto.userId2 = user2.id;
-      await this.channelService.createDirect(channelDirectCreationDto);
-    }
-    console.log('Direct seeding complete!');
     return true;
   }
 

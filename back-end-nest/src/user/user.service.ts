@@ -227,6 +227,49 @@ export class UserService {
     throw new HttpException('User update failed', HttpStatus.NOT_FOUND);
   }
 
+  public async updateAsWinner(id: string) {
+    const user = await this.findByIdLazy(id);
+    let userUpdateDto = new UserUpdateDto();
+    userUpdateDto.nGames = user.nGames + 1;
+    userUpdateDto.nWins = user.nWins + 1;
+    userUpdateDto.xp = user.xp + 10;
+    const ratio = (user.nWins + 1)/(user.nGames +1);
+    if (ratio < 0.5) {
+      userUpdateDto.level = 0;
+    }
+    else if (ratio >= 0.5 && ratio < 0.9) {
+      userUpdateDto.level = 1;
+    }
+    else if (ratio >= 0.9 && ratio < 0.95) {
+      userUpdateDto.level = 2;
+    }
+    else if (ratio >= 0.95) {
+      userUpdateDto.level = 3;
+    }
+    return await this.update(id, userUpdateDto);
+  }
+
+  public async updateAsLoser(id: string) {
+    const user = await this.findByIdLazy(id);
+    let userUpdateDto = new UserUpdateDto();
+    userUpdateDto.nGames = user.nGames + 1;
+    userUpdateDto.nLosses = user.nLosses + 1;
+    const ratio = (user.nWins)/(user.nGames +1);
+    if (ratio < 0.5) {
+      userUpdateDto.level = 0;
+    }
+    else if (ratio >= 0.5 && ratio < 0.9) {
+      userUpdateDto.level = 1;
+    }
+    else if (ratio >= 0.9 && ratio < 0.95) {
+      userUpdateDto.level = 2;
+    }
+    else if (ratio >= 0.95) {
+      userUpdateDto.level = 3;
+    }
+    return await this.update(id, userUpdateDto);
+  }
+
   public async delete(id: string) {
     try {
       await this.findById(id);

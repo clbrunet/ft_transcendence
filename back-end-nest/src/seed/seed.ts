@@ -35,10 +35,6 @@ async function bootstrap() {
           return resParticipant;
         })
         .then((resParticipant) => {
-          let resDirect = seedService.seedDirect();
-          return resDirect;
-        })
-        .then((resDirect) => {
           let resMessage = seedService.seedMessage();
           return resMessage;
         })

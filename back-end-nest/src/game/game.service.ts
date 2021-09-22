@@ -360,6 +360,44 @@ export class GameService {
         userUpdateDto.status = 1;
         await this.userService.update(player.user.id, userUpdateDto);
       }
+      if (game.players[0].point > game.players[1].point) {
+        await this.userService.updateAsWinner(game.players[0].id);
+        await this.userService.updateAsLoser(game.players[1].id);
+      }
+      if (game.players[1].point > game.players[0].point) {
+        await this.userService.updateAsWinner(game.players[1].id);
+        await this.userService.updateAsLoser(game.players[0].id);
+      }
+      await this.victoryMessage(game);
+    }
+    else {
+      scoreDto.outcome = "ongoing";
+      scoreDto.gameDto = this.gameToDto(await this.findById(id));
+    }
+    return scoreDto;
+  }
+
+  public async scoreSeed(userId: string, id: string, addedPoint: number) {
+    await this.playerService.score(id, userId, addedPoint);
+    const game = await this.findById(id);
+    const player = await this.playerService.findByGameAndUserLazy(id, userId);
+    let scoreDto = new ScoreDto();
+    if (player.point == game.pointToVictory) {
+      scoreDto.outcome = "finished";
+      scoreDto.gameDto = await this.setAsFinished(id);
+      for (const player of game.players) {
+        let userUpdateDto = new UserUpdateDto();
+        userUpdateDto.status = 1;
+        await this.userService.update(player.user.id, userUpdateDto);
+      }
+      if (game.players[0].point > game.players[1].point) {
+        await this.userService.updateAsWinner(game.players[0].user.id);
+        await this.userService.updateAsLoser(game.players[1].user.id);
+      }
+      if (game.players[1].point > game.players[0].point) {
+        await this.userService.updateAsWinner(game.players[1].user.id);
+        await this.userService.updateAsLoser(game.players[0].user.id);
+      }
       await this.victoryMessage(game);
     }
     else {

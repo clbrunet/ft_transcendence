@@ -36,11 +36,6 @@ export class UserUpdateDto {
 export class UserSeedDto {
   email: string;
   avatar: string;
-  level: number;
-  nGames: number;
-  nWins: number;
-  nLosses: number;
-  xp: number;
 }
 
 export class UserDtoLazy {

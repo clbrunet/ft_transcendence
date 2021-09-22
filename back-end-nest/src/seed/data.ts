@@ -20,12 +20,12 @@ export const registers: RegisterDto[] = [
 ];
 
 export const users: UserSeedDto[] = [
-  { email: 'erwan@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'clement@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'nicolas@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'lucille@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'come@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
-  { email: 'alban@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default', level: 2, nGames: 20, nWins: 10, nLosses: 10, xp: 300},
+  { email: 'erwan@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' },
+  { email: 'clement@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' },
+  { email: 'nicolas@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' },
+  { email: 'lucille@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' },
+  { email: 'come@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' },
+  { email: 'alban@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' },
 ];
 
 // friend.status can't equal to 1, you invert connectorEmail and friendEmail if needed
@@ -122,20 +122,6 @@ export const participants: ParticipantSeedDto[] = [
   { channelName: 'Doudou & Cie', userEmail: 'come@yopmail.com' },
 ];
 
-export const directs: ChannelDirectSeedDto[] = [
-  { name1: 'Erwan', name2: 'Nicolas'},
-  { name1: 'Erwan', name2: 'Clement'},
-
-  { name1: 'Nicolas', name2: 'Lucille'},
-  { name1: 'Nicolas', name2: 'Alban'},
-
-  { name1: 'Clement', name2: 'Lucille'},
-  { name1: 'Clement', name2: 'Alban'},
-
-  { name1: 'Come', name2: 'Nicolas'},
-  { name1: 'Come', name2: 'Clement'},
-];
-
 export const messages: MessageSeedDto[] = [
   { channelName: 'Global Announcement', userEmail: 'erwan@yopmail.com', content: 'Hello c ici pour les messages de services!'},
   { channelName: 'Global Announcement', userEmail: 'nicolas@yopmail.com', content: 'Le jeu est live! faites vous plaiz!'},
@@ -172,28 +158,4 @@ export const messages: MessageSeedDto[] = [
   { channelName: 'Doudou & Cie', userEmail: 'alban@yopmail.com', content: 'dclksdlhsdlkhskl'},
   { channelName: 'Doudou & Cie', userEmail: 'lucille@yopmail.com', content: 'Doudou!'},
   { channelName: 'Doudou & Cie', userEmail: 'come@yopmail.com', content: 'Doudou!'},
-
-  { channelName: 'ErwanDirectToNicolas', userEmail: 'erwan@yopmail.com', content: 'Yo dude!'},
-  { channelName: 'ErwanDirectToNicolas', userEmail: 'nicolas@yopmail.com', content: 'Hey!'},
-
-  { channelName: 'ErwanDirectToClement', userEmail: 'erwan@yopmail.com', content: 'Yo dude!'},
-  { channelName: 'ErwanDirectToClement', userEmail: 'clement@yopmail.com', content: 'Hey!'},
-
-  { channelName: 'NicolasDirectToLucille', userEmail: 'nicolas@yopmail.com', content: 'Yo dude!'},
-  { channelName: 'NicolasDirectToLucille', userEmail: 'lucille@yopmail.com', content: 'Hey!'},
-
-  { channelName: 'NicolasDirectToAlban', userEmail: 'nicolas@yopmail.com', content: 'Yo dude!'},
-  { channelName: 'NicolasDirectToAlban', userEmail: 'alban@yopmail.com', content: 'Hey!'},
-
-  { channelName: 'ClementDirectToLucille', userEmail: 'clement@yopmail.com', content: 'Yo dude!'},
-  { channelName: 'ClementDirectToLucille', userEmail: 'lucille@yopmail.com', content: 'Hey!'},
-
-  { channelName: 'ClementDirectToAlban', userEmail: 'clement@yopmail.com', content: 'Yo dude!'},
-  { channelName: 'ClementDirectToAlban', userEmail: 'alban@yopmail.com', content: 'Hey!'},
-
-  { channelName: 'ComeDirectToNicolas', userEmail: 'come@yopmail.com', content: 'Yo dude!'},
-  { channelName: 'ComeDirectToNicolas', userEmail: 'nicolas@yopmail.com', content: 'Hey!'},
-
-  { channelName: 'ComeDirectToClement', userEmail: 'come@yopmail.com', content: 'Yo dude!'},
-  { channelName: 'ComeDirectToClement', userEmail: 'clement@yopmail.com', content: 'Hey!'},
 ];
