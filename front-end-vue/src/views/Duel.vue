@@ -1,14 +1,14 @@
 <template>
     <div>
       <template v-if="!game_won">
-        <h1 v-if="side == 'left' || side == 'right'">You can play with up/down arrow</h1>
+        <h1 v-if="side == 'left' || side == 'right'">You can play with up/down arrow  {{windowWidth}} x {{windowHeight }}  </h1>
         <h1 v-else>You are spectating</h1>
       </template>
       <canvas
         v-if="!game_won"
         ref="Game"
-        :width="canvas.width"
-        :height="canvas.height"
+        :width="canvas.width / ratio"
+        :height="canvas.height / ratio"
         style="border: 1px solid black"
         id="canvas"
       >
@@ -57,7 +57,10 @@ export default Vue.extend({
               { x: 0, y: 0 } as any,
               { x: 0, y: 0 } as any,
             ] as any,
-            nbPoints: undefined as any
+            nbPoints: undefined as any,
+            windowWidth: undefined as any,
+            windowHeight: undefined as any,
+            ratio: 1 as any
         }
     },
     created() {
@@ -66,6 +69,34 @@ export default Vue.extend({
       });
     },
     mounted() {
+            
+        this.windowWidth = window.innerWidth;
+        this.windowHeight = window.innerHeight;
+          if (this.windowWidth >= 1400)
+            this.ratio = 1;
+          else if (this.windowWidth >= 1200)
+            this.ratio = 1.5;
+          else if (this.windowWidth >= 800)
+            this.ratio = 2;
+          else if (this.windowWidth >= 600)
+            this.ratio = 2.5;
+          else
+            this.ratio = 5;
+    
+        window.addEventListener('resize', () => {
+            this.windowWidth = window.innerWidth;
+            this.windowHeight = window.innerHeight;
+            if (this.windowWidth >= 1400)
+              this.ratio = 1;
+            else if (this.windowWidth >= 1200)
+              this.ratio = 1.5;
+            else if (this.windowWidth >= 800)
+              this.ratio = 2;
+            else if (this.windowWidth >= 600)
+              this.ratio = 2.5;
+            else
+              this.ratio = 5;
+        });
 
         const disc = document.getElementById("btn-disconnect");
         disc ? (disc.style.display = "none") : 0;
@@ -126,7 +157,6 @@ export default Vue.extend({
         }
 
 
-
         this.$store.state.socket.on("data", (data: any) => {
             this.canvas.width = data.canvas.width;
             this.canvas.height = data.canvas.height;
@@ -147,8 +177,8 @@ export default Vue.extend({
             this.context.clearRect(
                 0,
                 0,
-                this.canvas.width,
-                this.canvas.height
+                this.canvas.width  / this.ratio,
+                this.canvas.height  / this.ratio
             );
             }
             this.drawPlayers(this.position[0], this.position[1]);
@@ -238,24 +268,24 @@ export default Vue.extend({
       drawPlayers: function (player1: any, player2: any) {
         this.context.fillStyle = "#FF4675";
         this.context.fillRect(
-          player1.x,
-          player1.y,
-          this.player_size.width,
-          this.player_size.height
+          player1.x  / this.ratio,
+          player1.y  / this.ratio,
+          this.player_size.width  / this.ratio,
+          this.player_size.height  / this.ratio
         );
         this.context.fillRect(
-          player2.x,
-          player2.y,
-          this.player_size.width,
-          this.player_size.height
+          player2.x  / this.ratio,
+          player2.y  / this.ratio,
+          this.player_size.width  / this.ratio,
+          this.player_size.height  / this.ratio
         );
       },
       drawLine: function() {
         this.context.beginPath();
         if (this.context != undefined)
         {
-          this.context.moveTo(this.canvas.width / 2, 0);
-          this.context.lineTo(this.canvas.width / 2, this.canvas.height);
+          this.context.moveTo((this.canvas.width / this.ratio) /  2, 0);
+          this.context.lineTo((this.canvas.width / this.ratio) / 2, this.canvas.height);
         }
         this.context.strokeStyle = "#fff";
         this.context.stroke();
@@ -263,7 +293,7 @@ export default Vue.extend({
       drawBall: function(ball: any)
       {
         this.context.beginPath();
-        this.context.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
+        this.context.arc(ball.x  / this.ratio, ball.y  / this.ratio, ball.radius  / this.ratio, 0, 2 * Math.PI);
         this.context.stroke();
         this.context.fillStyle = "#fff";
         this.context.fill();
@@ -280,7 +310,7 @@ export default Vue.extend({
     background-color: #3043f0;
   }
 
-  h1 {
+  h1 , h2 {
     color : black;
   }
 

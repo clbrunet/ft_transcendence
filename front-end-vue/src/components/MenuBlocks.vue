@@ -87,8 +87,8 @@ tr {
 td span {
   padding: 3%;
   text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /*overflow: hidden;
+   text-overflow: ellipsis; */
 }
 
 .row {

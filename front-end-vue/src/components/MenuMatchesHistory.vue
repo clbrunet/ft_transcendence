@@ -99,8 +99,8 @@ td span {
   font-size:1rem;
   text-align:center;
   width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /*overflow: hidden;
+   text-overflow: ellipsis; */
 }
 
 .row {

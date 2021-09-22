@@ -10,6 +10,10 @@
             </table>
             <span v-else> No match on going...</span>
         </div>
+        <div>
+            with = {{windowWidth}}
+            height = {{windowHeight}}
+        </div>
     </div>
 </template>
 
@@ -31,6 +35,7 @@ export default Vue.extend({
         disc ? (disc.style.display = "inline-block") : 0;
 
             /* check game ongoing */
+
 
     if (this.$store.state.user.id != undefined)
     {
