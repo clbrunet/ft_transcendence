@@ -1,7 +1,7 @@
 <template>
     <div>
       <template v-if="!game_won">
-        <h1 v-if="side == 'left' || side == 'right'">You can play with up/down arrow  {{windowWidth}} x {{windowHeight }}  </h1>
+        <h1 v-if="side == 'left' || side == 'right'">You can play with up/down arrow</h1>
         <h1 v-else>You are spectating</h1>
       </template>
       <canvas
@@ -168,7 +168,6 @@ export default Vue.extend({
         this.context = canv.getContext('2d');
 
         this.$store.state.socket.on("position", (obj: any) => {
-          console.log("get_position");
             this.position[0] = obj[0];
             this.position[1] = obj[1];
 

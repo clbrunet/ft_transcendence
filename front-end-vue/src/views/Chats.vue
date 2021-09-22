@@ -202,8 +202,11 @@ export default Vue.extend({
         if (this.flag == false)
         {
           this.flag = true;
-          this.select_channel(this.channels[0], 0);
-          this.$store.dispatch('desactivateChat');
+          if (this.showDm == false)
+          {
+            this.select_channel(this.channels[0], 0);
+            this.$store.dispatch('desactivateChat');
+          }
         }
       })
       .catch(() => {
@@ -253,12 +256,13 @@ export default Vue.extend({
       this.$store.dispatch('activateChat');
     },
     select_dm(channel: any, index: number) {
+      console.log("select dm = ", channel);
       this.showDm = true;
       this.numberSelectedDm = index;
       this.selectedChannel = channel;
       this.$store.state.socket.emit('joinRoom', this.selectedChannel.id);
       this.refresh_channels();
-      this.$store.dispatch('activateChat');
+      //this.$store.dispatch('activateChat');
     },
     open_params() {
       this.params = true;
