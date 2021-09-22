@@ -13,7 +13,8 @@
             <strong>{{ match.players[1].point }}</strong>
           </td>
           <td>
-            <button @click="spectate(match)" class="btn">spectate</button>
+            <button @click="spectate(match)" class="btn" v-if="match.pointToVictory != match.players[0].point && match.pointToVictory != match.players[1].point">spectate</button>
+            <button class="btn" disabled v-else>Finished</button>
           </td>
         </tr>
       </table>
@@ -40,6 +41,11 @@ export default Vue.extend({
   mounted() {
     const disc = document.getElementById("btn-disconnect");
     disc ? (disc.style.display = "inline-block") : 0;
+
+    this.$store.state.socket.on('refreshAllSpectates', () => {
+      console.log("will refrehs get on oging");
+      this.get_ongoing();
+    });
 
     /* check game ongoing */
 

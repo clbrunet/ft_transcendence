@@ -70,6 +70,7 @@ export default Vue.extend({
     },
     mounted() {
             
+        this.$store.state.socket.emit('refreshSpectating');
         this.windowWidth = window.innerWidth;
         this.windowHeight = window.innerHeight;
           if (this.windowWidth >= 1400)
@@ -211,6 +212,7 @@ export default Vue.extend({
       var flagpassage = false;
 
       this.$store.state.socket.on("update_point", (data: any) => {
+        this.$store.state.socket.emit('refreshSpectating');
         if (data.idDuel == this.duelid)
         {
           this.left_point = data.points.left;
@@ -258,6 +260,7 @@ export default Vue.extend({
             if (this.left_point >= this.nbPoints) this.winner = "left";
             else this.winner = "right";
             this.$store.state.socket.emit('refreshUsers', 'all');
+            this.$store.state.socket.emit('refreshSpectating');
           }
 
         }
