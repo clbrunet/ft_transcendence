@@ -194,4 +194,16 @@ export class SeedService {
     return true;
   }
 
+  async SeedLogOut() {
+    console.log('Logging out everbody...');
+    for await (const user of users) {
+      let user1 = await this.userService.findByEmailLazy(user.email);
+      let userUpdateDto = new UserUpdateDto();
+      userUpdateDto.status = 0;
+      await this.userService.update(user1.id, userUpdateDto);
+    }
+    console.log('Logging out complete!');
+    return true;
+  }
+
 }

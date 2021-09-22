@@ -38,6 +38,10 @@ async function bootstrap() {
           let resMessage = seedService.seedMessage();
           return resMessage;
         })
+        .then((resMessage) => {
+          let resLogout = seedService.SeedLogOut();
+          return resLogout;
+        })
         .catch(error => {
           console.log('Seeding failed!');
           throw error;
