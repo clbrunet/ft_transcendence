@@ -264,12 +264,20 @@ export default Vue.extend({
   background-color: rgb(245, 62, 108);
   width: 100%;
   color:white;
-  overflow: hidden;
-  text-overflow: ellipsis;
   padding: 1% 0 1% 0;
   display:flex;
   align-items:center;
   justify-content:center;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row-participant span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .clickable {
@@ -294,8 +302,15 @@ export default Vue.extend({
   font-weight:700;
   background-color: #3040F0;
   padding: 15px;
-  word-break: break-all;
+  max-height: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
+.title span {
+  white-space: nowrap;
+}
+
 .messages {
   overflow-y: auto;
   display:flex;
@@ -321,7 +336,6 @@ p {
   background-color: rgb(68, 96, 253);
   display: flex;
   flex-direction: column;
-  border-right: 2px solid black;
   border-bottom: 2px solid black;
 }
 
@@ -336,11 +350,13 @@ p:nth-child(odd) {
 .pbase {
   text-align:left;
   padding-left:2%;
+  word-break: break-all;
 }
 
 .pyou {
   text-align:right;
   padding-right:2%;
+  word-break: break-all;
 }
 
 

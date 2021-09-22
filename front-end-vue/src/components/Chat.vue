@@ -371,10 +371,10 @@ export default Vue.extend({
       const nav = document.getElementById("nav");
       nav ? (nav.style.display = "flex") : 0;
       const list_channels = document.getElementById("revamp2");
-      list_channels ? (list_channels.style.display = "block") : 0;
+      list_channels ? (list_channels.style.display = "") : 0;
       
       const global = document.getElementById("current-chat");
-      global ? (global.style.width = "75%") : 0;
+      global ? (global.style.width = "") : 0;
 
       this.popup_settings = false;
     },
@@ -382,10 +382,10 @@ export default Vue.extend({
       const nav = document.getElementById("nav");
       nav ? (nav.style.display = "flex") : 0;
       const list_channels = document.getElementById("revamp2");
-      list_channels ? (list_channels.style.display = "block") : 0;
+      list_channels ? (list_channels.style.display = "") : 0;
 
       const global = document.getElementById("current-chat");
-      global ? (global.style.width = "75%") : 0;
+      global ? (global.style.width = "") : 0;
       
       this.popup_ban = false;
     },
@@ -393,10 +393,10 @@ export default Vue.extend({
       const nav = document.getElementById("nav");
       nav ? (nav.style.display = "flex") : 0;
       const list_channels = document.getElementById("revamp2");
-      list_channels ? (list_channels.style.display = "block") : 0;
+      list_channels ? (list_channels.style.display = "") : 0;
 
       const global = document.getElementById("current-chat");
-      global ? (global.style.width = "75%") : 0;
+      global ? (global.style.width = "") : 0;
       this.popup_mute = false;
     },
     open_popup_settings() {
@@ -601,7 +601,13 @@ export default Vue.extend({
   font-weight:700;
   background-color: #3040F0;
   padding: 15px;
-  word-break: break-all;
+  max-height: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.title span {
+  white-space: nowrap;
 }
 
 .you {
@@ -779,6 +785,12 @@ export default Vue.extend({
   padding: 1% 0 1% 0;
 }
 
+.row-participant span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 p {
   padding: 1% 0 1% 0;
   color:black;
@@ -796,11 +808,13 @@ p:nth-child(odd) {
 .pbase {
   text-align:left;
   padding-left:2%;
+  word-break: break-all;
 }
 
 .pyou {
   text-align:right;
   padding-right:2%;
+  word-break: break-all;
 }
 
 .message {
@@ -817,7 +831,6 @@ p:nth-child(odd) {
   background-color: rgb(68, 96, 253);
   display: flex;
   flex-direction: column;
-  border-right: 2px solid black;
   border-bottom: 2px solid black;
 }
 

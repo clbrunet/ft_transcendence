@@ -39,7 +39,7 @@
           </div>
         </div>
       </div>
-      <div id="current-chat" v-bind:class="{ 'current-chat--active': isChatActive }">
+      <div class="current-chat" v-bind:class="{ 'current-chat--active': isChatActive }">
         <template v-for="(channel, index) in channels">
           <template v-if="(channel.status != 'protected' || channel.activeUserAuthorized == true) && showDm == false">
             <Chat v-show="numberSelectedChannel == index" :key="index" :data="channel" />
@@ -633,7 +633,7 @@ export default Vue.extend({
   background-color: #777;
 }
 
-#current-chat {
+.current-chat {
   width: 75%;
 }
 

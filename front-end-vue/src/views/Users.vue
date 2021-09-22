@@ -553,6 +553,7 @@ td {
   margin: 0px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 tr:nth-child(even) {
   color: white;

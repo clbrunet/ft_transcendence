@@ -146,6 +146,7 @@ export default Vue.extend({
 span {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: 600px) {

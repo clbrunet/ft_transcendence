@@ -24,6 +24,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable */
 import Vue from "vue";
 import axios from "axios";
 export default Vue.extend({
