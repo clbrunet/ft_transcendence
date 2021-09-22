@@ -1,8 +1,7 @@
-import { IsString, IsInt, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsInt, IsOptional, IsEnum, IsUUID } from 'class-validator';
 
 import { Status } from './enum.status';
 import { Level } from './enum.level';
-
 
 export class UserUpdateDto {
   @IsOptional()
