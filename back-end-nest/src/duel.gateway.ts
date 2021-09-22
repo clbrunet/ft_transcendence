@@ -17,7 +17,7 @@ export class DuelGateway {
     }
 
     @SubscribeMessage('duelAccepted')
-    duelAccepted(client:Socket, data: {idRoom: string, id: string, duelId: string}) {
+    duelAccepted(client:Socket, data: {idRoom: string, id: string, ownerId: string, duelId: string}) {
         this.server.emit('duelIsAccepted', data);
     }
 
@@ -29,5 +29,10 @@ export class DuelGateway {
     @SubscribeMessage('refreshUsers')
     refreshFriends(client:Socket, idUser: string) {
         this.server.emit('refreshAllUsers', idUser);
+    }
+
+    @SubscribeMessage('refreshSpectating')
+    refreshSpectating(client:Socket) {
+        this.server.emit('refreshAllSpectates');
     }
 }
