@@ -115,10 +115,12 @@ export default Vue.extend({
     const disc = document.getElementById("btn-disconnect");
     disc ? (disc.style.display = "inline-block") : 0;
 
+    setTimeout(() => {
     if (this.$store.state.colorConfig == undefined)
       this.choseTheme(0);
     else
       this.choseTheme(this.$store.state.colorConfig);
+    }, 300);
 
     if (this.$store.state.user.id == undefined)
     {
@@ -194,7 +196,7 @@ export default Vue.extend({
       const violet = document.getElementById('violet');
       if (index == 0)
       {
-        blue ? blue.style.border = "2px solid red" : 0;
+        blue ? blue.style.border = "2px solid red": 0;
         yellow ? yellow.style.border = "2px solid black" : 0;
         green ? green.style.border = "2px solid black" : 0;
         violet ? violet.style.border = "2px solid black" : 0;

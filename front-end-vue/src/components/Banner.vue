@@ -64,7 +64,6 @@ export default Vue.extend({
     },
   },
   mounted() {
-    console.log("mounted banner");
     if (this.$route.params.id && this.$route.params.id !== this.$store.state.user.id) {
       axios({
         url: `${ process.env.VUE_APP_API_URL }/user/` + this.$route.params.id,
