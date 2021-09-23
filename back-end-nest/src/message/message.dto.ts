@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsBoolean, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsBoolean, IsOptional, MaxLength } from 'class-validator';
 
 export class MessageCreationDto {
   @IsString()
@@ -6,6 +6,7 @@ export class MessageCreationDto {
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(500)
   content: string;
 
   @IsOptional()
