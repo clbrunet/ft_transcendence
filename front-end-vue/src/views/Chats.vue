@@ -12,7 +12,7 @@
           />
         </div>
         <div class="list_channels">
-          <span style="font-weight:700;font-size:23px;text-decoration:underline;">channels general</span>
+          <span style="font-weight:700;font-size:23px;padding:1% 0 1% 0;">channels general</span>
           <div class="channel" v-for="(channel, index) in channels" :key="index" @click="select_channel(channel, index)">
             <span>{{ channel.name }} </span> 
             <span>{{ channel.status }} </span>
@@ -33,7 +33,7 @@
               />
             </div>
           </div>
-          <span style="font-weight:700;font-size:23px;text-decoration:underline;">direct messages</span>
+          <span style="font-weight:700;font-size:23px;padding:1% 0 1% 0;">direct messages</span>
           <div class="channel" v-for="(conv, indexdm) in dm" :key="(indexdm + 12) * 12" @click="select_dm(conv, indexdm)">
             <span>{{ conv.name }} </span> 
           </div>
@@ -56,6 +56,7 @@
     <!-- popups -->
     <portal-target v-if="popup_password" id="popup-password" name="popup-password">
       <div id="popup-password-content">
+        <h2>Enter the password of the channel</h2>
         <form action="" @submit.prevent="form_password_submit">
           <input type="password" required placeholder="password" v-model="password_input">
           <input type="submit" value="Access" class="btn-close">
@@ -66,6 +67,7 @@
 
     <div v-if="popup_create" id="popup-create">
       <div id="popup-create-content">
+        <h2>Create a channel</h2>
         <form @submit.prevent="create_channel()" id="form-create-channel">
           <input type="text" required maxlength="25" placeholder="name of the channel" v-model="createName">
           <select required v-model="createStatus">
@@ -413,6 +415,10 @@ export default Vue.extend({
 
 /* popup password */
 
+* {
+  box-sizing:border-box;
+}
+
 #revamp {
   display:flex;
   flex-direction: row;
@@ -441,6 +447,9 @@ export default Vue.extend({
   flex-direction: column;
   align-items:center;
   background-color:white;
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+  border-bottom: 2px solid black;
 }
 
 #popup-password {
@@ -477,7 +486,7 @@ export default Vue.extend({
 #popup-password-content form input{
     margin:4%;
   width:20%;
-  padding:3%;
+  padding:2%;
 }
 
 #popup-password-content form select{
@@ -485,6 +494,7 @@ export default Vue.extend({
   width:40%;
   padding:2%;
 }
+
 
 #popup-create-content {
   display:flex;
@@ -553,9 +563,12 @@ export default Vue.extend({
 
 .list_channels{
   width: 100%;
-  outline: 3px solid black;
-  background-color :white;
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+  border-bottom: 2px solid black;
+  background-color :#3040F0;
   max-height: 100%;
+  color:white;
   overflow-y: auto; /* maybe remove */
   overflow-x: hidden;
 }
@@ -567,8 +580,8 @@ export default Vue.extend({
   padding-top:2%;
   padding-bottom:2%;
   outline: 1px solid #aaa;
-  color:white;
-  background-color:#3040F0;
+  color:black;
+  background-color:white;
   margin:0;
   display:flex;
   align-items:center;
@@ -579,7 +592,7 @@ export default Vue.extend({
 }
 
 .channel:nth-child(even) {
-  background-color:rgb(68, 96, 253);
+  background-color:#ededed;
 }
 
 .channel:focus {

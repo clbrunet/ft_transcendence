@@ -604,7 +604,7 @@ export default Vue.extend({
 
 .chat {
   display: flex;
-  outline: 1px solid black;
+  border: 2px solid black;
   width: 70%;
   height: 100%;
   flex-direction: column;
@@ -889,6 +889,8 @@ p:nth-child(odd) {
   background-color: rgb(68, 96, 253);
   display: flex;
   flex-direction: column;
+  border-top: 2px solid black;
+  border-right: 2px solid black;
   border-bottom: 2px solid black;
 }
 
