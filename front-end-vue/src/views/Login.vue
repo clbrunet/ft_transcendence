@@ -47,6 +47,7 @@ export default Vue.extend({
   },
   methods: {
     async submit_login() {
+      this.messages = [""];
       if (this.email == "")
       {
         this.messages = ['email should not be empty'];

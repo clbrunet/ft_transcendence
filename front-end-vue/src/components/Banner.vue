@@ -157,7 +157,11 @@ span {
   white-space: nowrap;
 }
 
-@media (max-width: 600px) {
+#top span:last-child {
+  max-width: 50%;
+}
+
+@media (max-width: 770px) {
   #body {
     background-color: #3040F0;
     display: flex;

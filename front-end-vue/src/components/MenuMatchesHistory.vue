@@ -11,11 +11,12 @@
             <span v-else> {{ match.loserName }} </span>
           </td>
           <td>
-            <span>{{match.winnerPoint}} - {{match.loserPoint}} </span>
-          </td>
-          <td>
-            <span v-if="($route.params.id == undefined && $store.state.user.name == match.winnerName) || ($route.params.id != undefined && data.name == match.winnerName)"> Win </span>
-            <span v-else> Lose </span>
+            <span v-if="isMatchWon(match)">
+              {{match.winnerPoint}} - {{match.loserPoint}} W
+            </span>
+            <span v-else>
+              {{match.winnerPoint}} - {{match.loserPoint}} L
+            </span>
           </td>
         </tr>
       </table>
@@ -43,7 +44,17 @@ export default Vue.extend({
     }).then(res => {
       this.matchesHistory = res.data;
     }).catch(() => console.log(""));
-  }
+  },
+  methods: {
+    isMatchWon(winnerName: string): boolean {
+      if (this.$route.params.id == undefined) {
+        return this.$store.state.user.name != winnerName;
+      }
+      else {
+        return this.data.name != winnerName;
+      }
+    },
+  },
 });
 </script>
 
@@ -94,31 +105,42 @@ tr {
   width: 100%;
 }
 
-td span {
-  padding: 3%;
-  text-align: left;
-  font-size:1rem;
-  text-align:center;
-  width: 100%;
-  /*overflow: hidden;
-   text-overflow: ellipsis; */
-}
-
 .row {
   height: 10%;
   width: 100%;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
 }
+
 
 table td {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28%;
+  width: 45%;
+  margin: 0 5px;
 }
 
-@media (max-width: 600px) {
+td span {
+  padding: 3%;
+  text-align: left;
+  font-size:1rem;
+  text-align:center;
+  width: fit-content;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row td:first-child {
+  width: 50%;
+}
+
+.row td:last-child {
+  min-width: 70px;
+  width: fit-content;
+}
+
+@media (max-width: 770px) {
   #body {
     height: 90%;
     max-height: 200px;

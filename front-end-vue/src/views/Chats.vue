@@ -268,7 +268,7 @@ export default Vue.extend({
       this.selectedChannel = channel;
       this.$store.state.socket.emit('joinRoom', this.selectedChannel.id);
       this.refresh_channels();
-      //this.$store.dispatch('activateChat');
+      this.$store.dispatch('activateChat');
     },
     open_params() {
       this.params = true;

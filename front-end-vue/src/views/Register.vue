@@ -59,6 +59,7 @@ export default Vue.extend({
   },
   methods: {
     async submit_register() {
+      this.message = "";
       if (this.password != this.confirmPassword) {
         this.message = "passwords do not match";
         return;
@@ -73,7 +74,6 @@ export default Vue.extend({
       }
       catch (error) {
         let messages = Array.isArray(error.response.data.message) ? error.response.data.message : [error.response.data.message];
-        this.message = "";
         messages.forEach(message => {
           this.message += message + "; ";
         });

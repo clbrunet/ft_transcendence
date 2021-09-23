@@ -338,8 +338,8 @@ export default Vue.extend({
 .boxes {
   display:flex;
   margin: 7% 0 15% 0;
-  width: 50%;
-  justify-content: space-between;
+  width: 100%;
+  justify-content: center;
 }
 
 .box {
@@ -347,6 +347,7 @@ export default Vue.extend({
   height:30px;
   border-radius: 8px;
   cursor:pointer;
+  margin: 5px;
 }
 
 #blue {
@@ -534,12 +535,12 @@ input {
   flex-direction: column;
   justify-content: space-around;
   height: 100%;
-  width: 35%;
+  width: 39%;
   align-items: center;
 }
 
 #middle {
-  width: 30%;
+  width: 24%;
   height: 100%;
   margin: auto;
   background-color: #ebebeb;
@@ -550,7 +551,7 @@ input {
   align-items: center;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 770px) {
   #bottom {
     flex-direction: column;
     align-items: center;
@@ -562,6 +563,11 @@ input {
     order: -1;
     width: 90%;
     height: 20%;
+    margin-top: 20px;
+  }
+
+  .boxes {
+    margin: 10px 0;
   }
 
   #left,
@@ -570,6 +576,10 @@ input {
     height: auto;
     display: flex;
     justify-content: center;
+  }
+
+  #right {
+    margin-bottom: 10px;
   }
 
   #play {

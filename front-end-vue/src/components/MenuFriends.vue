@@ -115,15 +115,15 @@ tr {
 td span {
   padding: 3%;
   text-align: left;
-  /*overflow: hidden;
-   text-overflow: ellipsis; */ 
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .row {
   height: 10%;
   width: 100%;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
 }
 
 table td {
@@ -131,9 +131,19 @@ table td {
   align-items: center;
   justify-content: center;
   width: 45%;
+  margin: 0 5px;
 }
 
-@media (max-width: 600px) {
+.row td:first-child {
+  width: 45%;
+}
+
+.row td:last-child {
+  min-width: 85px;
+  width: fit-content;
+}
+
+@media (max-width: 770px) {
   #body {
     height: 90%;
     margin: 10px;
