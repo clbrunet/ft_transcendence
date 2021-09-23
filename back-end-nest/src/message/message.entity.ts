@@ -6,13 +6,13 @@ import Participant from '../participant/participant.entity';
 @Entity()
 class Message {
     @PrimaryGeneratedColumn('uuid')
-    public id?: string;
+    id?: string;
 
     @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     createDateTime: Date;
 
     @Column()
-    public content: string;
+    content: string;
 
     @Column({ type: 'boolean', default: false })
     button: boolean;

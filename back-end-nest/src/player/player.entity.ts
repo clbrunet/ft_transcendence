@@ -7,10 +7,10 @@ import Game from '../game/game.entity';
 @Unique(["user", "game"])
 class Player {
     @PrimaryGeneratedColumn('uuid')
-    public id?: string;
+    id?: string;
 
 	@Column({ default: 0 })
-  	public point: number;
+  	point: number;
 
     @ManyToOne(() => User, user => user.players, { eager: false, onDelete: "CASCADE" })
     user: User;

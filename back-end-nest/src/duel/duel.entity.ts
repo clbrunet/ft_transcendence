@@ -10,10 +10,10 @@ import Game  from '../game/game.entity';
 @Unique(["duelOwner", "duel"])
 class Duel {
     @PrimaryGeneratedColumn('uuid')
-    public id?: string;
+    id?: string;
 
     @Column()
-    public status: DuelStatus;
+    status: DuelStatus;
 
     @Column({ nullable: true, default: null })
     gameId: string;

@@ -9,22 +9,22 @@ import Player from '../player/player.entity';
 @Entity()
 class Game {
     @PrimaryGeneratedColumn('uuid')
-    public id?: string;
+    id?: string;
 
     @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
-    public startTime: Date;
+    startTime: Date;
 
 	@Column()
-  	public pointToVictory: number;
+  	pointToVictory: number;
 
   @Column()
-    public ballSize: number;
+    ballSize: number;
 
   @Column()
-    public ballSpeed: number;
+    ballSpeed: number;
 
 	@Column({ default: 0 })
-  	public status: GameStatus;
+  	status: GameStatus;
 
 	@OneToMany(() => Player, player => player.game)
   	players: Player[];

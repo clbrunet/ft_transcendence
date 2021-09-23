@@ -9,10 +9,10 @@ import User  from '../user/user.entity';
 @Unique(["friendOwner", "friend"])
 class Friend {
     @PrimaryGeneratedColumn('uuid')
-    public id?: string;
+    id?: string;
 
     @Column()
-    public status: FriendStatus;
+    status: FriendStatus;
 
     @ManyToOne(() => User, user => user.friendOwners, { eager: false, onDelete: "CASCADE" })
     friendOwner: User;

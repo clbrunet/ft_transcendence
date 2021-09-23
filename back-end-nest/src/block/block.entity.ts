@@ -9,10 +9,10 @@ import User  from '../user/user.entity';
 @Unique(["blockOwner", "block"])
 class Block {
     @PrimaryGeneratedColumn('uuid')
-    public id?: string;
+    id?: string;
 
     @Column()
-    public status: BlockStatus;
+    status: BlockStatus;
 
     @ManyToOne(() => User, user => user.blockOwners, { eager: false, onDelete: "CASCADE" })
     blockOwner: User;
