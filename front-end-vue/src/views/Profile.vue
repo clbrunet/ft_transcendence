@@ -44,12 +44,12 @@
           <MenuBlocks v-if="is_auth" />
         </div>
         <div id="middle">
-            <span>Choose your pong theme! </span>
-            <div class="boxes">
-            <div class="box" id="blue" @click="choseTheme(0)"></div>
-            <div class="box" id="yellow" @click="choseTheme(1)"></div>
-            <div class="box" id="green" @click="choseTheme(2)"></div>
-            <div class="box" id="violet" @click="choseTheme(3)"></div>
+            <span v-if="is_auth">Choose your pong theme! </span>
+            <div class="boxes" v-if="is_auth">
+              <div class="box" id="blue" @click="choseTheme(0)"></div>
+              <div class="box" id="yellow" @click="choseTheme(1)"></div>
+              <div class="box" id="green" @click="choseTheme(2)"></div>
+              <div class="box" id="violet" @click="choseTheme(3)"></div>
           </div>
           <button
             id="play"
@@ -59,7 +59,7 @@
           <button id="play" v-else-if="is_auth" @click="unqueue()">Unqueue</button>
         </div>
         <div id="right">
-          <MenuMatchesHistory v-if="$store.state.user.id" />
+          <MenuMatchesHistory v-if="$store.state.user.id" :data="user" />
           <!--<MenuDuels v-if="is_auth" />-->
         </div>
       </div>

@@ -7,14 +7,14 @@
       <table>
         <tr class="row" v-for="(match, index) in matchesHistory" :key="index">
           <td>
-            <span v-if="$store.state.user.name != match.winnerName"> {{ match.winnerName }} </span>
+            <span v-if="($route.params.id == undefined && $store.state.user.name != match.winnerName) || ($route.params.id != undefined && data.name != match.winnerName)"> {{ match.winnerName }} </span>
             <span v-else> {{ match.loserName }} </span>
           </td>
           <td>
             <span>{{match.winnerPoint}} - {{match.loserPoint}} </span>
           </td>
           <td>
-            <span v-if="$store.state.user.name == match.winnerName"> Win </span>
+            <span v-if="($route.params.id == undefined && $store.state.user.name == match.winnerName) || ($route.params.id != undefined && data.name == match.winnerName)"> Win </span>
             <span v-else> Lose </span>
           </td>
         </tr>
@@ -29,6 +29,7 @@ import Vue from "vue";
 import axios from "axios";
 export default Vue.extend({
   name: "MenuMatchesHistory",
+  props: ['data'],
   data() {
     return {
       matchesHistory: null,
