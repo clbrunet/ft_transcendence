@@ -39,7 +39,7 @@
           </div>
         </div>
       </div>
-      <div class="current-chat" v-bind:class="{ 'current-chat--active': isChatActive }">
+      <div class="current-chat" id="current-chat" v-bind:class="{ 'current-chat--active': isChatActive }">
         <template v-for="(channel, index) in channels">
           <template v-if="(channel.status != 'protected' || channel.activeUserAuthorized == true) && showDm == false">
             <Chat v-show="numberSelectedChannel == index" :key="index" :data="channel" />
@@ -447,7 +447,7 @@ export default Vue.extend({
   z-index: 1000;
   width:100vw;
   height:100vh;
-  background-color:rgba(48, 74, 36, 0.6);
+  background-color: rgba(0, 0, 0, 0.85);
   position: absolute;
 }
 
@@ -520,8 +520,8 @@ export default Vue.extend({
 #popup-create {
   z-index: 1000;
   width:100vw;
+  background-color: rgba(0, 0, 0, 0.85);
   height:100vh;
-  background-color:rgba(48, 74, 36, 0.6);
   position: absolute;
 }
 
@@ -590,10 +590,10 @@ export default Vue.extend({
   z-index: 1000;
   position: fixed;
   width: 100vw;
+  background-color: rgba(0, 0, 0, 0.85);
   height: 100vh;
   top:0;
   left:0;
-  background-color: rgba(48, 74, 36, 0.6);
   margin: 0;
   display: flex;
   justify-content: center;
@@ -614,7 +614,7 @@ export default Vue.extend({
 .popup-params-content input {
   margin:5%;
   width:40%;
-  padding:5%;
+  padding:2%;
 }
 
 .popup-params-content select {
@@ -623,6 +623,11 @@ export default Vue.extend({
   padding:2%;
   cursor:pointer;
 
+}
+
+.popup-settings {
+  background-color: rgba(0, 0, 0, 0.85);
+  
 }
 
 .error {

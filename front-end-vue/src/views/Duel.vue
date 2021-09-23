@@ -103,10 +103,13 @@ export default Vue.extend({
 
         /**/
         this.$store.state.socket.on('gameHasBugged', (data: any) => {
+          console.log("game has bugged");
           if (this.$store.state.user.id != undefined)
           {
+            console.log("in first if");
             if (data.idGame == this.gameid)
             {
+              console.log("in second if");
               this.$store.state.socket.emit("game_won", this.duelid);
               alert('Game finished because one of the players disconnected from the game');
               if (data.idUser ==  this.$store.state.user.id)

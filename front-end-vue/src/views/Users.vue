@@ -1,8 +1,8 @@
 <template>
   <div id="body">
     <form @submit.prevent="">
-      <span>Number of points</span>
-      <select v-model="nbPointsConfig">
+      <span class="nbPoints"> Number of points (duel) </span>
+      <select v-model="nbPointsConfig" class="selectDuel">
         <option selected>3</option>
         <option>4</option>
         <option>5</option>
@@ -54,7 +54,7 @@
                   style="width:30px;cursor:pointer;"
                   @click="duel(user)"
                 />
-                <button v-else-if="tabDuels != undefined && tabDuels[index] != undefined && tabDuels[index].status == 'sent'" @click="unduel(user)">Unduel</button>
+                <button class="btn-ok" v-else-if="tabDuels != undefined && tabDuels[index] != undefined && tabDuels[index].status == 'sent'" @click="unduel(user)">Unduel</button>
                 <template v-else-if="tabDuels != undefined && tabDuels[index] != undefined && tabDuels[index].status == 'received'">
                   <img
                     src="/assets/accept-button.svg"
@@ -69,7 +69,13 @@
                     @click="deny_duel(user)"
                   />
                 </template>
-                <span v-else>sending</span>
+                <img
+                  v-else        
+                  src="/assets/duel.svg"
+                  alt="duel"
+                  style="width:30px;cursor:pointer;"
+                  @click="duel(user)"
+                />
               </td>
               <td class="field btnBox">
                 <img
@@ -584,6 +590,29 @@ tr {
   margin: 0;
   background-color: #ededed;
   padding: 3%;
+}
+
+.nbPoints {
+  color:black;
+}
+
+.selectDuel {
+  background-color: #3040F0;
+  color:white;
+  padding: 1%;
+}
+
+.btn-ok {
+  background-color: #3040F0;
+  outline:none;
+  border: 1px solid white;
+  border-radius: 5px;
+  cursor:pointer;
+  color:white;
+}
+
+.btn-ok:hover {
+  background-color: rgb(21, 39, 235);
 }
 
 .field {

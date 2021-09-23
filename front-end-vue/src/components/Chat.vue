@@ -2,8 +2,8 @@
   <div class="chat_and_participant">
     <div class="chat">
       <div class="title">
-        <span>{{data.name}} by <span class="clickable" @click="goToProfile({userId: data.ownerId})">{{data.ownerName}}</span></span>
-        <button v-if="isOwner == true" @click="open_popup_settings()">add</button>
+        <span>{{data.name}} by <span class="clickable" style="margin-right:3%;" @click="goToProfile({userId: data.ownerId})">{{data.ownerName}}</span></span>
+        <button v-if="isOwner == true" @click="open_popup_settings()" class="btn-ok">add</button>
       </div>
 
       <template v-if="data.activeUserParticipant == true && data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false">
@@ -81,20 +81,20 @@
         </template>
         <template v-else-if="participant.left != true">
           <div class="row-participant" :key="index">
-            <span class="clickable" @click="goToProfile(participant)">{{participant.userName}}</span>
+            <span class="clickable" @click="goToProfile(participant)" style="margin-right: 2%;">{{participant.userName}}</span>
 
             <template v-if="participant.ban == false && isCurrentlyBanMute(participant.banEndDateTime) == false">
-              <button v-if="isOwner == true" @click="changeOwner(participant)">change owner</button>
+              <button v-if="isOwner == true" @click="changeOwner(participant)" class="btn-ok">set owner</button>
 
-              <button v-if="isOwner == true && participant.admin == false" @click="addAdmin(participant)">+ admin</button>
-              <button v-else-if="isOwner == true" @click="removeAdmin(participant)">- admin</button>
+              <button v-if="isOwner == true && participant.admin == false" @click="addAdmin(participant)" class="btn-ok">admin</button>
+              <button v-else-if="isOwner == true" @click="removeAdmin(participant)" class="btn-ok">unadmin</button>
 
-              <button v-if="data.activeUserAdmin == true  && participant.admin == false" @click="open_popup_ban(participant)">Ban</button>
+              <button v-if="data.activeUserAdmin == true  && participant.admin == false" @click="open_popup_ban(participant)" class="btn-ok">ban</button>
             </template>
-            <button v-else @click="unbanParticipant(participant)">unban</button>
+            <button v-else @click="unbanParticipant(participant)" class="btn-ok">unban</button>
             <template v-if="data.activeUserAdmin == true&& participant.admin == false">
-              <button v-if="participant.mute == false && isCurrentlyBanMute(participant.muteEndDateTime) == false" @click="open_popup_mute(participant)">Mute</button>
-              <button v-else @click="unmuteParticipant(participant)">unmute</button>
+              <button v-if="participant.mute == false && isCurrentlyBanMute(participant.muteEndDateTime) == false" @click="open_popup_mute(participant)" class="btn-ok">mute</button>
+              <button v-else @click="unmuteParticipant(participant)" class="btn-ok">unmute</button>
             </template>
           </div>
         </template>
@@ -428,7 +428,6 @@ export default Vue.extend({
       const list_channels = document.getElementById("revamp2");
       list_channels ? (list_channels.style.display = "none") : 0;
 
-
       const global = document.getElementById("current-chat");
       global ? (global.style.width = "100%") : 0;
       this.popup_ban = true;
@@ -642,7 +641,7 @@ export default Vue.extend({
   z-index: 1000;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(48, 74, 36, 0.8);
+  background-color: rgba(0, 0, 0, 0.85);
   position: absolute;
   margin: 0;
 }
@@ -659,7 +658,7 @@ export default Vue.extend({
 .form-popup-mute input{
   margin:5%;
   width:40%;
-  padding:5%;
+  padding:2%;
 
 }
 
@@ -669,6 +668,20 @@ export default Vue.extend({
   padding:2%;
 
 }
+
+.btn-ok {
+  background-color: #3040F0;
+  outline:none;
+  border: 1px solid white;
+  border-radius: 5px;
+  cursor:pointer;
+  color:white;
+}
+
+.btn-ok:hover {
+  background-color: rgb(21, 39, 235);
+}
+
 
 .popup-mute-content {
   position: absolute;
@@ -695,7 +708,7 @@ export default Vue.extend({
   width: 100vw;
   height: 100vh;
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.85);
   margin: 0;
 }
 
@@ -711,7 +724,7 @@ export default Vue.extend({
 .form-popup-ban input {
   margin:5%;
   width:40%;
-  padding:5%;
+  padding:2%;
 }
 
 .form-popup-ban select {
@@ -747,7 +760,7 @@ export default Vue.extend({
   height: 100vh;
   top:0;
   left:0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.85);
   margin: 0;
   display: flex;
   justify-content: center;

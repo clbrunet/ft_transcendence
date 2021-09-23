@@ -36,7 +36,7 @@
       />
       <span style="padding:1% 0 1% 0;"> You</span>
       <div class="row-participant">
-        <span class="clickable" @click="goToProfile(data)"> {{data.name}}</span>
+        <span class="clickable" style="margin-right:2%;" @click="goToProfile(data)"> {{data.name}}</span>
         <template v-if="pendingDuel == false">
           <img
             src="/assets/duel.svg"
@@ -45,7 +45,7 @@
             @click="duelFriend()"
           />
           <form @submit.prevent="">
-            <select v-model="nbPointsConfig">
+            <select v-model="nbPointsConfig" class="selectDuel">
               <option selected>5</option>
               <option>6</option>
               <option>7</option>
@@ -274,6 +274,12 @@ export default Vue.extend({
   text-overflow: ellipsis;
 }
 
+.selectDuel {
+  background-color: #3040F0;
+  color:white;
+  padding: 1%;
+}
+
 .row-participant span {
   white-space: nowrap;
   overflow: hidden;
@@ -411,5 +417,7 @@ a:hover {
     border: none;
   }
 }
+
+
 
 </style>

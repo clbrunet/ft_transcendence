@@ -64,6 +64,7 @@ export default Vue.extend({
     },
   },
   mounted() {
+    console.log("mounted banner");
     if (this.$route.params.id && this.$route.params.id !== this.$store.state.user.id) {
       axios({
         url: `${ process.env.VUE_APP_API_URL }/user/` + this.$route.params.id,
@@ -78,6 +79,14 @@ export default Vue.extend({
       this.is_auth = true;
       this.user = this.$store.state.user;
       this.avatar_src = this.user.avatar + "?" + new Date().valueOf();
+      axios({
+        url: `${ process.env.VUE_APP_API_URL }/user/` + this.$store.state.user.id,
+        method: "get",
+        withCredentials: true,
+      }).then(res => {
+        this.user = res.data;
+        this.avatar_src = this.user.avatar + "?" + new Date().valueOf();
+      });
     }
   }
 });

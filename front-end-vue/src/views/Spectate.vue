@@ -74,6 +74,7 @@ export default Vue.extend({
                 page: "Spectate",
                 idUser: this.$store.state.user.id
               });
+              this.get_ongoing();
             });
           }
         }
