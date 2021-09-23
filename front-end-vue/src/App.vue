@@ -56,7 +56,7 @@ export default Vue.extend({
         router.push({ name: "App" });
       });
       this.is_disconnecting = false;
-    }
+    },
   },
   computed: {
     is_auth() {
@@ -70,7 +70,7 @@ export default Vue.extend({
       if (this.$store.state.user.id != undefined)
       {
         if (this.$store.state.user.id == data.id ||
-        this.$store.state.user.id == data.ownerId)
+          this.$store.state.user.id == data.ownerId)
         {
           const path = "/duel/" + data.duelId;
           this.$store.state.duelId = data.duelId;
@@ -80,7 +80,7 @@ export default Vue.extend({
         }
       }
     });
-  }
+  },
 });
 </script>
 

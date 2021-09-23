@@ -33,7 +33,7 @@ import { TwoFactorAuthenticationController } from './twoFactor/twoFactorAuthenti
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
         signOptions: {
-          expiresIn: `1d`,
+          expiresIn: `1y`,
         },
       }),
     }),
