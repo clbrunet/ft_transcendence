@@ -235,7 +235,7 @@ export class ParticipantService {
     if (res) {
       return await this.findByIdLazy(id);
     }
-    throw new HttpException('Participant update failed', HttpStatus.NOT_FOUND);
+    throw new HttpException('Participant update failed', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   public async updateAuthorized(id: string, authorized: boolean) {
@@ -309,7 +309,7 @@ export class ParticipantService {
 
   public async isMute(userId: string, channelId: string) {
     if (!(await this.isParticipant(userId, channelId))) {
-      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND); 
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.BAD_REQUEST); 
     }
     const user = await this.userService.findByIdLazy(userId);
     const channel = await this.channelService.findByIdLazy(channelId);
@@ -323,7 +323,7 @@ export class ParticipantService {
 
   public async isBan(userId: string, channelId: string) {
     if (!this.isParticipant(userId, channelId)) {
-      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND); 
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.BAD_REQUEST); 
     }
     const user = await this.userService.findByIdLazy(userId);
     const channel = await this.channelService.findByIdLazy(channelId);

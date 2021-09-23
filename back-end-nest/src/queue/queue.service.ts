@@ -31,7 +31,7 @@ export class QueueService {
   public async create(queuerId: string) {
     const queuer = await this.userService.findByIdLazy(queuerId);
     if (!queuer) {
-      throw new HttpException('Queuer with this id does not exist', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Queuer with this id does not exist', HttpStatus.NOT_FOUND);
     }
     if (await this.inQueue(queuer.id)) {
       throw new HttpException('User is already in queue', HttpStatus.BAD_REQUEST);
@@ -88,7 +88,7 @@ export class QueueService {
       const duel = await this.findById(id);
       return this.queueToDto(duel);
     }
-    throw new HttpException('Duel update failed', HttpStatus.NOT_FOUND);
+    throw new HttpException('Duel update failed', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   public async delete(id: string) {
@@ -104,7 +104,7 @@ export class QueueService {
 
   public async unqueueActiveUser(userId: string) {
     if (!(await this.inQueue(userId))) {
-      throw new HttpException('User is not in queue', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not in queue', HttpStatus.BAD_REQUEST);
     }
     const user = await this.userRepo.findOne(userId,
       {
@@ -121,7 +121,7 @@ export class QueueService {
   public async popQueue() {
     const res = await this.findAll();
     if (res.length == 0) {
-      throw new HttpException('Queue is empty', HttpStatus.NOT_FOUND);      
+      throw new HttpException('Queue is empty', HttpStatus.BAD_REQUEST);      
     }
     await this.delete(res[0].id);
     const queuer = await this.userService.findByIdLazy(res[0].queuer.id);

@@ -1,4 +1,4 @@
-    import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 
 import { ChannelStatus } from './enum.channelStatus';
 
@@ -8,19 +8,19 @@ import Participant from '../participant/participant.entity';
 @Entity()
 class Channel {
     @PrimaryGeneratedColumn('uuid')
-    public id?: string;
+    id?: string;
 
     @Column({ unique: true })
-    public name: string;
+    name: string;
 
     @Column({ type: 'boolean', default: false })
-    public direct: boolean ;
+    direct: boolean ;
 
     @Column()
-    public status: ChannelStatus;
+    status: ChannelStatus;
 
     @Column({ nullable: true })
-    public password: string;
+    password: string;
 
     @ManyToOne(() => User, user => user.channels, { nullable: true, eager: false, onDelete: "CASCADE" })
     owner: User;

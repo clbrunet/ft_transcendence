@@ -8,7 +8,7 @@ import  Message  from '../message/message.entity';
 @Unique(["user", "channel"])
 class Participant {
     @PrimaryGeneratedColumn('uuid')
-    public id?: string;
+    id?: string;
 
     @ManyToOne(() => User, user => user.participants, { eager: false, onDelete: "CASCADE" })
     user: User;

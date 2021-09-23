@@ -211,13 +211,13 @@ export class ChannelService {
     if (res) {
       return this.channelToDtoLazy(await this.findByIdOwner(id));
     }
-    throw new HttpException('Channel update failed', HttpStatus.NOT_FOUND);
+    throw new HttpException('Channel update failed', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   public async getOwnerCandidateActiveUser(userId: string, id: string) {
     const channel = await this.findByIdOwner(id);
     if (channel.owner.id !== userId) {
-      throw new HttpException('User is not the Channel owner', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not the Channel owner', HttpStatus.BAD_REQUEST);
     }
     const candidates = await this.participantRepo.find(
       {
@@ -239,10 +239,10 @@ export class ChannelService {
   public async changeOwnerActiveUser(userId: string, id: string, newOwnerId: string) {
     const channel = await this.findByIdOwner(id);
     if (channel.owner.id !== userId) {
-      throw new HttpException('User is not the Channel owner', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not the Channel owner', HttpStatus.BAD_REQUEST);
     }
     if (!await this.participantService.isParticipant(newOwnerId, id)) {
-      throw new HttpException('New owner is not a Participant of this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('New owner is not a Participant of this Channel', HttpStatus.BAD_REQUEST);
     }
     let channelUpdateDto = new ChannelUpdateDto();
     channelUpdateDto.owner = await this.userService.findByIdLazy(newOwnerId);
@@ -253,13 +253,13 @@ export class ChannelService {
     if (res) {
       return this.channelToDtoLazy(await this.findByIdOwner(id));
     }
-    throw new HttpException('Channel update failed', HttpStatus.NOT_FOUND);
+    throw new HttpException('Channel update failed', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   public async changeStatusActiveUser(userId: string, id: string, channelUpdateDto: ChannelUpdateDto) {
     const channel = await this.findById(id);
     if (channel.owner.id !== userId) {
-      throw new HttpException('User is not the Channel owner', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not the Channel owner', HttpStatus.BAD_REQUEST);
     }
     if (channelUpdateDto.status === 0) {
       await this.addAllUser(id);
@@ -290,10 +290,10 @@ export class ChannelService {
   public async updateAdminActiveUser(userId: string, id: string, newAdminId: string, toogle: boolean) {
     const channel = await this.findByIdOwner(id);
     if (channel.owner.id !== userId) {
-      throw new HttpException('User is not the Channel owner', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not the Channel owner', HttpStatus.BAD_REQUEST);
     }
     if (!await this.participantService.isParticipant(newAdminId, id)) {
-      throw new HttpException('New admin is not a Participant of this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('New admin is not a Participant of this Channel', HttpStatus.BAD_REQUEST);
     }
     const newAdmin = await this.participantService.findByUserAndChannelLazy(newAdminId, id);
     return await this.participantService.updateAdmin(newAdmin.id, toogle);
@@ -302,11 +302,11 @@ export class ChannelService {
   public async getParticipantCandidateActiveUser(userId: string, id: string) {
     const channel = await this.findByIdOwner(id);
     if (!await this.participantService.isParticipant(userId, id)) {
-      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.BAD_REQUEST);
     }
     const participantActiveUser = await this.participantService.findByUserAndChannelLazy(userId, id);
     if (!participantActiveUser.admin) {
-      throw new HttpException('User is not an admin of this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not an admin of this Channel', HttpStatus.BAD_REQUEST);
     }
     const users = await this.userRepo.find();
     let candidates = [];
@@ -325,14 +325,14 @@ export class ChannelService {
 
   public async addParticipantActiveUser(userId: string, participantCreationDto: ParticipantCreationDto) {
     if (!await this.participantService.isParticipant(userId, participantCreationDto.channelId)) {
-      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.BAD_REQUEST);
     }
     const participantActiveUser = await this.participantService.findByUserAndChannelLazy(userId, participantCreationDto.channelId);
     if (!participantActiveUser.admin) {
-      throw new HttpException('User is not an admin of this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not an admin of this Channel', HttpStatus.BAD_REQUEST);
     }
     if (await this.participantService.isParticipant(participantCreationDto.userId, participantCreationDto.channelId)) {
-      throw new HttpException('User can not add an existing Participant to the channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User can not add an existing Participant to the channel', HttpStatus.BAD_REQUEST);
     }   
     let newParticipant;
     try {
@@ -347,11 +347,11 @@ export class ChannelService {
   public async muteActiveUser(userId: string, muteBanDto: MuteBanDto) {
     const channel = await this.findByIdLazy(muteBanDto.channelId);
     if (!await this.participantService.isParticipant(userId, muteBanDto.channelId)) {
-      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.BAD_REQUEST);
     }
     const participantActiveUser = await this.participantService.findByUserAndChannelLazy(userId, muteBanDto.channelId);
     if (!participantActiveUser.admin) {
-      throw new HttpException('User is not an admin of this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not an admin of this Channel', HttpStatus.BAD_REQUEST);
     }
     const mutedParticipant = await this.participantService.findByUserAndChannelLazy(muteBanDto.userId, muteBanDto.channelId);
     if (muteBanDto.always == true) {
@@ -364,11 +364,11 @@ export class ChannelService {
 
   public async banActiveUser(userId: string, muteBanDto: MuteBanDto) {
     if (!await this.participantService.isParticipant(userId, muteBanDto.channelId)) {
-      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.BAD_REQUEST);
     }
     const participantActiveUser = await this.participantService.findByUserAndChannelLazy(userId, muteBanDto.channelId);
     if (!participantActiveUser.admin) {
-      throw new HttpException('User is not an admin of this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not an admin of this Channel', HttpStatus.BAD_REQUEST);
     }
     const banedParticipant = await this.participantService.findByUserAndChannelLazy(muteBanDto.userId, muteBanDto.channelId);
     if (muteBanDto.always == true) {
@@ -382,11 +382,11 @@ export class ChannelService {
   public async authorizeActiveUser(userId: string, authorizationDto: AuthorizationDto) {
     const channel = await this.findByIdLazy(authorizationDto.channelId);
     if (!await this.participantService.isParticipant(userId, authorizationDto.channelId)) {
-      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.BAD_REQUEST);
     }    
     const participantActiveUser = await this.participantService.findByUserAndChannelLazy(userId, authorizationDto.channelId);
     if (participantActiveUser.authorized) {
-      throw new HttpException('User is already authorized for this protected Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is already authorized for this protected Channel', HttpStatus.BAD_REQUEST);
     }
     const isPasswordMatching = await bcrypt.compare(authorizationDto.password, channel.password);
     if (!isPasswordMatching) {
@@ -398,10 +398,10 @@ export class ChannelService {
   public async leaveActiveUser(userId: string, id: string) {
     const channel = await this.findByIdOwner(id);
     if (!await this.participantService.isParticipant(userId, id)) {
-      throw new HttpException('User is not a Participant of this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not a Participant of this Channel', HttpStatus.BAD_REQUEST);
     }
     if (channel.owner.id === userId) {
-      throw new HttpException('The owner can not leave the channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('The owner can not leave the channel', HttpStatus.BAD_REQUEST);
     }
     const participantActiveUser = await this.participantService.findByUserAndChannelLazy(userId, id);
     return this.participantService.updateLeft(participantActiveUser.id, true);

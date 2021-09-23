@@ -14,46 +14,46 @@ import Player from '../player/player.entity';
 @Entity()
 class User {
   @PrimaryGeneratedColumn('uuid')
-  public id?: string;
+  id?: string;
 
   @Column({ unique: true })
-  public name: string;
+  name: string;
 
   @Column({ unique: true })
-  public email: string;
+  email: string;
 
   @Column()
-  public password: string;
+  password: string;
 
   @Column({ default: false })
-  public isFortyTwoAccount: boolean;
+  isFortyTwoAccount: boolean;
 
   @Column({ nullable: true })
-  public twoFactorAuthenticationSecret?: string;
+  twoFactorAuthenticationSecret?: string;
 
   @Column({ default: false })
-  public isTwoFactorAuthenticationEnabled: boolean;
+  isTwoFactorAuthenticationEnabled: boolean;
 
   @Column({ default: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' })
-  public avatar: string;
+  avatar: string;
 
   @Column({ default: 0 })
-  public status: Status;
+  status: Status;
 
   @Column({ default: 0 })
-  public level: Level;
+  level: Level;
 
   @Column({ default: 0 })
-  public nGames: number;
+  nGames: number;
 
   @Column({ default: 0 })
-  public nWins: number;
+  nWins: number;
 
   @Column({ default: 0 })
-  public nLosses: number;
+  nLosses: number;
 
   @Column({ default: 0 })
-  public xp: number;
+  xp: number;
 
   @OneToMany(() => Channel, channel => channel.owner)
   channels: Channel[];

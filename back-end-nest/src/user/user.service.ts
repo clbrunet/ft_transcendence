@@ -89,7 +89,7 @@ export class UserService {
     try {
       user = await this.userRepository.findOne(id);
     } catch (error) {
-      throw new HttpException('Id does not respect UUID format', HttpStatus.INTERNAL_SERVER_ERROR); 
+      throw new HttpException('Id does not respect UUID format', HttpStatus.BAD_REQUEST); 
     }
     if (user) { 
       return this.userToDtoLazy(user);
@@ -121,7 +121,7 @@ export class UserService {
     try {
       user = await this.userRepository.findOne(id);
     } catch (error) {
-      throw new HttpException('Id does not respect UUID format', HttpStatus.INTERNAL_SERVER_ERROR); 
+      throw new HttpException('Id does not respect UUID format', HttpStatus.BAD_REQUEST); 
     }
     if (user) { 
       return user;
@@ -224,7 +224,7 @@ export class UserService {
       const user = await this.findByIdLazy(id);
       return this.userToDtoLazy(user);
     }
-    throw new HttpException('User update failed', HttpStatus.NOT_FOUND);
+    throw new HttpException('User update failed', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   public async updateAsWinner(id: string) {

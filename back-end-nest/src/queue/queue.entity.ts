@@ -6,7 +6,7 @@ import User from '../user/user.entity';
 @Entity()
 class Queue {
     @PrimaryGeneratedColumn('uuid')
-    public id?: string;
+    id?: string;
 
     @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     queueTime: Date;

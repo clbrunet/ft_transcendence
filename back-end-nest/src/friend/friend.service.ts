@@ -31,11 +31,11 @@ export class FriendService {
     }
     const friendOwner = await this.userService.findByIdLazy(friendOwnerId);
     if (!friendOwner) {
-      throw new HttpException('FriendOwner with this id does not exist', HttpStatus.BAD_REQUEST);
+      throw new HttpException('FriendOwner with this id does not exist', HttpStatus.NOT_FOUND);
     }
     const friend = await this.userService.findByIdLazy(friendId);
     if (!friend) {
-      throw new HttpException('Friend with this id does not exist', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Friend with this id does not exist', HttpStatus.NOT_FOUND);
     }
 
     let friendObject = new Friend();
@@ -200,16 +200,16 @@ export class FriendService {
       const friend = await this.findById(id);
       return this.friendToDto(friend);
     }
-    throw new HttpException('Friend update failed', HttpStatus.NOT_FOUND);
+    throw new HttpException('Friend update failed', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   public async updateStatus(userId: string, friendId: string, status: number) {
     let friend = await this.findByOwnerAndFriendLazy(userId, friendId);
     if (friend.status === 0) {
-      throw new HttpException('You have to wait for Friend to accept', HttpStatus.NOT_FOUND);
+      throw new HttpException('You have to wait for Friend to accept', HttpStatus.BAD_REQUEST);
     }
     if (friend.status === 2) {
-      throw new HttpException('The request has already been accepted', HttpStatus.NOT_FOUND);
+      throw new HttpException('The request has already been accepted', HttpStatus.BAD_REQUEST);
     }
     let friendUpdateDto = new FriendUpdateDto();
     friendUpdateDto.status = status;
@@ -242,7 +242,7 @@ export class FriendService {
   public async reject(userId: string, friendId: string) {
     const friend = await this.findByOwnerAndFriendLazy(userId, friendId);
     if (friend.status == 0) {
-      throw new HttpException('User can not reject a Friend he has sent', HttpStatus.NOT_FOUND);      
+      throw new HttpException('User can not reject a Friend he has sent', HttpStatus.BAD_REQUEST);      
     }
     const friend2 = await this.findByOwnerAndFriendLazy(friendId, userId);
     await this.delete(friend.id);
@@ -253,7 +253,7 @@ export class FriendService {
   public async unfriend(userId: string, friendId: string) {
     const friend = await this.findByOwnerAndFriendLazy(userId, friendId);
     if (friend.status == 1) {
-      throw new HttpException('User can not unfriend before accepting', HttpStatus.NOT_FOUND);
+      throw new HttpException('User can not unfriend before accepting', HttpStatus.BAD_REQUEST);
     }
     const friend2 = await this.findByOwnerAndFriendLazy(friendId, userId);
     await this.delete(friend.id);
