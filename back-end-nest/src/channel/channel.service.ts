@@ -75,19 +75,24 @@ export class ChannelService {
     participantCreationDto.authorized = true;
     await this.participantService.create(participantCreationDto);
     if (channelCreationDto.status == 0) {
-      this.addAllUser(newChannel.owner.id, newChannel.id);
+      this.addAllUser(newChannel.id);
     }
     return this.channelToDtoLazy(newChannel);
   }
 
-  private async addAllUser(ownerId: string, channelId: string) {
+  private async addAllUser(channelId: string) {
+    const channel = await this.findByIdLazy(channelId);
     const users = await this.userService.findAllLazy();
     for (const user of users) {
-      if (user.id != ownerId) {
+      const participant = await this.participantRepo.findOne( { user, channel } );
+      if (!participant) {
         let participantCreationDto = new ParticipantCreationDto();
         participantCreationDto.userId = user.id;
         participantCreationDto.channelId = channelId;
         await this.participantService.create(participantCreationDto);
+      }
+      else if (participant.left) {
+        await this.participantService.updateLeft(participant.id, false);
       }
     }
   }
@@ -256,7 +261,15 @@ export class ChannelService {
     if (channel.owner.id !== userId) {
       throw new HttpException('User is not the Channel owner', HttpStatus.NOT_FOUND);
     }
-    if (channelUpdateDto.status === 0 || channelUpdateDto.status === 1) {
+    if (channelUpdateDto.status === 0) {
+      await this.addAllUser(id);
+      for (const participant of channel.participants) {
+        this.participantService.updateAuthorized(participant.id, true);
+      }
+      channelUpdateDto.password = null;
+      return this.update(id, channelUpdateDto);
+    }
+    else if (channelUpdateDto.status === 1) {
       for (const participant of channel.participants) {
         this.participantService.updateAuthorized(participant.id, true);
       }
