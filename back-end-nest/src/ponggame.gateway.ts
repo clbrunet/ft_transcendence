@@ -151,7 +151,6 @@ export class PonggameGateway {
             {
                 this.alldata[this.rooms.indexOf(data.idDuel)].players[0].emit('youAre', "left");
                 this.alldata[this.rooms.indexOf(data.idDuel)].players[1].emit('youAre', "right");
-                console.log("Passage");
                 setTimeout(() => this.server.emit('refreshAllSpectates'), 100);
             }
             this.alldata[this.rooms.indexOf(data.idDuel)].loop = setInterval(() => {
