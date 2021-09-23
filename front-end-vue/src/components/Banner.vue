@@ -167,7 +167,7 @@ span {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 50%;
+    height: fit-content;
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
     color: white;
@@ -183,6 +183,11 @@ span {
     width: 100%;
     max-width: 100%;
     justify-content: space-around;
+  }
+
+  #right #top, #right #bottom {
+    margin: 10px;
+    height: 35px;
   }
 
   #avatar {

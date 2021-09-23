@@ -551,7 +551,7 @@ input {
   align-items: center;
 }
 
-@media (max-width: 770px) {
+@media (max-width: 770px), (max-height: 550px) {
   #bottom {
     flex-direction: column;
     align-items: center;

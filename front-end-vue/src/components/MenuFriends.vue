@@ -143,7 +143,7 @@ table td {
   width: fit-content;
 }
 
-@media (max-width: 770px) {
+@media (max-width: 770px), (max-height: 550px) {
   #body {
     height: 90%;
     margin: 10px;

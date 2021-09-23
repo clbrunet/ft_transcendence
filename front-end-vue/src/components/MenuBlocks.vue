@@ -105,7 +105,7 @@ table td {
   width: 75%;
 }
 
-@media (max-width: 770px) {
+@media (max-width: 770px), (max-height: 550px) {
   #body {
     height: 90%;
     max-height: 200px;
