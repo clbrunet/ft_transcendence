@@ -30,11 +30,11 @@ export class BlockService {
     }
     const blockOwner = await this.userService.findByIdLazy(blockOwnerId);
     if (!blockOwner) {
-      throw new HttpException('BlockOwner with this id does not exist', HttpStatus.BAD_REQUEST);
+      throw new HttpException('BlockOwner with this id does not exist', HttpStatus.NOT_FOUND);
     }
     const block = await this.userService.findByIdLazy(blockId);
     if (!block) {
-      throw new HttpException('Block with this id does not exist', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Block with this id does not exist', HttpStatus.NOT_FOUND);
     }
 
     let blockObject = new Block();
@@ -217,7 +217,7 @@ export class BlockService {
   public async unblock(userId: string, blockId: string) {
     const block = await this.findByOwnerAndBlockLazy(userId, blockId);
     if (block.status == 1) {
-      throw new HttpException('Only the blocker can unblock a Block', HttpStatus.NOT_FOUND);      
+      throw new HttpException('Only the blocker can unblock a Block', HttpStatus.BAD_REQUEST);      
     }
     const block2 = await this.findByOwnerAndBlockLazy(blockId, userId);
     await this.delete(block.id);

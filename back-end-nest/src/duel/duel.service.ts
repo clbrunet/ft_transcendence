@@ -50,7 +50,7 @@ export class DuelService {
     }
     const duel = await this.userService.findByIdLazy(duelId);
     if (!duel) {
-      throw new HttpException('Duel with this id does not exist', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Duel with this id does not exist', HttpStatus.NOT_FOUND);
     }
 
     let duelObject = new Duel();
@@ -239,13 +239,13 @@ export class DuelService {
   public async accept(userId: string, duelId: string) {
     let duel1 = await this.findByOwnerAndDuel(userId, duelId);
     if (duel1.status == 0) {
-      throw new HttpException('User can not accept a Duel he has sent', HttpStatus.NOT_FOUND);      
+      throw new HttpException('User can not accept a Duel he has sent', HttpStatus.BAD_REQUEST);      
     }
     if (duel1.status == 2) {
-      throw new HttpException('Duel has already been accepted', HttpStatus.NOT_FOUND);      
+      throw new HttpException('Duel has already been accepted', HttpStatus.BAD_REQUEST);      
     }
     if (duel1.status == 3) {
-      throw new HttpException('Duel has already been rejected', HttpStatus.NOT_FOUND);      
+      throw new HttpException('Duel has already been rejected', HttpStatus.BAD_REQUEST);      
     }
     const duel2 = await this.findByOwnerAndDuel(duelId, userId);
 
@@ -264,7 +264,7 @@ export class DuelService {
     await this.delete(duel2.id);
     const messages = await this.messageService.findByDuelIdLazy(duel2.id);
     if (messages.length != 1) {
-      throw new HttpException('No or more than one Message with this duelId attribute', HttpStatus.NOT_FOUND);   
+      throw new HttpException('No or more than one Message with this duelId attribute', HttpStatus.INTERNAL_SERVER_ERROR);   
     }
     let messageUpdateDto = new MessageUpdateDto();
     messageUpdateDto.button = false;
@@ -289,13 +289,13 @@ export class DuelService {
   public async reject(userId: string, duelId: string) {
     const duel1 = await this.findByOwnerAndDuel(userId, duelId);
     if (duel1.status == 0) {
-      throw new HttpException('User can not reject a Duel he has sent', HttpStatus.NOT_FOUND);      
+      throw new HttpException('User can not reject a Duel he has sent', HttpStatus.BAD_REQUEST);      
     }
     if (duel1.status == 2) {
-      throw new HttpException('Duel has already been accepted', HttpStatus.NOT_FOUND);      
+      throw new HttpException('Duel has already been accepted', HttpStatus.BAD_REQUEST);      
     }
     if (duel1.status == 3) {
-      throw new HttpException('Duel has already been rejected', HttpStatus.NOT_FOUND);      
+      throw new HttpException('Duel has already been rejected', HttpStatus.BAD_REQUEST);      
     }
     const duel2 = await this.findByOwnerAndDuel(duelId, userId);
 
@@ -306,7 +306,7 @@ export class DuelService {
 
     const messages = await this.messageService.findByDuelIdLazy(duel2.id);
     if (messages.length != 1) {
-      throw new HttpException('No or more than one Message with this duelId attribute', HttpStatus.NOT_FOUND);   
+      throw new HttpException('No or more than one Message with this duelId attribute', HttpStatus.INTERNAL_SERVER_ERROR);   
     }
     let messageUpdateDto = new MessageUpdateDto();
     messageUpdateDto.button = false;
@@ -318,7 +318,7 @@ export class DuelService {
   public async unduel(userId: string, duelId: string) {
     const duel1 = await this.findByOwnerAndDuelLazy(userId, duelId);
     if (duel1.status == 1) {
-      throw new HttpException('User can not unduel before accepting', HttpStatus.NOT_FOUND);      
+      throw new HttpException('User can not unduel before accepting', HttpStatus.BAD_REQUEST);      
     }
     const duel2 = await this.findByOwnerAndDuelLazy(duelId, userId);
 
@@ -327,7 +327,7 @@ export class DuelService {
 
     const messages = await this.messageService.findByDuelIdLazy(duel1.id);
     if (messages.length != 1) {
-      throw new HttpException('No or more than one Message with this duelId attribute', HttpStatus.NOT_FOUND);   
+      throw new HttpException('No or more than one Message with this duelId attribute', HttpStatus.INTERNAL_SERVER_ERROR);   
     }
     let messageUpdateDto = new MessageUpdateDto();
     messageUpdateDto.button = false;

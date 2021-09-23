@@ -31,11 +31,11 @@ export class PlayerService {
   public async create(userId: string, gameId: string) {
     const user = await this.userService.findByIdLazy(userId);
     if (!user) {
-      throw new HttpException('User with this id does not exist', HttpStatus.BAD_REQUEST);
+      throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
     }
     const game = await this.gameService.findById(gameId);
     if (!game) {
-      throw new HttpException('Game with this id does not exist', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Game with this id does not exist', HttpStatus.NOT_FOUND);
     }
     if (game.players.length == 2) {
       throw new HttpException('Already two players in that game', HttpStatus.BAD_REQUEST); 
@@ -161,13 +161,13 @@ export class PlayerService {
       const player = await this.findById(id);
       return this.playerToDto(player);
     }
-    throw new HttpException('Player update failed', HttpStatus.NOT_FOUND);
+    throw new HttpException('Player update failed', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   public async score(gameId: string, userId: string, addedPoint: number) {
     const player = await this.findByGameAndUser(gameId, userId);
     if (player.point + addedPoint > player.game.pointToVictory) {
-      throw new HttpException('A player can not have a more point than pointToVictory', HttpStatus.NOT_FOUND);
+      throw new HttpException('A player can not have a more point than pointToVictory', HttpStatus.BAD_REQUEST);
     }
     let playerUpdateDto = new PlayerUpdateDto();
     playerUpdateDto.point = player.point + addedPoint;

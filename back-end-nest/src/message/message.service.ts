@@ -43,16 +43,16 @@ export class MessageService {
 
   public async createActiveUser(userId: string, channelId: string, content: string) {
     if (!(await this.participantService.isParticipant(userId, channelId))) {
-      throw new HttpException('User is not a Participant to this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not a Participant to this Channel', HttpStatus.BAD_REQUEST);
     }
     if (!(await this.participantService.isAuthorized(userId, channelId))) {
-      throw new HttpException('User is not authorized for this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not authorized for this Channel', HttpStatus.BAD_REQUEST);
     }
     if (await this.participantService.isBan(userId, channelId)) {
-      throw new HttpException('User is banned for this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is banned for this Channel', HttpStatus.BAD_REQUEST);
     }
     if (await this.participantService.isMute(userId, channelId)) {
-      throw new HttpException('User is muted for this Channel', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is muted for this Channel', HttpStatus.BAD_REQUEST);
     }
     let message = new Message();
     const author = await this.participantService.findByUserAndChannelUserChannel(userId, channelId);
@@ -72,13 +72,13 @@ export class MessageService {
   public async getAllInChannelActiveUser(userId: string, channelId: string) {
     if (!await this.channelService.isPublic(channelId)) {
       if (!(await this.participantService.isParticipant(userId, channelId))) {
-        throw new HttpException('Channel is not Public or User is not a Participant to this Channel', HttpStatus.NOT_FOUND);
+        throw new HttpException('Channel is not Public or User is not a Participant to this Channel', HttpStatus.BAD_REQUEST);
       }
       if (!(await this.participantService.isAuthorized(userId, channelId))) {
-        throw new HttpException('User is not authorized for this Channel', HttpStatus.NOT_FOUND);
+        throw new HttpException('User is not authorized for this Channel', HttpStatus.BAD_REQUEST);
       }
       if (await this.participantService.isBan(userId, channelId)) {
-        throw new HttpException('Channel is not Public or User is banned for this Channel', HttpStatus.NOT_FOUND);
+        throw new HttpException('Channel is not Public or User is banned for this Channel', HttpStatus.BAD_REQUEST);
       }
     }
     const messages = await this.messageRepo.find (
@@ -138,7 +138,7 @@ export class MessageService {
       );
       return this.messageToDto(message);
     }
-    throw new HttpException('Message update failed', HttpStatus.NOT_FOUND);
+    throw new HttpException('Message update failed', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   public async delete(id: string) {

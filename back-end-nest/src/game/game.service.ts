@@ -46,13 +46,13 @@ export class GameService {
 
   public async create(pointToVictory: number, ballSize: number, ballSpeed: number) {
     if (pointToVictory < 3 || pointToVictory > 10) {
-      throw new HttpException('pointToVictory must be between 3 and 10', HttpStatus.NOT_FOUND);
+      throw new HttpException('pointToVictory must be between 3 and 10', HttpStatus.BAD_REQUEST);
     }
     if (ballSize < 1 || ballSize > 10) {
-      throw new HttpException('ballSize must be between 1 and 10', HttpStatus.NOT_FOUND);
+      throw new HttpException('ballSize must be between 1 and 10', HttpStatus.BAD_REQUEST);
     }
     if (ballSpeed < 1 || ballSpeed > 10) {
-      throw new HttpException('ballSpeed must be between 1 and 10', HttpStatus.NOT_FOUND);
+      throw new HttpException('ballSpeed must be between 1 and 10', HttpStatus.BAD_REQUEST);
     }
     const game = new Game();
     game.pointToVictory = pointToVictory;
@@ -161,7 +161,7 @@ export class GameService {
       }
     }
     if (dto.length > 1) {
-      throw new HttpException('There is more than one game ongoing for User', HttpStatus.NOT_FOUND);
+      throw new HttpException('There is more than one game ongoing for User', HttpStatus.INTERNAL_SERVER_ERROR);
     }
     return dto;
   }
@@ -219,7 +219,7 @@ export class GameService {
       );
       return game;
     }
-    throw new HttpException('Game update failed', HttpStatus.NOT_FOUND);
+    throw new HttpException('Game update failed', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   private async setGameAttributes(id: string, pointToVictory: number, ballSize: number, ballSpeed: number) {
@@ -244,7 +244,7 @@ export class GameService {
 
   public async setAsUnfinished(userId:string, id: string) {
     if (!(await this.isPlayer(userId, id))) {
-      throw new HttpException('User is not a Player of that Game', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not a Player of that Game', HttpStatus.BAD_REQUEST);
     }    
     const game = await this.findById(id);
     for (const player of game.players) {
@@ -323,16 +323,16 @@ export class GameService {
 
   public async launchActiveUser(userId: string, id: string, pointToVictory: number, ballSize: number, ballSpeed: number) {
     if (!(await this.isPlayer(userId, id))) {
-      throw new HttpException('User is not a Player of that Game', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not a Player of that Game', HttpStatus.BAD_REQUEST);
     }
     if (pointToVictory < 3 || pointToVictory > 10) {
-      throw new HttpException('pointToVictory must be between 3 and 10', HttpStatus.NOT_FOUND);
+      throw new HttpException('pointToVictory must be between 3 and 10', HttpStatus.BAD_REQUEST);
     }
     if (ballSize < 1 || ballSize > 10) {
-      throw new HttpException('ballSize must be between 1 and 10', HttpStatus.NOT_FOUND);
+      throw new HttpException('ballSize must be between 1 and 10', HttpStatus.BAD_REQUEST);
     }
     if (ballSpeed < 1 || ballSpeed > 10) {
-      throw new HttpException('ballSpeed must be between 1 and 10', HttpStatus.NOT_FOUND);
+      throw new HttpException('ballSpeed must be between 1 and 10', HttpStatus.BAD_REQUEST);
     }
     const game = await this.findById(id);
     await this.setGameAttributes(id, pointToVictory, ballSize, ballSpeed);
@@ -343,10 +343,10 @@ export class GameService {
 
   public async scoreActiveUser(userId: string, id: string, addedPoint: number) {
     if (!(await this.isPlayer(userId, id))) {
-      throw new HttpException('User is not a Player of that Game', HttpStatus.NOT_FOUND);
+      throw new HttpException('User is not a Player of that Game', HttpStatus.BAD_REQUEST);
     }
     if (await this.getStatus(id) !== 1) {
-      throw new HttpException('One cannot score in a Game that is not ongoing', HttpStatus.NOT_FOUND);
+      throw new HttpException('One cannot score in a Game that is not ongoing', HttpStatus.BAD_REQUEST);
     }
     await this.playerService.score(id, userId, addedPoint);
     const game = await this.findById(id);
