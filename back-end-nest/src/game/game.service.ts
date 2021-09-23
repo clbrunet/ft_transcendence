@@ -361,12 +361,12 @@ export class GameService {
         await this.userService.update(player.user.id, userUpdateDto);
       }
       if (game.players[0].point > game.players[1].point) {
-        await this.userService.updateAsWinner(game.players[0].id);
-        await this.userService.updateAsLoser(game.players[1].id);
+        await this.userService.updateAsWinner(game.players[0].user.id);
+        await this.userService.updateAsLoser(game.players[1].user.id);
       }
       if (game.players[1].point > game.players[0].point) {
-        await this.userService.updateAsWinner(game.players[1].id);
-        await this.userService.updateAsLoser(game.players[0].id);
+        await this.userService.updateAsWinner(game.players[1].user.id);
+        await this.userService.updateAsLoser(game.players[0].user.id);
       }
       await this.victoryMessage(game);
     }
