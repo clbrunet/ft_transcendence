@@ -44,6 +44,13 @@
           <MenuBlocks v-if="is_auth" />
         </div>
         <div id="middle">
+            <span>Choose your pong theme! </span>
+            <div class="boxes">
+            <div class="box" id="blue" @click="choseTheme(0)"></div>
+            <div class="box" id="yellow" @click="choseTheme(1)"></div>
+            <div class="box" id="green" @click="choseTheme(2)"></div>
+            <div class="box" id="violet" @click="choseTheme(3)"></div>
+          </div>
           <button
             id="play"
             v-if="is_auth && queueing == false"
@@ -100,12 +107,18 @@ export default Vue.extend({
       turnOffCode: "",
       is_turning_off: false,
       render: false as any,
-      queueing: false as any
+      queueing: false as any,
+      selectedThemeIndex: 0 as any
     };
   },
   mounted() {
     const disc = document.getElementById("btn-disconnect");
     disc ? (disc.style.display = "inline-block") : 0;
+
+    if (this.$store.state.colorConfig == undefined)
+      this.choseTheme(0);
+    else
+      this.choseTheme(this.$store.state.colorConfig);
 
     if (this.$store.state.user.id == undefined)
     {
@@ -172,6 +185,41 @@ export default Vue.extend({
         .catch(() => {
           router.push({ path: "/profile" });
         });
+    },
+    choseTheme(index: number) {
+      this.$store.state.colorConfig = index;
+      const blue = document.getElementById('blue');
+      const yellow = document.getElementById('yellow');
+      const green = document.getElementById('green');
+      const violet = document.getElementById('violet');
+      if (index == 0)
+      {
+        blue ? blue.style.border = "2px solid red" : 0;
+        yellow ? yellow.style.border = "2px solid black" : 0;
+        green ? green.style.border = "2px solid black" : 0;
+        violet ? violet.style.border = "2px solid black" : 0;
+      }
+      if (index == 1)
+      {
+        yellow ? yellow.style.border = "2px solid red" : 0;
+        blue ? blue.style.border = "2px solid black" : 0;
+        green ? green.style.border = "2px solid black" : 0;
+        violet ? violet.style.border = "2px solid black" : 0;
+      }
+      if (index == 2)
+      {
+        green ? green.style.border = "2px solid red" : 0;
+        blue ? blue.style.border = "2px solid black" : 0;
+        yellow ? yellow.style.border = "2px solid black" : 0;
+        violet ? violet.style.border = "2px solid black" : 0;
+      }
+      if (index == 3)
+      {
+        violet ? violet.style.border = "2px solid red" : 0;
+        blue ? blue.style.border = "2px solid black" : 0;
+        yellow ? yellow.style.border = "2px solid black" : 0;
+        green ? green.style.border = "2px solid black" : 0;
+      }
     },
     async generate() {
       this.QRCodeSRC = "";
@@ -280,6 +328,44 @@ export default Vue.extend({
 #settings {
   margin: 20px;
 }
+
+#middle span {
+  color:black;
+}
+
+.boxes {
+  display:flex;
+  margin: 7% 0 15% 0;
+  width: 50%;
+  justify-content: space-between;
+}
+
+.box {
+  width:30px;
+  height:30px;
+  border-radius: 8px;
+  cursor:pointer;
+}
+
+#blue {
+  border: 2px solid black;
+  background-color: blue;
+}
+
+#yellow {
+  border: 2px solid black;
+  background-color: yellow;
+}
+
+#green {
+  border: 2px solid black;
+  background-color: green;
+}
+#violet {
+  border: 2px solid black;
+  background-color: violet;
+}
+
 
 input {
   padding: 5px;
@@ -457,7 +543,7 @@ input {
   background-color: #ebebeb;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-content: space-around;
   align-items: center;
 }

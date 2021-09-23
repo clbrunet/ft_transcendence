@@ -1,18 +1,21 @@
 <template>
   <div id="body">
-    <form @submit.prevent="">
-      <span class="nbPoints"> Number of points (duel) </span>
-      <select v-model="nbPointsConfig" class="selectDuel">
-        <option selected>3</option>
-        <option>4</option>
-        <option>5</option>
-        <option>6</option>
-        <option>7</option>
-        <option>8</option>
-        <option>9</option>
-        <option>10</option>
-      </select>
-    </form>
+      <div class="settings">
+        <h3>Duel's settings :</h3>
+        <div class="settings-points">
+          <span class="nbPoints"> Number of points </span>
+          <select v-model="nbPointsConfig" class="selectDuel">
+            <option selected>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+          </select>
+        </div>
+      </div>
     <table>
       <tr style="background-color:#aaa;">
         <td style="text-align:center;">Username</td>
@@ -342,7 +345,7 @@ export default Vue.extend({
                     }
                   }).catch(() => console.log(""));
             }
-            else if (this.$store.state.user != undefined)
+            else if (this.$store.state.user.id != undefined)
             {
               this.$store.state.gameid = res.data.id;
               this.$store.state.nbPoints = this.nbPointsConfig;
@@ -625,4 +628,21 @@ tr {
   height: 100%;
   margin-left: auto;
 }
+
+.settings {
+  background-color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction: column;
+  padding:  0.5% 1.5% 0.5% 1.5%;
+  border-radius:15px;
+  border: 1px solid #3040F0;
+  color:white;
+}
+
+h3 {
+  color: black;
+}
+
 </style>

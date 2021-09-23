@@ -5,6 +5,7 @@
         <h1 v-else>You are spectating</h1>
       </template>
       <canvas
+        :class="colors[$store.state.colorConfig]"
         v-if="!game_won"
         ref="Game"
         :width="canvas.width / ratio"
@@ -60,7 +61,8 @@ export default Vue.extend({
             nbPoints: undefined as any,
             windowWidth: undefined as any,
             windowHeight: undefined as any,
-            ratio: 1 as any
+            ratio: 1 as any,
+            colors: ['blue', 'yellow', 'green', 'violet'] as any
         }
     },
     created() {
@@ -69,7 +71,9 @@ export default Vue.extend({
       });
     },
     mounted() {
-            
+        if (this.$store.state.colorConfig == undefined)
+          this.$store.state.colorConfig = 0;
+
         this.windowWidth = window.innerWidth;
         this.windowHeight = window.innerHeight;
           if (this.windowWidth >= 1400)
@@ -311,8 +315,21 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-  canvas {
+
+  .blue {
     background-color: #3043f0;
+  }
+
+  .yellow {
+    background-color: #c3b70d;
+  }
+
+  .green {
+    background-color: #07721e;
+  }
+  
+  .violet {
+    background-color: #965bf5;
   }
 
   h1 , h2 {

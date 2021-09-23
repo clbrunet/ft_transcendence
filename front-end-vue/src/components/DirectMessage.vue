@@ -176,8 +176,11 @@ export default Vue.extend({
           method: "post",
           withCredentials: true 
         }).then((res) => {
-          this.$store.state.gameid = res.data.id;
-          this.$store.state.nbPoints = this.nbPointsConfig;
+          if (this.$store.state.user.id != undefined)
+          {
+            this.$store.state.gameid = res.data.id;
+            this.$store.state.nbPoints = this.nbPointsConfig;
+          }
         });
       }).catch(() => console.log(''));
     },
