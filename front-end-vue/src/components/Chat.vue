@@ -214,6 +214,14 @@ export default Vue.extend({
   mounted() {
     this.mounted_like();
 
+    this.$store.state.socket.on('refreshOnceChat', (idRoom: any) => {
+      if (idRoom == this.data.id)
+      {
+        this.refresh_candidateParticipants();
+        this.refresh_participants();
+      }
+    });
+
     this.$store.state.socket.on('chatToClient', (message: any) => {
       this.refresh_messages();
     });
@@ -322,6 +330,7 @@ export default Vue.extend({
         }
       }).then(() => {
         this.refresh_channel();
+        this.$store.state.socket.emit('refreshChannels', this.data.id);
         this.refresh_participants();
       });
     },
@@ -336,6 +345,7 @@ export default Vue.extend({
           channelId: this.data.id
         }
       }).then(() => {
+        this.$store.state.socket.emit('refreshChannels', this.data.id);
         this.refresh_participants();
       });
     },
@@ -350,6 +360,7 @@ export default Vue.extend({
           channelId: this.data.id
         }
       }).then(() => {
+        this.$store.state.socket.emit('refreshChannels', this.data.id);
         this.refresh_participants();
       });
     },
@@ -364,6 +375,7 @@ export default Vue.extend({
           channelId: this.data.id
         }
       }).then(() => {
+        this.$store.state.socket.emit('refreshChannels');
         this.refresh_participants();
       });
     },
@@ -469,6 +481,7 @@ export default Vue.extend({
       }).then(() => {
         this.refresh_participants();
         this.refresh_channel();
+        this.$store.state.socket.emit('refreshChannels', this.data.id);
       });
     },
     banParticipant(participant: any) {
@@ -499,6 +512,7 @@ export default Vue.extend({
         this.selectBanTime = undefined;
         this.refresh_participants();
         this.refresh_channel();
+        this.$store.state.socket.emit('refreshChannels', this.data.id);
       });
     },
     muteParticipant(participant: any) {
@@ -529,6 +543,7 @@ export default Vue.extend({
         this.selectMuteTime = undefined;
         this.refresh_participants();
         this.refresh_channel();
+        this.$store.state.socket.emit('refreshChannels', this.data.id);
       });
     },
     unmuteParticipant(participant: any) {
@@ -545,6 +560,7 @@ export default Vue.extend({
       }).then(() => {
         this.refresh_participants();
         this.refresh_channel();
+        this.$store.state.socket.emit('refreshChannels', this.data.id);
       });
     },
     goToProfile(user: any) {
@@ -763,6 +779,7 @@ export default Vue.extend({
   border-radius: 8px;
   background-color:#3040F0;
   border: 1px solid white;
+  width:20%;
 }
 
 .popup-settings-add-participant button:hover {
@@ -784,11 +801,11 @@ export default Vue.extend({
 .popup-settings-add-participant span {
   color: black;
   margin: 0 2% 0 2%;
-  width: 30%;
+  width: 20%;
 }
 
 .popup-settings-add-participant div {
-  width :80%;
+  width :90%;
   display:flex;
   align-items:center;
   justify-content: space-around;

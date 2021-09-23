@@ -35,4 +35,14 @@ export class DuelGateway {
     refreshSpectating(client:Socket) {
         this.server.emit('refreshAllSpectates');
     }
+
+    @SubscribeMessage('refreshChannels')
+    refreshChannels(client: Socket) {
+        this.server.emit('refreshAllChannels');
+    }
+
+    @SubscribeMessage('refreshChat')
+    refreshChat(client: Socket, idRoom: string) {
+        this.server.emit('refreshOnceChat', idRoom);
+    }
 }

@@ -425,6 +425,7 @@ export default Vue.extend({
       }).then(() => {
         this.get_users();
         this.get_blocks();
+        this.$store.state.socket.emit('refreshChannels');
         this.$store.state.socket.emit('refreshUsers', user.id);
       });
     },
@@ -437,6 +438,7 @@ export default Vue.extend({
       }).then(() => {
         this.get_users();
         this.get_blocks();
+        this.$store.state.socket.emit('refreshChannels');
         this.$store.state.socket.emit('refreshUsers', user.id);
       });
     },

@@ -148,11 +148,16 @@ export default Vue.extend({
     },
   },
   mounted() {
-        const disc = document.getElementById("btn-disconnect");
-        disc ? (disc.style.display = "inline-block") : 0;
+    const disc = document.getElementById("btn-disconnect");
+    disc ? (disc.style.display = "inline-block") : 0;
 
     this.refresh_channels();
     this.refresh_dm();
+
+    this.$store.state.socket.on('refreshAllChannels', () => {
+      this.refresh_channels();
+    });
+
 
     this.$store.state.socket.on('refreshChannels', (id: any) => {
       if (this.$store.state.user.id == id)
@@ -342,6 +347,7 @@ export default Vue.extend({
       .then(() => {
         this.close_popup_create();
         this.refresh_channels();
+        this.$store.state.socket.emit('refreshChannels');
       }).catch(err => {
         this.errorCreate = Array.isArray(err.response.data.message) ? err.response.data.message[0] : err.response.data.message;
       });
@@ -378,6 +384,7 @@ export default Vue.extend({
       .then(() => {
         this.changeStatus = undefined;
         this.changePassword = undefined;
+        this.$store.state.socket.emit('refreshChannels');
         this.refresh_channels();
         this.close_params();
       })
@@ -392,7 +399,9 @@ export default Vue.extend({
         withCredentials: true
       }).then(res => {
         this.refresh_channels();
+        this.$store.state.socket.emit('refreshChat', channel.id);
       }).catch(() => {
+        console.log("you can't leave as owner");
         alert("you can't leave as owner");
       })
     }
