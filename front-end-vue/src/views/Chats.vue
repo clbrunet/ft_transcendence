@@ -558,6 +558,7 @@ export default Vue.extend({
   flex-direction: column;
   align-items:center;
   width:80%;
+  height:60%;
 }
 
 #body-chat {
