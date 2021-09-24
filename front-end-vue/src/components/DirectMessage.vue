@@ -22,8 +22,8 @@
 
 
       <form @submit.prevent="send_message()" class="buttons">
-        <input class="message" type="text" placeholder="type your message here" v-model="messageTyping" />
-        <input class="send" type="submit" value="send" />
+        <input class="message" type="text" style="text-align:center;font-size:18px;" placeholder="type your message here" v-model="messageTyping" />
+        <input class="send" type="submit"  value="send" />
       </form>
     </div>
 
@@ -390,8 +390,17 @@ p:nth-child(odd) {
 
 .send {
   flex: 1;
+  background-color:#3040F0;
+  color:white;
+  outline:none;
+  font-weight: 700;
+  border: 1px solid white;
+  cursor:pointer;
 }
 
+.send:hover {
+  background-color:rgb(29, 47, 245);
+}
 a {
   text-decoration:underline;
   color:blue;

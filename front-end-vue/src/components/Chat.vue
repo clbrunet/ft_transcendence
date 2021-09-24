@@ -889,8 +889,31 @@ p:nth-child(odd) {
   flex: 3;
 }
 
+.message:disabled {
+  cursor:not-allowed;
+}
+
 .send {
   flex: 1;
+  background-color:#3040F0;
+  color:white;
+  outline:none;
+  font-weight: 700;
+  border: 1px solid white;
+  cursor:pointer;
+}
+
+.send:disabled {
+  background-color:rgb(132, 141, 241);
+}
+
+.send:disabled:hover {
+  background-color:rgb(132, 141, 241);
+  cursor:not-allowed;
+}
+
+.send:hover {
+  background-color:rgb(29, 47, 245);
 }
 
 .partipants {
