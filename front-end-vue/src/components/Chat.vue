@@ -611,7 +611,6 @@ export default Vue.extend({
   display: flex;
   border: 2px solid black;
   width: 70%;
-  height: 100%;
   flex-direction: column;
   background-color:rgb(250, 99, 137);
 }
@@ -918,7 +917,6 @@ p:nth-child(odd) {
 
 .partipants {
   width: 30%;
-  height: 100%;
   /*background-color: rgb(68, 96, 253);*/
   background-color:white;
   display: flex;
