@@ -54,6 +54,9 @@ export default Vue.extend({
         this.$store.state.inQueue = undefined;
         this.$store.dispatch("unauthenticate");
         router.push({ name: "App" });
+      })
+      .catch(() => {
+        alert("log-out failed, please retry after refreshing the page");
       });
       this.is_disconnecting = false;
     },

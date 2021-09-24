@@ -339,6 +339,8 @@ export default Vue.extend({
         this.refresh_channel();
         this.$store.state.socket.emit('refreshChannels', this.data.id);
         this.refresh_participants();
+      }).catch(() => {
+        alert("please refresh")
       });
     },
     addAdmin(participant: any) {

@@ -178,27 +178,33 @@ export default Vue.extend({
 
     if (this.$store.state.user.id != undefined)
     {
-    axios({
-      url: process.env.VUE_APP_API_URL + "/game/indexOngoing",
-      method: "get",
-      withCredentials: true
-    }).then(res => {
-      let allOngoing = res.data;
+      axios({
+        url: process.env.VUE_APP_API_URL + "/game/indexOngoing",
+        method: "get",
+        withCredentials: true
+      }).then(res => {
+        let allOngoing = res.data;
 
-      for (let i = 0; i < allOngoing.length; i++)
-      {
-        if (allOngoing[i].players[0].userId == this.$store.state.user.id || allOngoing[i].players[1].userId == this.$store.state.user.id)
+        for (let i = 0; i < allOngoing.length; i++)
         {
-          axios({
-            url: process.env.VUE_APP_API_URL + "/game/unfinished/" + allOngoing[i].id,
-            method: "patch",
-            withCredentials: true
-          }).then(() => {
-            this.$store.state.socket.emit('gameBugged', {idGame:allOngoing[i].id, page:'Chats', idUser: this.$store.state.user.id});
-          })
+          if (allOngoing[i].players[0].userId == this.$store.state.user.id || allOngoing[i].players[1].userId == this.$store.state.user.id)
+          {
+            axios({
+              url: process.env.VUE_APP_API_URL + "/game/unfinished/" + allOngoing[i].id,
+              method: "patch",
+              withCredentials: true
+            }).then(() => {
+              this.$store.state.socket.emit('gameBugged', {idGame:allOngoing[i].id, page:'Chats', idUser: this.$store.state.user.id});
+            }).catch(() => {
+              alert("There was an error, back to profile")
+              router.push({name: 'Profile'});
+            });
+          }
         }
-      }
-    });
+      }).catch(() => {
+        alert("There was an error, back to profile")
+        router.push({name: 'Profile'});
+      });
     }
 
     /**/

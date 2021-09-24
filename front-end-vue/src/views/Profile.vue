@@ -166,6 +166,9 @@ export default Vue.extend({
           }).then(() => {
             this.$store.state.socket.emit('gameBugged', {idGame:allOngoing[i].id, page:'Profile', idUser: this.$store.state.user.id});
           })
+          .catch(() => {
+            alert("please refresh")
+          })
         }
       }
     }).catch(() => console.log(""));
@@ -322,6 +325,9 @@ export default Vue.extend({
         method: "delete"
       }).then(() => {
         console.log("unqueded");
+      })
+      .catch(() => {
+        alert("please refresh")
       });
     }
   }

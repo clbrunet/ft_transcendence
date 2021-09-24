@@ -285,7 +285,8 @@ export default Vue.extend({
               url: process.env.VUE_APP_API_URL + "/game/indexOngoing",
               withCredentials: true,
               method: "get"
-            }).then(res => {
+            })
+            .then(res => {
               for (let i = 0; i < res.data.length; i++) {
                 if (res.data[i].id == this.gameid)
                 {
@@ -293,6 +294,10 @@ export default Vue.extend({
                   flagpassage = true;
                 }
               }
+            })
+            .catch(() => {
+              alert("There was an error, back to profile")
+              router.push({name: 'Profile'});
             });
           }
 
