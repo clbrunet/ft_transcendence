@@ -12,7 +12,8 @@ Vue.use(VueRouter)
 const routes: Array<RouteConfig> = [
   {
     path: '/',
-    name: 'App',
+    name: 'Home',
+    component: () => import('../views/Home.vue'),
     meta: {
       hideForAuth: true
     }
