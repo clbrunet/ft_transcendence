@@ -43,6 +43,7 @@ export class ParticipantController {
   }
 
   // ROUTES FOR DEV ONLY TO BE COMMENTED
+/*
   @UseGuards(JwtTwoFactorGuard)
   @Post('/create')
   async create(@Body() data: ParticipantCreationDto) {
@@ -66,4 +67,5 @@ export class ParticipantController {
   async delete(@Param('id') id) {
     return await this.participantService.delete(id);
   }
+*/
 }

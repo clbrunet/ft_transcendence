@@ -90,18 +90,21 @@ export class GameService {
   }
 
   public async getHistory(userId: string) {
-    const user = await this.userRepo.findOne(userId,
+    const games = await this.gameRepo.find(
       {
-        relations: ['players', 'players.game', 'players.game.players', 'players.game.players.user'],
+        relations: ['players', 'players.user'],
+        where: [
+            { status: 2 },
+        ],
+        order: {
+          startTime: "DESC",
+        }
       }
     );
-    if (!user) {
-      throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
-    }
     let dto: GameHistoryDto[] = [];
-    for (const player of user.players) {
-      if (player.game.status === 2) {
-        let gameHistoryDto: GameHistoryDto = this.gameToHistoryDto(player.game);
+    for (const game of games) {
+      if (await this.isPlayer(userId, game.id)) {
+        let gameHistoryDto: GameHistoryDto = this.gameToHistoryDto(game);
         dto.push(gameHistoryDto);
       }
     }

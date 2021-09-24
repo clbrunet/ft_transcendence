@@ -35,7 +35,7 @@ export class MessageController {
     const {user} = request;
     return await this.messageService.getAllInChannelActiveUser(user.id, channelId);
   }
-
+/*
   // ROUTES FOR DEV ONLY TO BE COMMENTED
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
@@ -54,4 +54,5 @@ export class MessageController {
   async delete(@Param('id') id) {
     return await this.messageService.delete(id);
   }
+*/
 }
