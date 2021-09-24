@@ -21,35 +21,18 @@ export class UserController {
   }
 
   // ROUTES FOR DEV ONLY TO BE COMMENTED
+/*
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
   async findAllLazy() {
     return await this.userService.findAllLazy();
   }
-
+*/
   // ROUTES NOT FOR DEV
   @UseGuards(JwtTwoFactorGuard)
   @Get('/:id')
   async getbyIdLazy(@Param('id') id) {
     return await this.userService.getByIdLazy(id);
-  }
-
-  // ROUTES FOR DEV ONLY TO BE COMMENTED
-  @UseGuards(JwtTwoFactorGuard)
-  @Get('/eager/:id')
-  async findbyId(@Param('id') id) {
-    return await this.userService.findById(id);
-  }
-
-  @Patch('/:id')
-  async update(@Param('id') id, @Body() userUpdateDto: UserUpdateDto) {
-    return this.userService.update(id, userUpdateDto);
-  }
-
-  @UseGuards(JwtTwoFactorGuard)
-  @Delete('/:id')
-  async delete(@Param('id') id) {
-    return await this.userService.delete(id);
   }
 
   @UseGuards(JwtTwoFactorGuard)
@@ -70,6 +53,7 @@ export class UserController {
       }
     }),
   )
+
   async uploadAvatar(@Req() request: RequestWithUser, @UploadedFile() file) {
     let userUpdateDto = new UserUpdateDto();
     userUpdateDto.avatar = (process.env.URL || "http://localhost:3000") + "/user/avatar/" + request.user.id;
@@ -86,4 +70,24 @@ export class UserController {
   getAvatar(@Param('filename') filename, @Res() res): any {
     return res.sendFile(filename, { root: './avatars' });
   }
+
+  // ROUTES FOR DEV ONLY TO BE COMMENTED
+/*
+  @UseGuards(JwtTwoFactorGuard)
+  @Get('/eager/:id')
+  async findbyId(@Param('id') id) {
+    return await this.userService.findById(id);
+  }
+
+  @Patch('/:id')
+  async update(@Param('id') id, @Body() userUpdateDto: UserUpdateDto) {
+    return this.userService.update(id, userUpdateDto);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Delete('/:id')
+  async delete(@Param('id') id) {
+    return await this.userService.delete(id);
+  }
+*/
 }

@@ -77,6 +77,7 @@ export class GameController {
     return await this.gameService.getHistory(userId);
   }
 
+/*
   // ROUTES FOR DEV ONLY TO BE COMMENTED
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
@@ -95,4 +96,5 @@ export class GameController {
   async unfriend(@Param('gameId') gameId) {
     return await this.gameService.delete(gameId);
   }
+*/
 }

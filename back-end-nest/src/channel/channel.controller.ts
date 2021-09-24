@@ -115,6 +115,7 @@ export class ChannelController {
   }
 
   // ROUTES FOR DEV ONLY TO BE COMMENTED
+/*
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all/:direct')
   async findAll(@Param('direct') direct) {
@@ -126,6 +127,7 @@ export class ChannelController {
   async delete(@Param('id') id) {
     return await this.channelService.delete(id);
   }
+*/
 }
 
 @Controller('direct')
@@ -152,9 +154,11 @@ export class DirectController {
   }
 
   // ROUTES FOR DEV ONLY TO BE COMMENTED
+/*
   @UseGuards(JwtTwoFactorGuard)
   @Post('/create')
   async create(@Body() channelDirectCreationDto: ChannelDirectCreationDto) {
     return this.channelService.createDirect(channelDirectCreationDto);
   }
+*/
 }
