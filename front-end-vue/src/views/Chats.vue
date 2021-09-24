@@ -12,7 +12,7 @@
           />
         </div>
         <div class="list_channels">
-          <span style="font-weight:700;font-size:23px;padding:1% 0 1% 0;">channels general</span>
+          <span style="font-weight:700;font-size:23px;padding:1% 0 1% 0;">channels</span>
           <div class="channel" v-for="(channel, index) in channels" :key="index" @click="select_channel(channel, index)">
             <span>{{ channel.name }} </span> 
             <span>{{ channel.status }} </span>
