@@ -14,6 +14,10 @@
         id="canvas"
       >
       </canvas>
+      <div v-if="ratio == 5 && !game_won">
+        <button id="up">up</button>
+        <button id="down">down</button>
+      </div>
       <h2 v-if="!game_won">Points : {{ left_point }} : {{ right_point }}</h2>
       <div v-else>
         <div class="ending">
@@ -71,6 +75,60 @@ export default Vue.extend({
       });
     },
     mounted() {
+      var sockeet = this.$store.state.socket;
+      var idGAME = this.$route.params.id;
+
+      if (this.$store.state.spec != undefined)
+      {
+        this.left_point = this.$store.state.spec[0];
+        this.right_point = this.$store.state.spec[1];
+      }
+
+        var mousedownIDUP:any = -1;
+        function mousedownUP(event: any) {
+          if(mousedownIDUP==-1)
+            mousedownIDUP = setInterval(whilemousedownUP, 100);
+        }
+        function mouseupUP(event: any) {
+          if(mousedownIDUP!=-1) {
+            clearInterval(mousedownIDUP);
+            mousedownIDUP=-1;
+          }
+        }
+        function whilemousedownUP() {
+          sockeet.emit("move", {key:"ArrowUp", idDuel:idGAME});
+        }
+
+        var mousedownIDDOWN:any = -1;
+        function mousedownDOWN(event: any) {
+          if(mousedownIDDOWN==-1)
+            mousedownIDDOWN = setInterval(whilemousedownDOWN, 100);
+        }
+        function mouseupDOWN(event: any) {
+          if(mousedownIDDOWN!=-1) {
+            clearInterval(mousedownIDDOWN);
+            mousedownIDDOWN=-1;
+          }
+        }
+        function whilemousedownDOWN() {
+          sockeet.emit("move", {key:"ArrowDown", idDuel:idGAME});
+        }
+
+        Vue.nextTick(() => {
+          const elementUP = document.getElementById('up');
+          elementUP ? elementUP.addEventListener("mousedown", mousedownUP) : 0;
+          elementUP ? elementUP.addEventListener("mouseup", mouseupUP) : 0;
+          elementUP ? elementUP.addEventListener("mouseout", mouseupUP) : 0;
+
+          const elementDOWN = document.getElementById('down');
+          elementDOWN ? elementDOWN.addEventListener("mousedown", mousedownDOWN) : 0;
+          elementDOWN ? elementDOWN.addEventListener("mouseup", mouseupDOWN) : 0;
+          elementDOWN ? elementDOWN.addEventListener("mouseout", mouseupDOWN) : 0;
+        });
+
+        /* */
+
+    
         if (this.$store.state.colorConfig == undefined)
           this.$store.state.colorConfig = 0;
 
@@ -227,7 +285,8 @@ export default Vue.extend({
               url: process.env.VUE_APP_API_URL + "/game/indexOngoing",
               withCredentials: true,
               method: "get"
-            }).then(res => {
+            })
+            .then(res => {
               for (let i = 0; i < res.data.length; i++) {
                 if (res.data[i].id == this.gameid)
                 {
@@ -235,6 +294,10 @@ export default Vue.extend({
                   flagpassage = true;
                 }
               }
+            })
+            .catch(() => {
+              alert("There was an error, back to profile")
+              router.push({name: 'Profile'});
             });
           }
 

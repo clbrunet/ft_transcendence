@@ -194,7 +194,8 @@ input[type=submit]:hover {
 }
 
 .notRegistered {
-  color:white;
+  color:black;
+  background-color:white;
   margin:0;
   margin-top: 25px;
 }

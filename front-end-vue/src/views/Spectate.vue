@@ -75,9 +75,15 @@ export default Vue.extend({
                 idUser: this.$store.state.user.id
               });
               this.get_ongoing();
+            }).catch(() => {
+              alert("There was an error, back to profile")
+              router.push({name: 'Profile'});
             });
           }
         }
+      }).catch(() => {
+        alert("There was an error, back to profile")
+        router.push({name: 'Profile'});
       });
     }
 
@@ -89,6 +95,9 @@ export default Vue.extend({
       withCredentials: true
     }).then(res => {
       this.matches = res.data;
+    }).catch(() => {
+      alert("There was an error, back to profile")
+      router.push({name: 'Profile'});
     });
   },
   methods: {
@@ -98,6 +107,7 @@ export default Vue.extend({
         this.$store.state.duelId = match.id;
         this.$store.state.gameid = match.id;
         this.$store.state.nbPoints = match.pointToVictory;
+        this.$store.state.spec = [match.players[0].point, match.players[1].point];
         router.push({ path: path }).catch(() => {
           console.log("Redirection...");
         });

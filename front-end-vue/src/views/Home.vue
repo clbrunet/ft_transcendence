@@ -2,7 +2,7 @@
   <div class="home">
     <div class="pongGame">
       <div class="content">
-        <h1>Test your skills at the first sports arcade game</h1>
+        <h1>Test your skills at the first sport arcade game</h1>
         <button @click="goToRegister()">Sign up for free</button>
       </div>
       <div class="ball">
