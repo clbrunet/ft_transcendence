@@ -98,6 +98,7 @@ export default Vue.extend({
         this.$store.state.duelId = match.id;
         this.$store.state.gameid = match.id;
         this.$store.state.nbPoints = match.pointToVictory;
+        this.$store.state.spec = [match.players[0].point, match.players[1].point];
         router.push({ path: path }).catch(() => {
           console.log("Redirection...");
         });

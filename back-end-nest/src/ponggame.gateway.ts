@@ -159,11 +159,12 @@ export class PonggameGateway {
         }
 
         client.on("disconnect", () => {
-            let index_player;
+            let index_player = -1;
             client.leave(data.idDuel);
 
-
-            if (index_player != -1) {
+            if (this.alldata[this.rooms.indexOf(data.idDuel)])
+                index_player = this.alldata[this.rooms.indexOf(data.idDuel)].players.indexOf(client);
+            if (index_player != -1 && (index_player == 0 || index_player == 1)) {
                 let isplaying = 0;
 
                 if (index_player <= 1)

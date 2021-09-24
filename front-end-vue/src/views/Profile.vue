@@ -8,7 +8,7 @@
       <transition name="slide">
         <div class="modal" v-if="showModal">
           <template v-if="$store.state.user.isTwoFactorAuthenticationEnabled == false">
-            <button v-bind:disabled="is_generating" @click="generate" class="btn">Generate</button>
+            <button v-bind:disabled="is_generating" @click="generate" style="fontSize:12px;" class="btn">Generate <br/> (Google authenticator)</button>
             <span v-if="loading != '' && QRCodeSRC == ''">{{ loading }}</span>
             <img v-if="QRCodeSRC != ''" :src="QRCodeSRC" alt="qr" />
           </template>
@@ -21,6 +21,7 @@
               v-model="turnOnCode"
               placeholder="??????"
             />
+            <a @click="howTo()" class="howTo">how to download ?</a>
             <button
               v-if="QRCodeSRC != ''"
               v-bind:disabled="is_turning_on"
@@ -187,6 +188,9 @@ export default Vue.extend({
         .catch(() => {
           router.push({ path: "/profile" });
         });
+    },
+    howTo() {
+      alert('Google Play: https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US\nGoogle Play: https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US');
     },
     choseTheme(index: number) {
       this.$store.state.colorConfig = index;
@@ -371,10 +375,17 @@ export default Vue.extend({
 
 
 input {
-  padding: 5px;
+  padding: 2px;
   border: 1px solid black;
-  height: 45px;
+  height: 25px;
+  margin-bottom:10px;
   text-align: center;
+}
+
+.howTo {
+  color:blue;
+  text-decoration: underline;
+  cursor:pointer;
 }
 
 .btn {
