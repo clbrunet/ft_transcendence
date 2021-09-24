@@ -458,6 +458,7 @@ export default Vue.extend({
         withCredentials: true
       }).then(res => {
         this.$store.state.goDM = res.data;
+        this.$store.state.socket.emit('refreshChannels');
         router.push({name: "Chats"});
       });
     },
