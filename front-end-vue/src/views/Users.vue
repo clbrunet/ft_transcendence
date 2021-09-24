@@ -531,6 +531,10 @@ h1 {
   flex-direction: column;
 }
 
+.settings-points{
+  width:80%;
+}
+
 table {
   border: 1px solid #3040F0;
   background-color:white;
@@ -635,10 +639,11 @@ tr {
   align-items:center;
   justify-content:center;
   flex-direction: column;
-  padding:  0.5% 1.5% 0.5% 1.5%;
+  padding:  0.5% 1.8% 0.5% 1.8%;
   border-radius:15px;
   border: 1px solid #3040F0;
   color:white;
+  width:25%;
 }
 
 h3 {
