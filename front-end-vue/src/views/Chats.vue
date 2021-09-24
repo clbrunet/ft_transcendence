@@ -31,7 +31,7 @@
                 src="/assets/settings.svg"
                 alt="settings"
                 style="width:30px;cursor:pointer;"
-                @click.stop="open_params()"
+                @click.stop="open_params(channel, index)"
               />
             </div>
           </div>
@@ -99,6 +99,7 @@
           <input v-if="changeStatus == 'protected'" type="password" v-model="changePassword" />
           <input type="submit" />
         </form>
+        <p class="error">{{errorChange}}</p>
         <button @click="close_params()" class="btn-close">Close</button>
       </div>
     </div>
@@ -127,6 +128,7 @@ export default Vue.extend({
     return {
       keyVFor: 0,
       errorCreate: undefined as any,
+      errorChange: undefined as any,
       channels: {} as any,
       dm: undefined as any,
       selectedChannel: undefined as any,
@@ -274,11 +276,14 @@ export default Vue.extend({
       this.refresh_channels();
       this.$store.dispatch('activateChat');
     },
-    open_params() {
+    open_params(channel:any, index: number) {
+      this.selectedChannel = channel;
+      this.numberSelectedChannel = index;
       this.params = true;
     },
     close_params() {
       this.params = false;
+      this.errorChange = "";
     },
     close_popup_password() {
       this.password_input = "";
@@ -395,7 +400,7 @@ export default Vue.extend({
         this.close_params();
       })
       .catch(err => {
-        console.log("");
+        this.errorChange = Array.isArray(err.response.data.message) ? err.response.data.message[0] : err.response.data.message;
       });
     },
     leave_channel(channel: any) {
@@ -521,14 +526,15 @@ export default Vue.extend({
 }
 
 #popup-create-content form select {
-  margin:2%;
+  margin:1%;
   width:40%;
-  padding:2%;
+  padding:1%;
+  width:20%;
 }
 
 
 #popup-create-content form input {
-      margin:4%;
+  margin:2%;
   width:20%;
   padding:1%;
 }
@@ -559,6 +565,10 @@ export default Vue.extend({
   align-items:center;
   width:80%;
   height:60%;
+}
+
+#form-create-channel h2 {
+  margin:0;
 }
 
 #body-chat {
@@ -656,7 +666,7 @@ export default Vue.extend({
 }
 
 .btn-close {
-  padding: 2%;
+  padding: 1%;
   width:20%;
   cursor:pointer;
 }
