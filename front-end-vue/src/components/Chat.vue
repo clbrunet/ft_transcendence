@@ -70,17 +70,21 @@
 
     <!-- participants -->
     <div class="partipants" v-if="(data.activeUserBan == false && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false)">
+      <div class="title">
+        <span>Participants</span>
+      </div>
       <img class="close-chat-icon"
         src="/assets/close-chat.svg"
         alt="close chat icon"
         @click="closeChat()"
       />
+      <div class="scroll">
       <template v-for="(participant, index) in participants">
         <template v-if="participant.userName == $store.state.user.name">
-          <span :key="index" class="you" style="padding: 1% 0 1% 0;">You</span>
+          <span :key="index" class="you degrade" style="padding: 1% 0 1% 0;">You</span>
         </template>
         <template v-else-if="participant.left != true">
-          <div class="row-participant" :key="index">
+          <div class="row-participant degrade" :key="index">
             <span class="clickable" @click="goToProfile(participant)" style="margin-right: 2%;">{{participant.userName}}</span>
 
             <template v-if="participant.ban == false && isCurrentlyBanMute(participant.banEndDateTime) == false">
@@ -99,6 +103,7 @@
           </div>
         </template>
       </template>
+      </div>
     </div>
     <div class="partipants" v-else>
       <span>You were banned from this channel</span>
@@ -626,8 +631,9 @@ export default Vue.extend({
 }
 
 .you {
-  color:white;
+  color:black;
   font-style: italic;
+  font-weight: 700;
   text-align:center;
 }
 
@@ -719,6 +725,10 @@ export default Vue.extend({
   flex-direction: column;
   align-items:center;
   justify-content: space-around;
+}
+
+.scroll {
+  overflow-y: auto;
 }
 
 .form-popup-ban input {
@@ -835,9 +845,9 @@ export default Vue.extend({
 }*/
 
 .row-participant {
-  background-color: rgb(245, 62, 108);
+  background-color: white;
   width: 100%;
-  color:white;
+  color:black;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 1% 0 1% 0;
@@ -886,7 +896,8 @@ p:nth-child(odd) {
 .partipants {
   width: 30%;
   height: 100%;
-  background-color: rgb(68, 96, 253);
+  /*background-color: rgb(68, 96, 253);*/
+  background-color:white;
   display: flex;
   flex-direction: column;
   border-top: 2px solid black;
@@ -896,6 +907,10 @@ p:nth-child(odd) {
 
 .close-chat-icon {
   display: none;
+}
+
+.degrade:nth-child(even) {
+  background-color:#ededed;
 }
 
 @media (max-width: 770px) {

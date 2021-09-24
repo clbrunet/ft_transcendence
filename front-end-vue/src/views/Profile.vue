@@ -499,6 +499,8 @@ input {
   margin-top: 0;
 }
 
+
+
 /* new css */
 
 #play {
@@ -519,6 +521,7 @@ input {
 #play:hover {
   background-color: rgb(228, 0, 0);
 }
+
 
 #bottom {
   display: flex;

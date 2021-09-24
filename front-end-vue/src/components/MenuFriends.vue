@@ -84,6 +84,7 @@ export default Vue.extend({
   border-top-right-radius: 15px;
 }
 
+
 #title span {
   color: white;
   font-size: 1.4rem;
@@ -113,8 +114,9 @@ tr {
 }
 
 td span {
+  width:100%;
   padding: 3%;
-  text-align: left;
+  text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
 }
