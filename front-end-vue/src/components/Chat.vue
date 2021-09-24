@@ -621,9 +621,9 @@ export default Vue.extend({
   font-weight:700;
   background-color: #3040F0;
   padding: 15px;
-  max-height: 70px;
   overflow: hidden;
   text-overflow: ellipsis;
+  border-bottom: 2px solid black;
 }
 
 .title span {

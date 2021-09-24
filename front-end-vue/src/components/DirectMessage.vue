@@ -29,32 +29,37 @@
 
     <!-- participants -->
     <div class="partipants">
+      <div class="title">
+        <span>Participants</span>
+      </div>
       <img class="close-chat-icon"
         src="/assets/close-chat.svg"
         alt="close chat icon"
         @click="closeChat()"
       />
-      <span style="padding:1% 0 1% 0;"> You</span>
-      <div class="row-participant">
-        <span class="clickable" style="margin-right:2%;" @click="goToProfile(data)"> {{data.name}}</span>
-        <template v-if="pendingDuel == false">
-          <img
-            src="/assets/duel.svg"
-            alt="duel"
-            style="width:30px;cursor:pointer;"
-            @click="duelFriend()"
-          />
-          <form @submit.prevent="">
-            <select v-model="nbPointsConfig" class="selectDuel">
-              <option selected>5</option>
-              <option>6</option>
-              <option>7</option>
-              <option>8</option>
-              <option>9</option>
-              <option>10</option>
-            </select>
-          </form>
-        </template>
+      <div class="scroll">
+        <span style="padding:1% 0 1% 0;font-weight:700;font-style:italic;margin-top:1.5%;"> You</span>
+        <div class="row-participant">
+          <span class="clickable" style="margin-right:2%;" @click="goToProfile(data)"> {{data.name}}</span>
+          <template v-if="pendingDuel == false">
+            <img
+              src="/assets/duel.svg"
+              alt="duel"
+              style="width:30px;cursor:pointer;"
+              @click="duelFriend()"
+            />
+            <form @submit.prevent="">
+              <select v-model="nbPointsConfig" class="selectDuel">
+                <option selected>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+                <option>9</option>
+                <option>10</option>
+              </select>
+            </form>
+          </template>
+        </div>
       </div>
     </div>
   </div>
@@ -264,9 +269,9 @@ export default Vue.extend({
 }
 
 .row-participant {
-  background-color: rgb(245, 62, 108);
+  background-color: #ededed;
   width: 100%;
-  color:white;
+  color:black;
   padding: 1% 0 1% 0;
   display:flex;
   align-items:center;
@@ -299,7 +304,10 @@ export default Vue.extend({
 
 .chat {
   display: flex;
-  outline: 1px solid black;
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+  border-left: 2px solid black;
+  border-right: 2px solid black;
   width: 70%;
   height: 100%;
   flex-direction: column;
@@ -314,6 +322,7 @@ export default Vue.extend({
   max-height: 70px;
   overflow: hidden;
   text-overflow: ellipsis;
+  border-bottom:2px solid black;
 }
 
 .title span {
@@ -326,6 +335,11 @@ export default Vue.extend({
   flex-direction:column-reverse;
   height:100%;
 }
+
+.scroll {
+  overflow-y: auto;
+}
+
 
 .buttons {
   display: flex;
@@ -342,10 +356,11 @@ p {
 .partipants {
   width: 30%;
   height: 100%;
-  background-color: rgb(68, 96, 253);
+  background-color: white;
   display: flex;
   flex-direction: column;
   border-bottom: 2px solid black;
+  border-top: 2px solid black;
 }
 
 p:nth-child(even) {

@@ -12,7 +12,9 @@
           />
         </div>
         <div class="list_channels">
-          <span style="font-weight:700;font-size:23px;padding:1% 0 1% 0;">channels</span>
+          <div class="fulltitle">
+            <span style="font-weight:700;font-size:23px;padding:1% 0 1% 0;">channels</span>
+          </div>
           <div class="channel" v-for="(channel, index) in channels" :key="index" @click="select_channel(channel, index)">
             <span>{{ channel.name }} </span> 
             <span>{{ channel.status }} </span>
@@ -33,7 +35,9 @@
               />
             </div>
           </div>
-          <span style="font-weight:700;font-size:23px;padding:1% 0 1% 0;">direct messages</span>
+          <div class="fulltitle">
+            <span style="font-weight:700;font-size:23px;padding:1% 0 1% 0;">direct messages</span>
+          </div>
           <div class="channel" v-for="(conv, indexdm) in dm" :key="(indexdm + 12) * 12" @click="select_dm(conv, indexdm)">
             <span>{{ conv.name }} </span> 
           </div>
@@ -448,8 +452,6 @@ export default Vue.extend({
   align-items:center;
   background-color:white;
   border-top: 2px solid black;
-  border-left: 2px solid black;
-  border-bottom: 2px solid black;
 }
 
 #popup-password {
@@ -472,6 +474,11 @@ export default Vue.extend({
   align-items: center;
   justify-content: center;
   flex-direction: column;
+}
+
+.fulltitle {
+  width:100%;
+  background-color:#3040F0;
 }
 
 #popup-password-content form {
@@ -566,8 +573,8 @@ export default Vue.extend({
   border-top: 2px solid black;
   border-left: 2px solid black;
   border-bottom: 2px solid black;
-  background-color :#3040F0;
-  max-height: 100%;
+  background-color :white;
+  height: 100%;
   color:white;
   overflow-y: auto; /* maybe remove */
   overflow-x: hidden;
