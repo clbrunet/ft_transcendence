@@ -7,15 +7,15 @@
       <table>
         <tr class="row" v-for="(match, index) in matchesHistory" :key="index">
           <td>
-            <span v-if="($route.params.id == undefined && $store.state.user.name != match.winnerName) || ($route.params.id != undefined && data.name != match.winnerName)"> {{ match.winnerName }} </span>
-            <span v-else> {{ match.loserName }} </span>
+            <span v-if="isMatchWon(match.winnerName)"> {{ match.loserName }} </span>
+            <span v-else> {{ match.winnerName }} </span>
           </td>
           <td>
-            <span v-if="isMatchWon(match)">
+            <span v-if="isMatchWon(match.winnerName)" class="win-color">
               {{match.winnerPoint}} - {{match.loserPoint}} W
             </span>
-            <span v-else>
-              {{match.winnerPoint}} - {{match.loserPoint}} L
+            <span v-else class="lose-color">
+              {{match.loserPoint}} - {{match.winnerPoint}} L
             </span>
           </td>
         </tr>
@@ -48,10 +48,10 @@ export default Vue.extend({
   methods: {
     isMatchWon(winnerName: string): boolean {
       if (this.$route.params.id == undefined) {
-        return this.$store.state.user.name != winnerName;
+        return this.$store.state.user.name == winnerName;
       }
       else {
-        return this.data.name != winnerName;
+        return this.data.name == winnerName;
       }
     },
   },
@@ -138,6 +138,14 @@ td span {
 .row td:last-child {
   min-width: 70px;
   width: fit-content;
+}
+
+.win-color {
+  color: green;
+}
+
+.lose-color {
+  color: red;
 }
 
 @media (max-width: 770px), (max-height: 550px) {
