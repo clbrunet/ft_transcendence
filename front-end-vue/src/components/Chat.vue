@@ -81,7 +81,9 @@
       <div class="scroll">
       <template v-for="(participant, index) in participants">
         <template v-if="participant.userName == $store.state.user.name">
-          <span :key="index" class="you degrade" style="padding: 1% 0 1% 0;">You</span>
+          <div style="width:100%;" class="degrade"  :key="index">
+            <span class="you" style="padding: 1% 0 1% 0;">You</span>
+          </div>
         </template>
         <template v-else-if="participant.left != true">
           <div class="row-participant degrade" :key="index">
