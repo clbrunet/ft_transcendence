@@ -8,7 +8,7 @@
         <input type="password" required placeholder="Confirm password" v-model="confirmPassword" />
         <input v-bind:disabled="is_registering" type="submit" value="Register"/>
         <p class="error"> {{ this.message }}</p>
-        <p class="notLogin"> Already have an account ? <a @click="goToLogin()">login</a> now </p>
+        <p class="notLogin" > Already have an account ? <a @click="goToLogin()"  >login</a> now </p>
       </form>
       <a class="api42" v-bind:href="authorize_url_42">
         <button class="api42-button">Sign in with 42</button>
@@ -200,7 +200,8 @@ input[type=submit]:hover {
 }
 
 .notLogin {
-  color:white;
+  color:black;
+  background-color:white;
 }
 
 .api42 {
