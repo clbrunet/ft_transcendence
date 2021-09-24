@@ -600,6 +600,7 @@ export default Vue.extend({
 .channel {
   width: 100%;
   min-height: 50px;
+  max-height: 80px;
   height: auto;
   padding-top:2%;
   padding-bottom:2%;

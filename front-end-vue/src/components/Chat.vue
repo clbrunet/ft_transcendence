@@ -731,6 +731,7 @@ export default Vue.extend({
 }
 
 .scroll {
+  height: 100%;
   overflow-y: auto;
 }
 
