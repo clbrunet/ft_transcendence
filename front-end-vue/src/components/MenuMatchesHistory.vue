@@ -37,8 +37,12 @@ export default Vue.extend({
     };
   },
   mounted() {
+    let idParam = "";
+    if (this.$route.params.id != undefined) {
+      idParam = "/" + this.$route.params.id
+    }
     axios({
-      url: `${ process.env.VUE_APP_API_URL }/game/history`,
+      url: `${ process.env.VUE_APP_API_URL }/game/history` + idParam,
       method: "get",
       withCredentials: true
     }).then(res => {
