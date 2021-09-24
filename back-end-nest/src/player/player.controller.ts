@@ -17,6 +17,7 @@ export class PlayerController {
   ) {}
 
   // ROUTES FOR DEV ONLY TO BE COMMENTED
+/*
   @UseGuards(JwtTwoFactorGuard)
   @Post('/create')
   async create(@Body() playerCreationDto: PlayerCreationDto) {
@@ -34,4 +35,5 @@ export class PlayerController {
   async delete(@Param('playerId') playerId) {
     return await this.playerService.delete(playerId);
   }
+*/
 }

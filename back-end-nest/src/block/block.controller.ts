@@ -39,11 +39,11 @@ export class BlockController {
   }
 
   // ROUTES FOR DEV ONLY TO BE COMMENTED
-
+/*
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
   async findAll() {
     return await this.blockService.findAll();
   }
-
+*/
 }

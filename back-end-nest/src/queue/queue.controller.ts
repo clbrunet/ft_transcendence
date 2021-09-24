@@ -36,7 +36,7 @@ export class QueueController {
   }
 
   // ROUTES FOR DEV ONLY TO BE COMMENTED
-
+/*
   @UseGuards(JwtTwoFactorGuard)
   @Post()
   async queue(@Req() request: RequestWithUser) {
@@ -56,4 +56,5 @@ export class QueueController {
     const {user} = request;
     return await this.queueService.popQueue();
   }
+*/
 }
