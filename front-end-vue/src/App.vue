@@ -53,7 +53,7 @@ export default Vue.extend({
         this.$store.state.side = undefined;
         this.$store.state.inQueue = undefined;
         this.$store.dispatch("unauthenticate");
-        router.push({ name: "App" });
+        router.push({ name: "Home" });
       })
       .catch(() => {
         alert("log-out failed, please retry after refreshing the page");
