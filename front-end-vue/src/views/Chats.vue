@@ -15,26 +15,28 @@
           <div class="fulltitle">
             <span style="font-weight:700;font-size:23px;padding:1% 0 1% 0;">channels</span>
           </div>
-          <div class="channel" v-for="(channel, index) in channels" :key="index" @click="select_channel(channel, index)">
-            <span>{{ channel.name }} </span> 
-            <span>{{ channel.status }} </span>
-            <div class="buttons-channels">
-              <img
-                v-if="channel.activeUserParticipant == true && channel.activeUserAuthorized == true"
-                src="/assets/leave.svg"
-                alt="leave"
-                style="width:30px;cursor:pointer;"
-                @click.stop="leave_channel(channel)"
-              />
-              <img
-                v-if="channel.ownerId == $store.state.user.id"
-                src="/assets/settings.svg"
-                alt="settings"
-                style="width:30px;cursor:pointer;"
-                @click.stop="open_params(channel, index)"
-              />
+          <template v-for="(channel, index) in channels" >
+            <div class="channel" v-if="channel.activeUserParticipant == true" :key="index" @click="select_channel(channel, index)">
+              <span>{{ channel.name }} </span> 
+              <span>{{ channel.status }} </span>
+              <div class="buttons-channels">
+                <img
+                  v-if="channel.activeUserParticipant == true && channel.activeUserAuthorized == true"
+                  src="/assets/leave.svg"
+                  alt="leave"
+                  style="width:30px;cursor:pointer;"
+                  @click.stop="leave_channel(channel)"
+                />
+                <img
+                  v-if="channel.ownerId == $store.state.user.id"
+                  src="/assets/settings.svg"
+                  alt="settings"
+                  style="width:30px;cursor:pointer;"
+                  @click.stop="open_params(channel, index)"
+                />
+              </div>
             </div>
-          </div>
+          </template>
           <div class="fulltitle">
             <span style="font-weight:700;font-size:23px;padding:1% 0 1% 0;">direct messages</span>
           </div>
