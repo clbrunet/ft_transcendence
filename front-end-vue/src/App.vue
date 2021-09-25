@@ -44,7 +44,8 @@ export default Vue.extend({
         url: `${ process.env.VUE_APP_API_URL }/authentication/log-out`,
         withCredentials: true
       })
-      .then(() => {
+      .then(async () => {
+        await router.push({ name: "Home" });
         this.$store.state.user = undefined;
         this.$store.state.goDM = undefined;
         this.$store.state.duelId = undefined;
@@ -53,7 +54,6 @@ export default Vue.extend({
         this.$store.state.side = undefined;
         this.$store.state.inQueue = undefined;
         this.$store.dispatch("unauthenticate");
-        router.push({ name: "App" });
       })
       .catch(() => {
         alert("log-out failed, please retry after refreshing the page");
