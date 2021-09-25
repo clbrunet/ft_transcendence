@@ -103,14 +103,12 @@ export default Vue.extend({
             mousedownIDUP = setInterval(whilemousedownUP, 100);
         }
         function mouseupUP(event: any) {
-          console.log("test ?");
           if(mousedownIDUP!=-1) {
             clearInterval(mousedownIDUP);
             mousedownIDUP=-1;
           }
         }
         function whilemousedownUP() {
-          console.log("yo ??");
           sockeet.emit("move", {key:"ArrowUp", idDuel:idGAME});
         }
 
@@ -278,7 +276,7 @@ export default Vue.extend({
 
         setTimeout(() => {
           const elementUP = document.getElementById('up');
-          elementUP ? elementUP.addEventListener("mousedown", mousedownUP) : console.log("tjs pas");
+          elementUP ? elementUP.addEventListener("mousedown", mousedownUP) : 0;
           elementUP ? elementUP.addEventListener("mouseup", mouseupUP) : 0;
           elementUP ? elementUP.addEventListener("mouseout", mouseupUP) : 0;
 
