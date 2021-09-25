@@ -21,7 +21,7 @@
               v-model="turnOnCode"
               placeholder="??????"
             />
-            <a @click="howTo()" class="howTo">how to download ?</a>
+            <a href="https://www.wikihow.com/Install-Google-Authenticator" target="_blank" class="howTo">how to download ?</a>
             <button
               v-if="QRCodeSRC != ''"
               v-bind:disabled="is_turning_on"
@@ -191,9 +191,6 @@ export default Vue.extend({
         .catch(() => {
           router.push({ path: "/profile" });
         });
-    },
-    howTo() {
-      alert('Google Play: https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US\nGoogle Play: https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US');
     },
     choseTheme(index: number) {
       this.$store.state.colorConfig = index;
