@@ -626,7 +626,11 @@ export class ChannelService {
   public channelToDtoDirectActiveUser(userId, channel: Channel) {
     let dto = new ChannelDtoDirect();
     dto.id = channel.id;
-    dto.name = this.getSecondParticipant(userId, channel.participants).user.name;
+    let secondParticipant = this.getSecondParticipant(userId, channel.participants);
+    if (secondParticipant === undefined) {
+      throw new HttpException('Direct does not contain a second participant', HttpStatus.BAD_REQUEST);      
+    }
+    dto.name = secondParticipant.user.name;
     dto.participants = [];
     for (const participant of channel.participants) {
       let channelDto = new ParticipantForChannelDirectDto();
