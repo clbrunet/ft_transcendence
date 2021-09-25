@@ -320,10 +320,7 @@ export default Vue.extend({
         url: process.env.VUE_APP_API_URL + "/queue/unqueue",
         withCredentials: true,
         method: "delete"
-      }).then(() => {
-        console.log("unqueded");
-      })
-      .catch(() => {
+      }).catch(() => {
         alert("please refresh")
       });
     }
