@@ -103,12 +103,14 @@ export default Vue.extend({
             mousedownIDUP = setInterval(whilemousedownUP, 100);
         }
         function mouseupUP(event: any) {
+          console.log("test ?");
           if(mousedownIDUP!=-1) {
             clearInterval(mousedownIDUP);
             mousedownIDUP=-1;
           }
         }
         function whilemousedownUP() {
+          console.log("yo ??");
           sockeet.emit("move", {key:"ArrowUp", idDuel:idGAME});
         }
 
@@ -127,17 +129,6 @@ export default Vue.extend({
           sockeet.emit("move", {key:"ArrowDown", idDuel:idGAME});
         }
 
-        Vue.nextTick(() => {
-          const elementUP = document.getElementById('up');
-          elementUP ? elementUP.addEventListener("mousedown", mousedownUP) : 0;
-          elementUP ? elementUP.addEventListener("mouseup", mouseupUP) : 0;
-          elementUP ? elementUP.addEventListener("mouseout", mouseupUP) : 0;
-
-          const elementDOWN = document.getElementById('down');
-          elementDOWN ? elementDOWN.addEventListener("mousedown", mousedownDOWN) : 0;
-          elementDOWN ? elementDOWN.addEventListener("mouseup", mouseupDOWN) : 0;
-          elementDOWN ? elementDOWN.addEventListener("mouseout", mouseupDOWN) : 0;
-        });
 
         /* */
 
@@ -284,6 +275,18 @@ export default Vue.extend({
         this.$store.state.socket.on('sendSide', () => {
           this.$store.state.socket.emit('imAm', {idRoom: idGAME, side:this.side, username: this.$store.state.user.name});
         });
+
+        setTimeout(() => {
+          const elementUP = document.getElementById('up');
+          elementUP ? elementUP.addEventListener("mousedown", mousedownUP) : console.log("tjs pas");
+          elementUP ? elementUP.addEventListener("mouseup", mouseupUP) : 0;
+          elementUP ? elementUP.addEventListener("mouseout", mouseupUP) : 0;
+
+          const elementDOWN = document.getElementById('down');
+          elementDOWN ? elementDOWN.addEventListener("mousedown", mousedownDOWN) : 0;
+          elementDOWN ? elementDOWN.addEventListener("mouseup", mouseupDOWN) : 0;
+          elementDOWN ? elementDOWN.addEventListener("mouseout", mouseupDOWN) : 0;
+        }, 300);
       });
 
       var flagpassage = false;
