@@ -276,14 +276,14 @@ export default Vue.extend({
 
         setTimeout(() => {
           const elementUP = document.getElementById('up');
-          elementUP ? elementUP.addEventListener("mousedown", mousedownUP) : 0;
-          elementUP ? elementUP.addEventListener("mouseup", mouseupUP) : 0;
-          elementUP ? elementUP.addEventListener("mouseout", mouseupUP) : 0;
+          elementUP ? elementUP.addEventListener("touchstart", mousedownUP) : 0;
+          elementUP ? elementUP.addEventListener("touchend", mouseupUP) : 0;
+          elementUP ? elementUP.addEventListener("touchend", mouseupUP) : 0;
 
           const elementDOWN = document.getElementById('down');
-          elementDOWN ? elementDOWN.addEventListener("mousedown", mousedownDOWN) : 0;
-          elementDOWN ? elementDOWN.addEventListener("mouseup", mouseupDOWN) : 0;
-          elementDOWN ? elementDOWN.addEventListener("mouseout", mouseupDOWN) : 0;
+          elementDOWN ? elementDOWN.addEventListener("touchstart", mousedownDOWN) : 0;
+          elementDOWN ? elementDOWN.addEventListener("touchend", mouseupDOWN) : 0;
+          elementDOWN ? elementDOWN.addEventListener("touchend", mouseupDOWN) : 0;
         }, 300);
       });
 
