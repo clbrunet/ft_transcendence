@@ -45,4 +45,14 @@ export class DuelGateway {
     refreshChat(client: Socket, idRoom: string) {
         this.server.emit('refreshOnceChat', idRoom);
     }
+
+    @SubscribeMessage('getSides')
+    getSides(client: Socket, idRoom: string) {
+        this.server.to(idRoom).emit('sendSide');
+    }
+
+    @SubscribeMessage('imAm')
+    iAm(client: Socket, data: {idRoom: string, side: string, username: string}) {
+        this.server.to(data.idRoom).emit('getSide', data);
+    }
 }

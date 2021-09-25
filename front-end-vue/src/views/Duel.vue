@@ -1,8 +1,12 @@
 <template>
-    <div>
+    <div id="body">
       <template v-if="!game_won">
         <h1 v-if="side == 'left' || side == 'right'">You can play with up/down arrow</h1>
-        <h1 v-else>You are spectating</h1>
+        <div v-else>
+          <h1>You are spectating</h1>
+          <h1 v-if="name_left && name_right">{{name_left}} vs {{name_right}}</h1>
+        </div>
+        <h3 v-if="side == 'left' || side == 'right'">You're playing on the {{side}} side</h3>
       </template>
       <canvas
         :class="colors[$store.state.colorConfig]"
@@ -14,7 +18,7 @@
         id="canvas"
       >
       </canvas>
-      <div v-if="ratio == 5 && !game_won">
+      <div v-if="!game_won && (side == 'left' || side == 'right')">
         <button id="up">up</button>
         <button id="down">down</button>
       </div>
@@ -66,7 +70,9 @@ export default Vue.extend({
             windowWidth: undefined as any,
             windowHeight: undefined as any,
             ratio: 1 as any,
-            colors: ['blue', 'yellow', 'green', 'violet'] as any
+            colors: ['blue', 'yellow', 'green', 'violet'] as any,
+            name_right: undefined as any,
+            name_left: undefined as any
         }
     },
     created() {
@@ -82,6 +88,13 @@ export default Vue.extend({
       {
         this.left_point = this.$store.state.spec[0];
         this.right_point = this.$store.state.spec[1];
+        this.$store.state.socket.on('getSide', (data: any) => {
+          if (data.side == 'left')
+            this.name_left = data.username;
+          else if (data.side == 'right')
+            this.name_right = data.username;
+        });
+        this.$store.state.socket.emit('getSides', idGAME);
       }
 
         var mousedownIDUP:any = -1;
@@ -268,6 +281,9 @@ export default Vue.extend({
       this.$store.state.socket.on("youAre", (side: any) => {
         this.$store.state.side = side;
         this.side = side;
+        this.$store.state.socket.on('sendSide', () => {
+          this.$store.state.socket.emit('imAm', {idRoom: idGAME, side:this.side, username: this.$store.state.user.name});
+        });
       });
 
       var flagpassage = false;
@@ -376,6 +392,20 @@ export default Vue.extend({
 
 <style scoped>
 
+  #body {
+    overflow-y: hidden;
+  }
+
+  #up, #down {
+    outline: none;
+    border: 1px solid white;
+    background-color: #3043f0;
+    padding:1%;
+    color:white;
+    width:10%;
+    cursor:pointer;
+  }
+
   .blue {
     background-color: #3043f0;
   }
@@ -424,5 +454,9 @@ export default Vue.extend({
 
   .ended {
     margin-top:3%;
+  }
+
+  h3 {
+    color:black;
   }
 </style>
