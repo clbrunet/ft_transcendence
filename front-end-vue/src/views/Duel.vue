@@ -338,6 +338,7 @@ export default Vue.extend({
             this.$store.state.gameid = undefined;
             this.$store.state.side = undefined;
             this.$store.state.gameid2 = undefined;
+            this.$store.state.spec = undefined;
             
             this.$store.state.socket.emit("game_won", this.duelid);
             if (this.left_point >= this.nbPoints) this.winner = "left";
