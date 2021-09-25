@@ -271,6 +271,7 @@ export default Vue.extend({
         this.$store.state.side = side;
         this.side = side;
         this.$store.state.socket.on('sendSide', () => {
+          console.log("I AM = ", idGAME, this.side, this.$store.state.user.name);
           this.$store.state.socket.emit('imAm', {idRoom: idGAME, side:this.side, username: this.$store.state.user.name});
         });
 
