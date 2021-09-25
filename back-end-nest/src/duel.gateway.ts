@@ -48,7 +48,7 @@ export class DuelGateway {
 
     @SubscribeMessage('getSides')
     getSides(client: Socket, idRoom: string) {
-        this.server.to(idRoom).emit('sendSide');
+        this.server.to(idRoom).emit('sendSide', idRoom);
     }
 
     @SubscribeMessage('imAm')
