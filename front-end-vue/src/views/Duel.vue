@@ -93,10 +93,13 @@ export default Vue.extend({
       this.left_point = this.$store.state.spec[0];
       this.right_point = this.$store.state.spec[1];
       this.$store.state.socket.on('getSide', (data: any) => {
-        if (data.side == 'left')
-        this.name_left = data.username;
-        else if (data.side == 'right')
-        this.name_right = data.username;
+        if (data.idRoom == idGAME)
+        {
+          if (data.side == 'left')
+          this.name_left = data.username;
+          else if (data.side == 'right')
+          this.name_right = data.username;
+        }
       });
       this.$store.state.socket.emit('getSides', idGAME);
     }
@@ -274,9 +277,11 @@ export default Vue.extend({
     this.$store.state.socket.on("youAre", (side: any) => {
       this.$store.state.side = side;
       this.side = side;
-      this.$store.state.socket.on('sendSide', () => {
-        console.log("I AM = ", idGAME, this.side, this.$store.state.user.name);
-        this.$store.state.socket.emit('imAm', {idRoom: idGAME, side:this.side, username: this.$store.state.user.name});
+      this.$store.state.socket.on('sendSide', (idOfRoom: any) => {
+        if (idOfRoom == idGAME)
+        {
+          this.$store.state.socket.emit('imAm', {idRoom: idGAME, side:this.side, username: this.$store.state.user.name});
+        }
       });
 
       setTimeout(() => {

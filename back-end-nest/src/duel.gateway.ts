@@ -53,6 +53,6 @@ export class DuelGateway {
 
     @SubscribeMessage('imAm')
     iAm(client: Socket, data: {idRoom: string, side: string, username: string}) {
-        this.server.to(data.idRoom).emit('getSide', data);
+        this.server.emit('getSide', data);
     }
 }
