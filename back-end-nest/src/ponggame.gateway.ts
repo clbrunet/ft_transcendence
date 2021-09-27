@@ -6,8 +6,8 @@ export class PonggameGateway {
 
 
     public canvas = {
-        width: 1200 as any,
-        height: 600 as any
+        width: 800 as any,
+        height: 400 as any
     }
 
     public rooms = [] as any;
@@ -95,11 +95,11 @@ export class PonggameGateway {
                 RECT_HEIGHT: 60,
                 player_left: {
                     x: 30 as any,
-                    y: 200 as any
+                    y: 140 as any
                 },
                 player_right: {
                     x: this.canvas.width - 30 as any,
-                    y: 300 as any
+                    y: 140 as any
                 },
                 points: {
                     left: 0,
@@ -109,8 +109,8 @@ export class PonggameGateway {
                     x: 200,
                     y: 200,
                     radius: 20,
-                    vx: 0.85,
-                    vy: 0.85
+                    vx: 0.60,
+                    vy: 0.60
                 },
                 NB_PLAYERS: 2,
                 indexInTab: -1

@@ -11,12 +11,12 @@ import { MessageSeedDto } from '../message/message.dto';
 
 
 export const registers: RegisterDto[] = [
-  { email: 'erwan@yopmail.com', name: 'Erwan', password: 'abcdefghi'},
-  { email: 'clement@yopmail.com', name: 'Clement', password: 'abcdefghi'},
-  { email: 'nicolas@yopmail.com', name: 'Nicolas', password: 'abcdefghi'},
-  { email: 'lucille@yopmail.com', name: 'Lucille', password: 'abcdefghi'},
-  { email: 'come@yopmail.com', name: 'Come', password: 'abcdefghi'},
-  { email: 'alban@yopmail.com', name: 'Alban', password: 'abcdefghi'},
+  { email: 'erwan@yopmail.com', name: 'Erwan', password: 'abcdefghi', admin: true},
+  { email: 'clement@yopmail.com', name: 'Clement', password: 'abcdefghi', admin: true},
+  { email: 'nicolas@yopmail.com', name: 'Nicolas', password: 'abcdefghi', admin: true},
+  { email: 'lucille@yopmail.com', name: 'Lucille', password: 'abcdefghi', admin: false},
+  { email: 'come@yopmail.com', name: 'Come', password: 'abcdefghi', admin: false},
+  { email: 'alban@yopmail.com', name: 'Alban', password: 'abcdefghi', admin: false},
 ];
 
 export const users: UserSeedDto[] = [

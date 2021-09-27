@@ -20,15 +20,13 @@ export class UserController {
     return await this.userService.getAllLazy();
   }
 
-  // ROUTES FOR DEV ONLY TO BE COMMENTED
-/*
   @UseGuards(JwtTwoFactorGuard)
   @Get('/all')
-  async findAllLazy() {
-    return await this.userService.findAllLazy();
+  async findAllAdmin(@Req() request: RequestWithUser) {
+    const {user} = request;
+    return await this.userService.getAllAdmin(user);
   }
-*/
-  // ROUTES NOT FOR DEV
+
   @UseGuards(JwtTwoFactorGuard)
   @Get('/:id')
   async getbyIdLazy(@Param('id') id) {
@@ -71,6 +69,27 @@ export class UserController {
     return res.sendFile(filename, { root: './avatars' });
   }
 
+  @UseGuards(JwtTwoFactorGuard)
+  @Patch('/admin/:id')
+  async setAsAdmin(@Req() request: RequestWithUser, @Param('id') id) {
+    const {user} = request;
+    return await this.userService.updateAdmin(user, id, true);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Patch('/unadmin/:id')
+  async unsetAsAdmin(@Req() request: RequestWithUser, @Param('id') id) {
+    const {user} = request;
+    return await this.userService.updateAdmin(user, id, false);
+  }
+
+  @UseGuards(JwtTwoFactorGuard)
+  @Delete('/:id')
+  async deleteAdmin(@Req() request: RequestWithUser, @Param('id') id) {
+    const {user} = request;
+    return await this.userService.deleteAdmin(user, id);
+  }
+
   // ROUTES FOR DEV ONLY TO BE COMMENTED
 /*
   @UseGuards(JwtTwoFactorGuard)
@@ -83,11 +102,6 @@ export class UserController {
   async update(@Param('id') id, @Body() userUpdateDto: UserUpdateDto) {
     return this.userService.update(id, userUpdateDto);
   }
-
-  @UseGuards(JwtTwoFactorGuard)
-  @Delete('/:id')
-  async delete(@Param('id') id) {
-    return await this.userService.delete(id);
-  }
 */
+
 }
