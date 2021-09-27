@@ -2,8 +2,8 @@
   <div id="body">
     <div class="pongGame">
       <form @submit.prevent="submit_login">
-        <input type="email" required placeholder="Email" v-model="email">
-        <input type="password" required placeholder="Password" v-model="password">
+        <input type="email" required placeholder="Email" v-model="email" autocomplete="email">
+        <input type="password" required placeholder="Password" v-model="password" autocomplete="password">
         <input v-bind:disabled="is_logging_in" type="submit" value="Log-in">
         <p class="error" v-for="(message, index) in messages" :key="index"> {{ message }} </p>
         <p class="notRegistered"> Not <a @click="goToRegister()">registered</a> yet ?</p>

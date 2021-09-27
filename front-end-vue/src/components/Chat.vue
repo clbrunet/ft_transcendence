@@ -28,7 +28,7 @@
         && data.activeUserMute == false
         && isCurrentlyBanMute(data.activeUserBanEndDateTime) == false
         && isCurrentlyBanMute(data.activeUserMuteEndDateTime) == false)">
-        <input autofocus style="text-align:center;font-size:18px;" class="message" type="text" placeholder="type your message here" v-model="messageTyping" />
+        <input style="text-align:center;font-size:18px;" class="message" type="text" placeholder="type your message here" v-model="messageTyping" />
         <input  style="text-align:center;font-size:18px;" class="send" type="submit" value="send" />
       </form>
       <div class="buttons" v-else>

@@ -64,7 +64,8 @@
       <div id="popup-password-content">
         <h2>Enter the password of the channel</h2>
         <form action="" @submit.prevent="form_password_submit">
-          <input type="password" required placeholder="password" v-model="password_input">
+          <input type="text" name="channel" value="channel" autocomplete="channel" style="display: none;">
+          <input type="password" required placeholder="password" autocomplete="new-password" v-model="password_input">
           <input type="submit" value="Access" class="btn-close">
         </form>
         <button @click="close_popup_password()" class="btn-close">Close</button>

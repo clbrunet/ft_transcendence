@@ -4,8 +4,8 @@
       <form @submit.prevent="submit_register">
         <input type="email" required placeholder="Email" v-model="email" />
         <input type="text" required maxlength="15" placeholder="Name" v-model="name" />
-        <input type="password" required placeholder="Password" v-model="password" />
-        <input type="password" required placeholder="Confirm password" v-model="confirmPassword" />
+        <input type="password" required placeholder="Password" v-model="password" autocomplete="password" />
+        <input type="password" required placeholder="Confirm password" v-model="confirmPassword" autocomplete="confirm-password" />
         <input v-bind:disabled="is_registering" type="submit" value="Register"/>
         <p class="error"> {{ this.message }}</p>
         <p class="notLogin" > Already have an account ? <a @click="goToLogin()"  >login</a> now </p>
