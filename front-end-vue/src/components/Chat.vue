@@ -196,7 +196,8 @@ export default Vue.extend({
       selectBanTime: undefined as any,
       selectMuteTime: undefined as any,
       currentParticipantSelected: undefined as any,
-      messageTyping: undefined as any
+      messageTyping: undefined as any,
+      isDestroyed: false as boolean,
     };
   },
   store: store,
@@ -230,8 +231,14 @@ export default Vue.extend({
     });
 
     this.$store.state.socket.on('chatToClient', (message: any) => {
+      if (this.isDestroyed) {
+        return;
+      }
       this.refresh_messages();
     });
+  },
+  destroyed() {
+    this.isDestroyed = true;
   },
   methods: {
     closeChat() {
