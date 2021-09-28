@@ -6,6 +6,7 @@
         <router-link to="/users">Users</router-link>
         <router-link to="/spectate">Spectate</router-link>
         <router-link to="/chats">Chats</router-link>
+        <router-link v-if="$store.state.user.admin" to="/admin">Admin</router-link>
         <button v-bind:disabled="is_disconnecting" id="btn-disconnect" @click="logout">Disconnect</button>
       </template>
       <template v-else>
@@ -159,6 +160,15 @@ export default Vue.extend({
   }
   #btn-disconnect {
     font-size: 13px;
+  }
+}
+
+@media (max-width: 350px) {
+  #nav a {
+    font-size: 12px;
+  }
+  #btn-disconnect {
+    font-size: 12px;
   }
 }
 </style>

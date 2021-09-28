@@ -75,6 +75,15 @@ const routes: Array<RouteConfig> = [
     }
   },
   {
+    path: '/admin',
+    name: 'Admin',
+    component: () => import('../views/Admin.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+    }
+  },
+  {
     path: '/auth',
     name: 'Auth',
     component: () => import('../views/Auth.vue'),
@@ -114,6 +123,9 @@ router.beforeEach((to, from, next) => {
       store.state.is_auth = true;
       store.state.user = res.data;
       if (to.matched.some((record) => record.meta.hideForAuth)) {
+        return next('/profile');
+      }
+      if (res.data.admin !== true && to.matched.some((record) => record.meta.requiresAdmin)) {
         return next('/profile');
       }
     })
