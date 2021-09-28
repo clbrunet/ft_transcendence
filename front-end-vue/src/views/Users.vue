@@ -546,7 +546,7 @@ h1 {
 }
 
 .settings-points{
-  width:80%;
+  width:170px;
 }
 
 table {
@@ -657,11 +657,10 @@ tr {
   border-radius:15px;
   border: 1px solid #3040F0;
   color:white;
-  width:25%;
+  width: fit-content;
 }
 
 h3 {
   color: black;
 }
-
 </style>
