@@ -8,6 +8,7 @@ import JwtTwoFactorGuard from '../authentication/twoFactor/jwtTwoFactor.guard';
 import { UserUpdateDto } from '../user/user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 
 @Controller('user')
@@ -40,7 +41,7 @@ export class UserController {
       storage: diskStorage({
         destination: './avatars',
         filename: (req: any, file: any, callback: any) => {
-          callback(null, req.user.id);
+          callback(null, req.user.name + extname(file.originalname));
         }
       }),
       fileFilter: (req, file, callback) => {
@@ -52,15 +53,12 @@ export class UserController {
     }),
   )
 
-  async uploadAvatar(@Req() request: RequestWithUser, @UploadedFile() file) {
+  async uploadAvatar(@Req() request: RequestWithUser, @UploadedFile() file: any) {
     let userUpdateDto = new UserUpdateDto();
-    userUpdateDto.avatar = (process.env.URL || "http://localhost:3000") + "/user/avatar/" + request.user.id;
+    let filename = (process.env.URL || "http://localhost:3000") + "/user/avatar/" + request.user.name + extname(file.originalname);
+    userUpdateDto.avatar = filename;
     await this.userService.update(request.user.id, userUpdateDto);
-    const response = {
-      originalname: file.originalname,
-      filename: file.filename,
-    };
-    return response;
+    return filename;
   }
 
   @UseGuards(JwtTwoFactorGuard)

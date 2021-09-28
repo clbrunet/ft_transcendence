@@ -39,6 +39,9 @@ export class AuthenticationService {
   }
 
   private async verifyName(name: string) {
+    if (name === "default") {
+      throw new HttpException('Please choose a different name', HttpStatus.BAD_REQUEST);
+    }
     let token_res = await axios.post('https://api.intra.42.fr/oauth/token', {
       grant_type: 'client_credentials',
       client_id: '9bf776aebb6591e065d48ddfcc3d16da20f4390dc25be24084702d9560132e06',

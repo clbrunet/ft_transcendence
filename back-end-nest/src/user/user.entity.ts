@@ -34,7 +34,7 @@ class User {
   @Column({ default: false })
   isTwoFactorAuthenticationEnabled: boolean;
 
-  @Column({ default: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' })
+  @Column({ default: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default.png' })
   avatar: string;
 
   @Column({ default: 0 })

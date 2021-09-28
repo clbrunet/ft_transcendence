@@ -20,12 +20,12 @@ export const registers: RegisterDto[] = [
 ];
 
 export const users: UserSeedDto[] = [
-  { email: 'erwan@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' },
-  { email: 'clement@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' },
-  { email: 'nicolas@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' },
-  { email: 'lucille@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' },
-  { email: 'come@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' },
-  { email: 'alban@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/default' },
+  { email: 'erwan@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/Erwan.png' },
+  { email: 'clement@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/Clement.png' },
+  { email: 'nicolas@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/Nicolas.png' },
+  { email: 'lucille@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/Lucille.png' },
+  { email: 'come@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/Come.png' },
+  { email: 'alban@yopmail.com', avatar: (process.env.URL || 'http://localhost:3000') + '/user/avatar/Alban.png' },
 ];
 
 // friend.status can't equal to 1, you invert connectorEmail and friendEmail if needed

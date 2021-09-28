@@ -51,16 +51,16 @@ export default Vue.extend({
       let selectedFile = event.target.files[0];
       const formData = new FormData();
       formData.append('avatar', selectedFile);
-      await axios.post(`${ process.env.VUE_APP_API_URL }/user/avatar`, formData, {
+      const res = await axios.post(`${ process.env.VUE_APP_API_URL }/user/avatar`, formData, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data'
         },
       }).catch(() => {
-        console.log("err while updating avatar");
+        alert("error while updating avatar");
         return;
       });
-      this.avatar_src = process.env.VUE_APP_API_URL + "/user/avatar/" + this.user.id + "?" + new Date().valueOf();
+      this.avatar_src = res?.data + "?" + new Date().valueOf();
     },
   },
   mounted() {
