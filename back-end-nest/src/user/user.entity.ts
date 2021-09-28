@@ -55,6 +55,9 @@ class User {
   @Column({ default: 0 })
   xp: number;
 
+  @Column({ default: false })
+  admin: boolean;
+
   @OneToMany(() => Channel, channel => channel.owner)
   channels: Channel[];
 

@@ -24,6 +24,9 @@ export class RegisterDto {
   @IsNotEmpty()
   avatar?: string;
 
+  @IsOptional()
+  @IsBoolean()
+  admin: boolean;
 }
 
 export default RegisterDto;

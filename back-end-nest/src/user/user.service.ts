@@ -83,6 +83,23 @@ export class UserService {
     return dto;    
   }
 
+  // return all User dtos without any relation
+  public async getAllAdmin(user: User) {
+    if (!user.admin) {
+      throw new HttpException('User is not an admin', HttpStatus.BAD_REQUEST); 
+    }
+    let users = [];
+    users = await this.userRepository.find(
+      { relations: ['queuers'] }
+    );
+    let dto: ActiveUserDto[] = [];
+    for (const user of users) {
+      let activeUserDto: ActiveUserDto = this.activeUserToDto(user);
+      dto.push(activeUserDto);
+    }
+    return dto;    
+  }
+
   // Return User DtoLazy without any relation
   public async getByIdLazy(id: string) {
     let user;
@@ -227,6 +244,19 @@ export class UserService {
     throw new HttpException('User update failed', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
+  public async updateAdmin(user: User, id: string, admin: boolean) {
+    if (!user.admin) {
+      throw new HttpException('User is not an admin', HttpStatus.BAD_REQUEST); 
+    }
+    if (user.id == id) {
+      throw new HttpException('User can not update his own admin status', HttpStatus.NOT_FOUND);
+    }
+    let userUpdateDto = new UserUpdateDto();
+    userUpdateDto.admin = admin;
+    await this.update(id, userUpdateDto);
+    return await this.getByIdLazy(id);
+  }
+
   public async updateAsWinner(id: string) {
     const user = await this.findByIdLazy(id);
     let userUpdateDto = new UserUpdateDto();
@@ -281,6 +311,39 @@ export class UserService {
     return 'Successfull User deletion';
   }
 
+  public async deleteAdmin(activeUser: User, id: string) {
+    if (!activeUser.admin) {
+      throw new HttpException('User is not an admin', HttpStatus.BAD_REQUEST); 
+    }
+    if (activeUser.id == id) {
+      throw new HttpException('User can not delete himself', HttpStatus.NOT_FOUND);
+    }
+    let user;
+    try {
+      user = await this.findById(id);
+    }
+    catch(error) {
+      throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND); 
+    }
+    if (user.status != 0) {
+      throw new HttpException('Can not delete a user that is not offline', HttpStatus.NOT_FOUND);
+    }
+    const channels = await this.channelRepository.find(
+      {
+        relations: ['owner', 'participants', 'participants.user'],
+        where: { direct: true },
+      }     
+    );
+    for (const channel of channels) {
+      const participant = await this.participantRepository.findOne( { user, channel } );
+      if (participant && channel.owner.id != user.id) {
+        await this.channelRepository.delete(channel.id);
+      }
+    }
+    await this.userRepository.delete(id);
+    return 'Successfull User deletion';
+  }
+
   public activeUserToDto(user: User) {
     let dto = new ActiveUserDto();
     dto.id = user.id;
@@ -294,6 +357,7 @@ export class UserService {
     dto.nWins = user.nWins;
     dto.nLosses = user.nLosses;
     dto.xp = user.xp;
+    dto.admin = user.admin;
     if (user.queuers.length === 0) {
       dto.inQueue = false;
     }
@@ -314,6 +378,7 @@ export class UserService {
     dto.nWins = user.nWins;
     dto.nLosses = user.nLosses;
     dto.xp = user.xp;
+    dto.admin = user.admin;
     return dto;
   }
 }

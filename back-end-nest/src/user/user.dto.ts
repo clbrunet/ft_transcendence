@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsOptional, IsEnum, IsUUID } from 'class-validator';
+import { IsString, IsInt, IsOptional, IsEnum, IsBoolean } from 'class-validator';
 
 import { Status } from './enum.status';
 import { Level } from './enum.level';
@@ -31,6 +31,10 @@ export class UserUpdateDto {
   @IsOptional()
   @IsInt()
   xp: number;
+
+  @IsOptional()
+  @IsBoolean()
+  admin: boolean;
 }
 
 export class UserSeedDto {
@@ -48,6 +52,7 @@ export class UserDtoLazy {
   nWins: number;
   nLosses: number;
   xp: number;
+  admin: boolean;
 }
 
 export class ActiveUserDto {
@@ -63,4 +68,5 @@ export class ActiveUserDto {
   nLosses: number;
   xp: number;
   inQueue: boolean;
+  admin: boolean;
 }
