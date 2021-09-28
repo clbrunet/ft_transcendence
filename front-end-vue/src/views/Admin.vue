@@ -81,7 +81,8 @@ export default Vue.extend({
       });
     },
     deleteUser(user: any) {
-      if (confirm("Delete " + user.name + " ?")) {
+      if (confirm("Warning : delete a user will also remove its messages in channels, channels of which he is the owner and history of games of which he is a player."
+                  + " Do you really want to delete " + user.name + " ?")) {
         const url = `${process.env.VUE_APP_API_URL}/user/` + user.id;
         axios({
           url: url,
