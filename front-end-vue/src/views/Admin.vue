@@ -9,6 +9,7 @@
         <td style="text-align:center;">Status</td>
         <td style="text-align:center;">Admin</td>
         <td style="text-align:center;">inQueue</td>
+        <td style="text-align:center;">Delete</td>
       </tr>
       <template v-for="(user, index) in users">
         <template v-if="user.id != $store.state.user.id">
@@ -20,6 +21,14 @@
             <td class="field">{{user.status}}</td>
             <td class="field">{{user.admin}}</td>
             <td class="field">{{user.inQueue}}</td>
+            <td class="field">
+              <img
+                src="/assets/deny-button.svg"
+                alt="delete"
+                style="width:30px;cursor:pointer;"
+                @click="deleteUser(user)"
+              />
+            </td>
           </tr>
         </template>
       </template>
@@ -68,113 +77,21 @@ export default Vue.extend({
         withCredentials: true
       }).then(res => {
         this.users = res.data;
-        this.get_friends();
       }).catch(() => {
         alert("error while getting users")
       });
     },
-    get_friends() {
-      axios({
-        url: `${process.env.VUE_APP_API_URL}/friend/index`,
-        method: "get",
-        withCredentials: true
-      }).then(res => {
-        this.friends = res.data;
-        this.tab.length = 0;
-        for (let i = 0; i < this.users.length; i++) {
-          var flag = false;
-          for (let j = 0; j < this.friends.length; j++) {
-            if (this.users[i].id == this.friends[j].friendId) {
-              this.tab.push(this.friends[j].requestStatus);
-              flag = true;
-            }
-          }
-          if (flag == false) this.tab.push("none");
-        }
-      });
-    },
-    add_friend(user: any) {
-      const url = `${process.env.VUE_APP_API_URL}/friend/` + user.id;
-      axios({
-        url: url,
-        method: "post",
-        withCredentials: true
-      }).then(() => {
-        this.get_users();
-        this.$store.state.socket.emit('refreshUsers', user.id);
-      });
-    },
-    remove_friend(user: any) {
-      const url = `${process.env.VUE_APP_API_URL}/friend/unfriend/` + user.id;
-      axios({
-        url: url,
-        method: "delete",
-        withCredentials: true
-      }).then(() => {
-        this.get_users();
-        this.$store.state.socket.emit('refreshUsers', user.id);
-      });
-    },
-    accept_friend_request(user: any) {
-      const url = `${process.env.VUE_APP_API_URL}/friend/accept/` + user.id;
-      axios({
-        url: url,
-        method: "patch",
-        withCredentials: true
-      })
-      .then(() => {
-        this.get_users();
-        this.$store.state.socket.emit('refreshUsers', user.id);
-      })
-      .catch(() => {
-        alert("please retry accepting the friend request after a refresh")
-      });
-    },
-    deny_friend_request(user: any) {
-      const url = `${process.env.VUE_APP_API_URL}/friend/reject/` + user.id;
-      axios({
-        url: url,
-        method: "patch",
-        withCredentials: true
-      }).then(() => {
-        this.get_users();
-        this.$store.state.socket.emit('refreshUsers', user.id);
-      });
-    },
-    block(user: any) {
-      const url = `${process.env.VUE_APP_API_URL}/block/` + user.id;
-      axios({
-        url: url,
-        method: "post",
-        withCredentials: true
-      }).then(() => {
-        this.get_users();
-        this.$store.state.socket.emit('refreshChannels');
-        this.$store.state.socket.emit('refreshUsers', user.id);
-      });
-    },
-    unblock(user: any) {
-      const url = `${process.env.VUE_APP_API_URL}/block/unblock/` + user.id;
-      axios({
-        url: url,
-        method: "delete",
-        withCredentials: true
-      }).then(() => {
-        this.get_users();
-        this.$store.state.socket.emit('refreshChannels');
-        this.$store.state.socket.emit('refreshUsers', user.id);
-      });
-    },
-    send_message(user: any) {
-      axios({
-        url: `${process.env.VUE_APP_API_URL}/direct/go/` + user.id,
-        method: "get",
-        withCredentials: true
-      }).then(res => {
-        this.$store.state.goDM = res.data;
-        this.$store.state.socket.emit('refreshChannels');
-        router.push({name: "Chats"});
-      });
+    deleteUser(user: any) {
+      if (confirm("Delete " + user.name + " ?")) {
+        const url = `${process.env.VUE_APP_API_URL}/user/` + user.id;
+        axios({
+          url: url,
+          method: "delete",
+          withCredentials: true
+        }).then(() => {
+          this.get_users();
+        });
+      }
     },
     goToProfile(user: any) {
       const path = "/profile/" + user.id;
@@ -273,29 +190,6 @@ tr {
   padding: 3%;
 }
 
-.nbPoints {
-  color:black;
-}
-
-.selectDuel {
-  background-color: #3040F0;
-  color:white;
-  padding: 1%;
-}
-
-.btn-ok {
-  background-color: #3040F0;
-  outline:none;
-  border: 1px solid white;
-  border-radius: 5px;
-  cursor:pointer;
-  color:white;
-}
-
-.btn-ok:hover {
-  background-color: rgb(21, 39, 235);
-}
-
 .field {
   padding: 5px 15px 5px 15px;
   text-align:center;
@@ -308,15 +202,5 @@ tr {
 
 .field a:hover {
   text-decoration: underline;
-}
-
-.btn {
-  cursor: pointer;
-  height: 100%;
-  margin-left: auto;
-}
-
-h3 {
-  color: black;
 }
 </style>
