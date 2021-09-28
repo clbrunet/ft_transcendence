@@ -19,7 +19,9 @@
             <td class="field">{{user.isTwoFactorAuthenticationEnabled}}</td>
             <td class="field"><a v-bind:href="user.avatar" target="_blank">{{user.avatar}}</a></td>
             <td class="field">{{user.status}}</td>
-            <td class="field">{{user.admin}}</td>
+            <td class="field">{{user.admin}} 
+              <button class="btn" @click="toggleAdmin(user)">toggle</button>
+            </td>
             <td class="field">{{user.inQueue}}</td>
             <td class="field">
               <img
@@ -49,9 +51,6 @@ export default Vue.extend({
   data() {
     return {
       users: {} as any,
-      blocks: {} as any,
-      friends: {} as any,
-      tab: [] as any,
     };
   },
   mounted() {
@@ -90,6 +89,35 @@ export default Vue.extend({
           withCredentials: true
         }).then(() => {
           this.get_users();
+        }).catch((error) => {
+          alert(error.response.data.message);
+        });
+      }
+    },
+    toggleAdmin(user: any) {
+      let message: string;
+      if (user.admin) {
+        message = "Remove " + user.name + " from admins ?"
+      }
+      else {
+        message = "Make " + user.name + " admin ?"
+      }
+      if (confirm(message)) {
+        let url: string;
+        if (user.admin) {
+          url = `${process.env.VUE_APP_API_URL}/user/unadmin/` + user.id;
+        }
+        else {
+          url = `${process.env.VUE_APP_API_URL}/user/admin/` + user.id;
+        }
+        axios({
+          url: url,
+          method: "patch",
+          withCredentials: true
+        }).then(() => {
+          this.get_users();
+        }).catch((error) => {
+          alert(error.response.data.message);
         });
       }
     },
@@ -203,4 +231,18 @@ tr {
 .field a:hover {
   text-decoration: underline;
 }
+
+.btn {
+  background-color: #3040F0;
+  outline:none;
+  border: 1px solid white;
+  border-radius: 5px;
+  cursor:pointer;
+  color:white;
+}
+
+.btn:hover {
+  background-color: rgb(21, 39, 235);
+}
+
 </style>
