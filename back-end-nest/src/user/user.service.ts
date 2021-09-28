@@ -249,7 +249,7 @@ export class UserService {
       throw new HttpException('User is not an admin', HttpStatus.BAD_REQUEST); 
     }
     if (user.id == id) {
-      throw new HttpException('User can not update his own admin status', HttpStatus.NOT_FOUND);
+      throw new HttpException('User can not update his own admin status', HttpStatus.BAD_REQUEST);
     }
     let userUpdateDto = new UserUpdateDto();
     userUpdateDto.admin = admin;
@@ -316,7 +316,7 @@ export class UserService {
       throw new HttpException('User is not an admin', HttpStatus.BAD_REQUEST); 
     }
     if (activeUser.id == id) {
-      throw new HttpException('User can not delete himself', HttpStatus.NOT_FOUND);
+      throw new HttpException('User can not delete himself', HttpStatus.BAD_REQUEST);
     }
     let user;
     try {
@@ -326,7 +326,7 @@ export class UserService {
       throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND); 
     }
     if (user.status != 0) {
-      throw new HttpException('Can not delete a user that is not offline', HttpStatus.NOT_FOUND);
+      throw new HttpException('Can not delete a user that is not offline', HttpStatus.BAD_REQUEST);
     }
     const channels = await this.channelRepository.find(
       {

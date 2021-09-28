@@ -103,7 +103,7 @@ export class GameService {
     );
     let dto: GameHistoryDto[] = [];
     for (const game of games) {
-      if (await this.isPlayer(userId, game.id)) {
+      if (await this.isPlayer(userId, game.id) && game.players.length == 2) {
         let gameHistoryDto: GameHistoryDto = this.gameToHistoryDto(game);
         dto.push(gameHistoryDto);
       }
