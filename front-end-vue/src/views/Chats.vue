@@ -232,7 +232,6 @@ export default Vue.extend({
         }
       })
       .catch(() => {
-        router.push({name: 'App'});
       });
     },
     refresh_dm() {
@@ -256,7 +255,6 @@ export default Vue.extend({
       })
       .catch(() => {
         console.log("");
-        router.push({name: 'App'});
       });
     },
     select_channel(channel: any, index: number) {
