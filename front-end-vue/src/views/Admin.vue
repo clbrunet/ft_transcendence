@@ -69,6 +69,8 @@ export default Vue.extend({
       }).then(res => {
         this.users = res.data;
         this.get_friends();
+      }).catch(() => {
+        alert("error while getting users")
       });
     },
     get_friends() {
