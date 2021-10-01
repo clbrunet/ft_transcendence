@@ -44,8 +44,8 @@ export class AuthenticationService {
     }
     let token_res = await axios.post('https://api.intra.42.fr/oauth/token', {
       grant_type: 'client_credentials',
-      client_id: '9bf776aebb6591e065d48ddfcc3d16da20f4390dc25be24084702d9560132e06',
-      client_secret: 'affd3a319e0abc6f0df8eb643a1524bbed9ddc481fb211952d2e4aa49fc5980f',
+      client_id: process.env.CLIENT_ID_42,
+      client_secret: process.env.CLIENT_SECRET_42,
     });
     let user_res: AxiosResponse<any>;
     do {
