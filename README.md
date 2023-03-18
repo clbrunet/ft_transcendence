@@ -1,4 +1,4 @@
-# 42_ft_transcendence
+# ft_transcendence
 Pong website
 
 ## Stack
